@@ -7,6 +7,18 @@
   <title>{{.Subject}}</title>
   <style type="text/css">
     body,.ExternalClass,.ReadMsgBody{background-color:#0a0815}
+    .card-body h1,.card-body h2,.card-body h3,.card-body h4,.card-body h5,.card-body h6{color:#ccfbf1!important}
+    .card-body a,.card-body a:link,.card-body a:visited{color:#5eead4!important;text-decoration:underline!important}
+    .card-body a:hover,.card-body a:active{color:#99f6e4!important}
+    .card-body li{color:rgba(210,252,245,0.88)!important}
+    .aurora-content,.aurora-content *{color:rgba(210,252,245,0.88)!important}
+    .aurora-content a,.aurora-content a:link,.aurora-content a:visited{color:#5eead4!important;text-decoration:underline!important}
+    .aurora-content a:hover,.aurora-content a:active{color:#99f6e4!important}
+    .aurora-content code,.aurora-content pre{color:#99f6e4!important;background:rgba(0,0,0,0.3)!important;border-color:rgba(13,148,136,0.2)!important}
+    .aurora-content blockquote{color:rgba(255,255,255,0.6)!important}
+    .aurora-content h1,.aurora-content h2,.aurora-content h3,.aurora-content h4,.aurora-content h5,.aurora-content h6{color:#ccfbf1!important}
+    .aurora-content hr{border-color:rgba(13,148,136,0.3)!important}
+    .aurora-content img{border:0;max-width:100%!important}
     @media only screen and (max-width:480px){
       .resp-card{padding:32px 20px!important}
       .resp-spacer{padding:24px 20px!important}
@@ -23,11 +35,11 @@
         <span style="font-size:16px;font-weight:300;color:rgba(255,255,255,0.4);letter-spacing:4px;text-transform:uppercase;">{{AppName}}</span>
       </td></tr>
       <!-- card -->
-      <tr><td class="resp-card" style="padding:48px 40px;background:rgba(25,20,50,0.8);border:1px solid rgba(13,148,136,0.2);box-shadow:0 0 60px rgba(13,148,136,0.08),0 0 120px rgba(99,102,241,0.04);">
+      <tr><td class="resp-card card-body" style="padding:48px 40px;background:rgba(25,20,50,0.8);border:1px solid rgba(13,148,136,0.2);box-shadow:0 0 60px rgba(13,148,136,0.08),0 0 120px rgba(99,102,241,0.04);">
         <p class="resp-heading" style="margin:0 0 20px;font-size:24px;font-weight:300;color:#ccfbf1;line-height:1.3;letter-spacing:-0.5px;"></p>
         <p style="margin:0 0 24px;font-size:14px;line-height:2;color:rgba(210,252,245,0.88);font-weight:300;">{{$release_url := HTMLFormat "<a href=\047%s\047>%s</a>" .Release.HTMLURL .Release.TagName}}{{$repo_url := HTMLFormat "<a href=\047%s\047>%s</a>" .Release.Repo.HTMLURL .Release.Repo.FullName}}{{.locale.Tr "mail.release.new.text" .Release.Publisher.Name $release_url $repo_url}}
 	<h4>{{.locale.Tr "mail.release.title" .Release.Title}}</h4>
-	{{if .Release.RenderedNote}}{{.locale.Tr "mail.release.note"}}<br><div>{{.Release.RenderedNote}}</div>{{end}}
+	{{if .Release.RenderedNote}}{{.locale.Tr "mail.release.note"}}<br><div class="aurora-content" style="color:rgba(210,252,245,0.88);font-size:14px;line-height:2;">{{.Release.RenderedNote}}</div>{{end}}
 	<p>{{.locale.Tr "mail.release.downloads"}}</p>
 	<ul>{{if not .DisableDownloadSourceArchives}}<li><a href="{{.Release.Repo.HTMLURL}}/archive/{{.Release.TagName | PathEscapeSegments}}.zip">{{.locale.Tr "mail.release.download.zip"}}</a></li><li><a href="{{.Release.Repo.HTMLURL}}/archive/{{.Release.TagName | PathEscapeSegments}}.tar.gz">{{.locale.Tr "mail.release.download.targz"}}</a></li>{{end}}{{if .Release.Attachments}}{{range .Release.Attachments}}<li><a href="{{.DownloadURL}}">{{.Name}} ({{.Size | FileSize}})</a></li>{{end}}{{end}}</ul></p>
         <p style="margin:0;font-size:13px;line-height:1.8;color:rgba(180,195,215,0.95);font-weight:300;"></p>
