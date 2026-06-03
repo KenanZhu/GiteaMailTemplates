@@ -7,10 +7,9 @@
 1. 创建风格目录：`themes/<风格名称>/`
 2. 从现有风格复制目录结构
 3. 用独特的视觉设计实现全部 11 个 `.tmpl` 文件
-4. 在 `tools/build-preview.go` 的 `themes` 切片中添加新主题
-5. 重新生成预览：`go run ./tools/build-preview.go`
-6. 在 `preview/index.html` 的 `<select id="sel-theme">` 中添加选项
-7. 提交包含截图渲染效果的 PR
+4. 重新生成预览：`go run ./tools/build-preview.go`（构建脚本会自动发现 `themes/` 下的所有主题目录）
+5. 在 `preview/index.html` 的 `<select id="sel-theme">` 中添加选项
+6. 提交包含截图渲染效果的 PR
 
 ### 风格指南
 

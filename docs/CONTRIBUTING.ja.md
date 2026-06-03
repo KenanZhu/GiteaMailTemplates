@@ -7,10 +7,9 @@
 1. スタイルディレクトリを作成: `themes/<style-name>/`
 2. 既存スタイルからディレクトリ構造をコピー
 3. 11個の `.tmpl` ファイルを独自デザインで実装
-4. `tools/build-preview.go` の `themes` スライスに追加
-5. プレビューを再生成: `go run ./tools/build-preview.go`
-6. `preview/index.html` の `<select id="sel-theme">` に追加
-7. スクリーンショット付きで PR を提出
+4. プレビューを再生成: `go run ./tools/build-preview.go`（ビルドスクリプトが `themes/` 以下の全テーマを自動検出します）
+5. `preview/index.html` の `<select id="sel-theme">` に追加
+6. スクリーンショット付きで PR を提出
 
 ### スタイルガイドライン
 

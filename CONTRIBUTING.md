@@ -11,10 +11,9 @@ Thanks for your interest in contributing! This project aims to provide a diverse
 1. Create the style directory: `themes/<your-style-name>/`
 2. Copy the directory structure from an existing style
 3. Implement all 11 `.tmpl` files with your unique visual design
-4. Add your theme to the `themes` slice in `tools/build-preview.go`
-5. Regenerate preview data: `go run ./tools/build-preview.go`
-6. Add your theme as an `<option>` in `<select id="sel-theme">` in `preview/index.html`
-7. Submit a PR with screenshots of rendered emails
+4. Regenerate preview data: `go run ./tools/build-preview.go` — the build script auto-discovers all theme directories under `themes/`
+5. Add your theme as an `<option>` in `<select id="sel-theme">` in `preview/index.html`
+6. Submit a PR with screenshots of rendered emails
 
 ### Style Guidelines
 

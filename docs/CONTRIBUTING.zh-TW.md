@@ -7,10 +7,9 @@
 1. 建立風格目錄：`themes/<風格名稱>/`
 2. 從現有風格複製目錄結構
 3. 以獨特的視覺設計實作全部 11 個 `.tmpl` 檔案
-4. 在 `tools/build-preview.go` 的 `themes` 切片中新增主題
-5. 重新產生預覽：`go run ./tools/build-preview.go`
-6. 在 `preview/index.html` 的 `<select id="sel-theme">` 中新增選項
-7. 提交包含螢幕截圖的 PR
+4. 重新產生預覽：`go run ./tools/build-preview.go`（建置腳本會自動發現 `themes/` 下的所有主題目錄）
+5. 在 `preview/index.html` 的 `<select id="sel-theme">` 中新增選項
+6. 提交包含螢幕截圖的 PR
 
 ### 風格指南
 

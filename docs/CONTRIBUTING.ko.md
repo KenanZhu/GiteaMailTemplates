@@ -7,10 +7,9 @@
 1. 스타일 디렉토리 생성: `themes/<style-name>/`
 2. 기존 스타일에서 디렉토리 구조 복사
 3. 11개 `.tmpl` 파일을 고유한 디자인으로 구현
-4. `tools/build-preview.go`의 `themes` 슬라이스에 추가
-5. 프리뷰 재생성: `go run ./tools/build-preview.go`
-6. `preview/index.html`의 `<select id="sel-theme">`에 추가
-7. 스크린샷과 함께 PR 제출
+4. 프리뷰 재생성: `go run ./tools/build-preview.go` (빌드 스크립트가 `themes/` 아래의 모든 테마 디렉토리를 자동으로 찾습니다)
+5. `preview/index.html`의 `<select id="sel-theme">`에 추가
+6. 스크린샷과 함께 PR 제출
 
 ### 스타일 가이드라인
 
