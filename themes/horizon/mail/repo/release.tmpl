@@ -37,6 +37,7 @@
         <h4 style="margin:24px 0 8px; font-size:18px; font-weight:600; color:#1e293b;">{{.locale.Tr "mail.release.title" .Release.Title}}</h4>
 
         {{if .Release.RenderedNote}}
+          {{.locale.Tr "mail.release.note"}}<br>
           <div style="margin:12px 0 16px; font-size:15px; line-height:1.6; color:#334155;">
             {{.Release.RenderedNote}}
           </div>
@@ -84,7 +85,7 @@
         <p style="margin:0; font-size:14px; color:#64748b;">
           © <a href="{{AppUrl}}" target="_blank" rel="noopener noreferrer" style="color:#1e88e5; text-decoration:none; font-weight:500; border-bottom:1px dotted #b9d5f0;">{{AppName}}</a>
         </p>
-        <p style="margin:6px 0 0; font-size:12px; color:#94a3b8;">Secure release notification – if you didn’t expect this, please ignore this email.</p>
+        <p style="margin:6px 0 0; font-size:12px; color:#94a3b8;">Secure release notification – if you didn't expect this, please ignore this email.</p>
       </div>
 
     </div>

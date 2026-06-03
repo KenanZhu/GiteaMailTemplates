@@ -65,7 +65,8 @@
           {{end}}
         {{else}}
           {{.Body}}
-        {{end -}}
+        {{end -}}{{if .CanReply}}&nbsp;{{.locale.Tr "mail.reply"}}{{end}}
+
         </p>
 
         {{- range .ReviewComments}}

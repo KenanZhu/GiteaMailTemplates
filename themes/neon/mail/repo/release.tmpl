@@ -30,12 +30,12 @@
       <!-- body -->
       <tr><td class="resp-pad" style="padding:8px 32px 24px;color:#e2e8f0;">
         <p class="resp-font" style="margin:0 0 8px;font-size:14px;line-height:1.7;color:#cbd5e1;">{{$release_url := HTMLFormat "<a href=\047%s\047>%s</a>" .Release.HTMLURL .Release.TagName}}{{$repo_url := HTMLFormat "<a href=\047%s\047>%s</a>" .Release.Repo.HTMLURL .Release.Repo.FullName}}{{.locale.Tr "mail.release.new.text" .Release.Publisher.Name $release_url $repo_url}}
-<h4>{{.locale.Tr "mail.release.title" .Release.Title}}</h4>
-{{if .Release.RenderedNote}}<div>{{.Release.RenderedNote}}</div>{{end}}
-<p>{{.locale.Tr "mail.release.downloads"}}</p>
-<ul>{{if not .DisableDownloadSourceArchives}}<li><a href="{{.Release.Repo.HTMLURL}}/archive/{{.Release.TagName | PathEscapeSegments}}.zip">{{.locale.Tr "mail.release.download.zip"}}</a></li><li><a href="{{.Release.Repo.HTMLURL}}/archive/{{.Release.TagName | PathEscapeSegments}}.tar.gz">{{.locale.Tr "mail.release.download.targz"}}</a></li>{{end}}{{if .Release.Attachments}}{{range .Release.Attachments}}<li><a href="{{.DownloadURL}}">{{.Name}} ({{.Size | FileSize}})</a></li>{{end}}{{end}}</ul></p>
+	<h4>{{.locale.Tr "mail.release.title" .Release.Title}}</h4>
+	{{if .Release.RenderedNote}}{{.locale.Tr "mail.release.note"}}<br><div>{{.Release.RenderedNote}}</div>{{end}}
+	<p>{{.locale.Tr "mail.release.downloads"}}</p>
+	<ul>{{if not .DisableDownloadSourceArchives}}<li><a href="{{.Release.Repo.HTMLURL}}/archive/{{.Release.TagName | PathEscapeSegments}}.zip">{{.locale.Tr "mail.release.download.zip"}}</a></li><li><a href="{{.Release.Repo.HTMLURL}}/archive/{{.Release.TagName | PathEscapeSegments}}.tar.gz">{{.locale.Tr "mail.release.download.targz"}}</a></li>{{end}}{{if .Release.Attachments}}{{range .Release.Attachments}}<li><a href="{{.DownloadURL}}">{{.Name}} ({{.Size | FileSize}})</a></li>{{end}}{{end}}</ul></p>
         <p class="resp-font" style="margin:0 0 24px;font-size:13px;color:#64748b;line-height:1.6;"></p>
-        
+
         <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin:0 0 24px;"><tr><td>
           <a href="{{.Link}}" class="resp-btn" style="display:inline-block;padding:13px 36px;font-size:14px;font-weight:700;color:#0a0a0f;text-decoration:none;background:linear-gradient(135deg,#ff2d95,#e0115f);border:1px solid #ff2d95;box-shadow:0 0 16px rgba(255,45,149,0.4);letter-spacing:1px;text-transform:uppercase;">{{.locale.Tr "mail.view_it_on" AppName}}</a>
         </td></tr></table>

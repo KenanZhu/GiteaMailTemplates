@@ -71,7 +71,8 @@
           {{end}}
         {{else}}
           {{.Body}}
-        {{end -}}
+        {{end -}}{{if .CanReply}}&nbsp;{{.locale.Tr "mail.reply"}}{{end}}
+
         </p>
 
         {{- range .ReviewComments}}
@@ -118,7 +119,7 @@
         <p style="margin:0; font-size:14px; color:#64748b;">
           © <a href="{{AppUrl}}" target="_blank" rel="noopener noreferrer" style="color:#1e88e5; text-decoration:none; font-weight:500; border-bottom:1px dotted #b9d5f0;">{{AppName}}</a>
         </p>
-        <p style="margin:6px 0 0; font-size:12px; color:#94a3b8;">Secure notification – if you didn’t expect this, please ignore this email.</p>
+        <p style="margin:6px 0 0; font-size:12px; color:#94a3b8;">Secure notification – if you didn't expect this, please ignore this email.</p>
       </div>
 
     </div>
