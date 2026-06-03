@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{.locale.Tr "mail.activate_email.title" (.DisplayName|DotEscape)}}</title>
+  <style type="text/css">
+    body, .ExternalClass, .ReadMsgBody { background-color: #0d1117; }
+  </style>
+</head>
+<body style="margin:0; padding:0; background-color:#0d1117; font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Courier New', monospace; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%;">
+
+  <center style="width:100%; table-layout:fixed;">
+    <div style="max-width:600px; margin:20px auto; background:#161b22; border:2px solid #30363d;">
+
+      <div style="padding:24px 28px 16px; border-bottom:2px solid #30363d;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+          <tr>
+            <td style="vertical-align:middle;">
+              <span style="font-size:16px; font-weight:700; color:#00ff41; letter-spacing:0.5px;">&gt; {{AppName}}</span>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div style="padding:28px 28px 20px; color:#c9d1d9;">
+        <p style="margin:0 0 12px; font-size:15px; line-height:1.6; color:#58a6ff;">
+          {{.locale.Tr "mail.hi_user_x" (.DisplayName|DotEscape)}}
+        </p>
+        <p style="margin:0 0 20px; font-size:14px; line-height:1.6; color:#c9d1d9;">
+          {{.locale.Tr "mail.activate_email.text" .ActiveCodeLives}}
+        </p>
+
+        {{$activate_url := printf "%suser/activate_email?code=%s&email=%s" AppUrl (QueryEscape .Code) (QueryEscape .Email)}}
+        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin:24px 0 20px; border-collapse:separate;">
+          <tr>
+            <td align="left">
+              <a href="{{$activate_url}}" style="display:inline-block; padding:11px 24px; font-size:14px; font-weight:700; color:#0d1117; text-decoration:none; background-color:#00ff41; border:2px solid #00ff41; font-family:'JetBrains Mono','Fira Code','Consolas',monospace; letter-spacing:0.5px;">$ verify_email</a>
+            </td>
+          </tr>
+        </table>
+
+        <div style="background:#0d1117; border:1px solid #30363d; padding:14px 16px; margin:20px 0 12px;">
+          <p style="margin:0 0 6px; font-size:12px; color:#8b949e;">
+            {{.locale.Tr "mail.link_not_working_do_paste"}}
+          </p>
+          <p style="margin:0; font-size:12px; color:#58a6ff; word-break:break-all; line-height:1.6;">
+            ┌─<br>
+            │ {{$activate_url}}<br>
+            └─
+          </p>
+        </div>
+      </div>
+
+      <div style="padding:16px 28px 20px; border-top:1px solid #30363d; background:#0d1117;">
+        <p style="margin:0; font-size:12px; color:#484f58;">
+          <span style="color:#8b949e;">#</span> &copy; <a href="{{AppUrl}}" style="color:#58a6ff; text-decoration:none;">{{AppName}}</a>
+        </p>
+        <p style="margin:4px 0 0; font-size:11px; color:#484f58;">
+          <span style="color:#8b949e;">#</span> if (!$expecting) { ignore(); }
+        </p>
+      </div>
+
+    </div>
+  </center>
+
+</body>
+</html>

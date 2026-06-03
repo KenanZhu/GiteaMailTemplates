@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="x-apple-disable-message-reformatting" />
+  <title>{{.Subject}}</title>
+  <style type="text/css">
+    body,.ExternalClass,.ReadMsgBody{background-color:#f5ede0}
+    @media only screen and (max-width:480px){
+      .resp-pad{padding-left:16px!important;padding-right:16px!important}
+      .resp-btn{display:block!important;width:auto!important;text-align:center!important}
+      .resp-heading{font-size:18px!important}
+    }
+  </style>
+</head>
+<body style="margin:0;padding:0;background:#f5ede0;font-family:Georgia,'Times New Roman',serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
+  <center style="width:100%;table-layout:fixed;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background:#fffdf9;border:1px solid #d4c4a8;">
+      <!-- hero banner -->
+      <tr><td height="100" style="padding:0;background:linear-gradient(180deg,#c67b5c,#d4956e,#e8c4a8);text-align:center;vertical-align:bottom;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding:0 32px 18px;">
+          <img src="{{AppUrl}}assets/img/favicon.png" alt="logo" width="28" height="28" style="display:block;margin:0 auto 10px;border:0;outline:none;" />
+          <span style="font-size:20px;font-weight:700;color:#fff;letter-spacing:1px;text-shadow:0 1px 2px rgba(0,0,0,0.1);">{{AppName}}</span>
+          <div style="width:40px;height:3px;background:#fff;margin:8px auto 0;border-radius:2px;opacity:0.6;"></div>
+        </td></tr></table>
+      </td></tr>
+      <!-- content -->
+      <tr><td class="resp-pad" style="padding:28px 32px 0;">
+        <p class="resp-heading" style="margin:0;font-size:22px;line-height:1.4;color:#3d2b1f;font-weight:700;"></p>
+      </td></tr>
+      <tr><td class="resp-pad" style="padding:16px 32px 24px;color:#5c4030;">
+        <p style="margin:0 0 8px;font-size:15px;line-height:1.8;color:#6b5040;">{{if .IsMention}}<p>{{.locale.Tr "mail.issue.x_mentioned_you" .Doer.Name}}</p>{{end}}{{if eq .ActionName "push"}}<p>{{if .Comment.IsForcePush}}{{$oldCommitUrl := printf "%s/commit/%s" .Comment.Issue.PullRequest.BaseRepo.HTMLURL .Comment.OldCommit}}{{$oldShortSha := ShortSha .Comment.OldCommit}}{{$oldCommitLink := HTMLFormat "<a href=\047%[1]s\047>%[2]s</a>" $oldCommitUrl $oldShortSha}}{{$newCommitUrl := printf "%s/commit/%s" .Comment.Issue.PullRequest.BaseRepo.HTMLURL .Comment.NewCommit}}{{$newShortSha := ShortSha .Comment.NewCommit}}{{$newCommitLink := HTMLFormat "<a href=\047%[1]s\047>%[2]s</a>" $newCommitUrl $newShortSha}}{{.locale.Tr "mail.issue.action.force_push" .Doer.Name .Comment.Issue.PullRequest.HeadBranch $oldCommitLink $newCommitLink}}{{else}}{{.locale.TrN (len .Comment.Commits) "mail.issue.action.push_1" "mail.issue.action.push_n" .Doer.Name .Comment.Issue.PullRequest.HeadBranch (len .Comment.Commits)}}{{end}}</p>{{end}}<p>{{if eq .ActionName "close"}}{{.locale.Tr "mail.issue.action.close" .Doer.Name .Issue.Index}}{{else if eq .ActionName "reopen"}}{{.locale.Tr "mail.issue.action.reopen" .Doer.Name .Issue.Index}}{{else if eq .ActionName "merge"}}{{.locale.Tr "mail.issue.action.merge" .Doer.Name .Issue.Index .Issue.PullRequest.BaseBranch}}{{else if eq .ActionName "approve"}}{{.locale.Tr "mail.issue.action.approve" .Doer.Name}}{{else if eq .ActionName "reject"}}{{.locale.Tr "mail.issue.action.reject" .Doer.Name}}{{else if eq .ActionName "review"}}{{.locale.Tr "mail.issue.action.review" .Doer.Name}}{{else if eq .ActionName "review_dismissed"}}{{.locale.Tr "mail.issue.action.review_dismissed" .Doer.Name .Comment.Review.Reviewer.Name}}{{else if eq .ActionName "ready_for_review"}}{{.locale.Tr "mail.issue.action.ready_for_review" .Doer.Name}}{{end}}{{- if eq .Body ""}}{{if eq .ActionName "new"}}{{.locale.Tr "mail.issue.action.new" .Doer.Name .Issue.Index}}{{end}}{{else}}{{.Body}}{{end -}}</p>{{- range .ReviewComments}}<hr><p>{{$.locale.Tr "mail.issue.in_tree_path" .TreePath}}</p><pre>{{.Patch}}</pre><div>{{.RenderedContent}}</div>{{end -}}{{if eq .ActionName "push"}}<ul>{{range .Comment.Commits}}<li><a href="{{$.Comment.Issue.PullRequest.BaseRepo.HTMLURL}}/commit/{{.ID}}">{{ShortSha .ID.String}}</a> - {{.MessageTitle}}</li>{{end}}</ul>{{end}}</p>
+        <p style="margin:0 0 24px;font-size:14px;line-height:1.8;color:#8c7a6e;font-style:italic;"></p>
+        
+        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin:0 0 28px;"><tr><td>
+          <a href="{{.Link}}" class="resp-btn" style="display:inline-block;padding:14px 38px;font-size:15px;font-weight:600;color:#fff;text-decoration:none;background:#c67b5c;border-radius:24px;letter-spacing:0.3px;">Activate Your Account</a>
+        </td></tr></table>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #d4c4a8;background:#f5ede0;border-radius:8px;"><tr><td style="padding:14px 16px;border-radius:8px;">
+          <p style="margin:0 0 6px;font-size:12px;color:#8c7a6e;font-style:italic;">{{.locale.Tr "mail.link_not_working_do_paste"}}</p>
+          <p style="margin:0;font-size:12px;font-family:monospace;color:#5c4030;background:#fffdf9;padding:10px 12px;border:1px solid #d4c4a8;border-radius:6px;word-break:break-all;">{{.Link}}</p>
+        </td></tr></table>
+      </td></tr>
+      <!-- footer -->
+      <tr><td style="padding:20px 32px;border-top:1px solid #d4c4a8;background:#f5ede0;text-align:center;">
+        <p style="margin:0;font-size:12px;color:#8c7a6e;">&copy; <a href="{{AppUrl}}" style="color:#c67b5c;text-decoration:none;font-weight:600;">{{AppName}}</a> &mdash; Gitea Mail Templates</p>
+      </td></tr>
+    </table>
+  </center>
+</body>
+</html>

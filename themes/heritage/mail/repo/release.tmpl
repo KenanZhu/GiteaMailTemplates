@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{.Subject}}</title>
+  <style type="text/css">
+    body, .ExternalClass, .ReadMsgBody { background-color: #faf8f5; }
+    blockquote { padding-left: 1em; margin: 1em 0; border-left: 2px solid #c4a97d; color: #5c4a3a; font-style: italic; }
+    ul { margin: 12px 0 16px; padding-left: 20px; }
+    li { margin-bottom: 8px; font-size: 15px; line-height: 1.5; color: #2c1810; }
+  </style>
+</head>
+<body style="margin:0; padding:0; background-color:#faf8f5; font-family: 'Charter', 'Georgia', 'Times New Roman', serif; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%;">
+
+  <center style="width:100%; table-layout:fixed;">
+    <div style="max-width:600px; margin:24px auto; background:#ffffff; border:3px double #c4a97d; padding:0;">
+
+      <div style="padding:32px 36px 20px; text-align:center; border-bottom:1px solid #c4a97d;">
+        <img src="{{AppUrl}}assets/img/favicon.png" alt="logo" width="40" height="40" style="display:inline-block; margin:0 auto 12px; border:0; outline:none;">
+        <p style="margin:0; font-size:20px; font-weight:700; color:#1e3a5f; letter-spacing:2px; font-variant:small-caps; font-family:Georgia,'Times New Roman',serif;">{{AppName}}</p>
+      </div>
+
+      <div style="padding:32px 36px 24px; color:#2c1810;">
+        {{$release_url := HTMLFormat "<a href='%s' style='color:#1e3a5f; text-decoration:none; font-weight:600; border-bottom:1px dotted #8b6914;'>%s</a>" .Release.HTMLURL .Release.TagName}}
+        {{$repo_url := HTMLFormat "<a href='%s' style='color:#1e3a5f; text-decoration:none; font-weight:600; border-bottom:1px dotted #8b6914;'>%s</a>" .Release.Repo.HTMLURL .Release.Repo.FullName}}
+        <p style="margin:0 0 16px; font-size:16px; line-height:1.7; color:#2c1810;">
+          {{.locale.Tr "mail.release.new.text" .Release.Publisher.Name $release_url $repo_url}}
+        </p>
+
+        <h4 style="margin:20px 0 8px; font-size:19px; font-weight:700; color:#1e3a5f; font-family:Georgia,'Times New Roman',serif;">{{.locale.Tr "mail.release.title" .Release.Title}}</h4>
+
+        {{if .Release.RenderedNote}}
+          <div style="margin:12px 0 16px; font-size:15px; line-height:1.7; color:#2c1810;">
+            {{.Release.RenderedNote}}
+          </div>
+        {{end}}
+
+        <p style="margin:20px 0 8px; font-weight:600; color:#1e3a5f; font-variant:small-caps; letter-spacing:1px;">{{.locale.Tr "mail.release.downloads"}}</p>
+        <ul style="margin:0 0 20px; padding-left:20px;">
+          {{if not .DisableDownloadSourceArchives}}
+          <li>
+            <a href="{{.Release.Repo.HTMLURL}}/archive/{{.Release.TagName | PathEscapeSegments}}.zip" rel="nofollow" style="color:#1e3a5f; text-decoration:none; font-weight:600; border-bottom:1px dotted #8b6914;">{{.locale.Tr "mail.release.download.zip"}}</a>
+          </li>
+          <li>
+            <a href="{{.Release.Repo.HTMLURL}}/archive/{{.Release.TagName | PathEscapeSegments}}.tar.gz" rel="nofollow" style="color:#1e3a5f; text-decoration:none; font-weight:600; border-bottom:1px dotted #8b6914;">{{.locale.Tr "mail.release.download.targz"}}</a>
+          </li>
+          {{end}}
+          {{if .Release.Attachments}}
+            {{range .Release.Attachments}}
+              <li>
+                <a href="{{.DownloadURL}}" target="_blank" style="color:#1e3a5f; text-decoration:none; font-weight:600; border-bottom:1px dotted #8b6914;">{{.Name}} ({{.Size | FileSize}})</a>
+              </li>
+            {{end}}
+          {{end}}
+        </ul>
+
+        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin:16px 0 24px; border-collapse:separate;">
+          <tr>
+            <td align="center">
+              <a href="{{.Link}}" style="display:inline-block; padding:13px 38px; font-size:15px; font-weight:600; color:#ffffff; text-decoration:none; background-color:#1e3a5f; border:2px solid #8b6914; font-family:Georgia,'Times New Roman',serif; font-variant:small-caps; letter-spacing:1px;">See the Release &#x2192;</a>
+            </td>
+          </tr>
+        </table>
+
+        <div style="background:#faf8f5; border:2px solid #d4c4a8; padding:16px 18px; margin:24px 0 16px;">
+          <p style="margin:0 0 8px; font-size:14px; color:#5c4a3a; line-height:1.5; font-style:italic;">
+            {{.locale.Tr "mail.link_not_working_do_paste"}}
+          </p>
+          <p style="margin:0; font-size:13px; color:#1e3a5f; background:#ffffff; padding:10px 12px; border:1px solid #d4c4a8; word-break:break-all; font-family:monospace;">
+            {{.Link}}
+          </p>
+        </div>
+      </div>
+
+      <div style="padding:20px 36px 24px; background:#faf8f5; border-top:3px double #c4a97d; text-align:center;">
+        <p style="margin:0; font-size:13px; color:#5c4a3a;">
+          &copy; <a href="{{AppUrl}}" style="color:#1e3a5f; text-decoration:none; font-weight:600;">{{AppName}}</a>
+        </p>
+        <p style="margin:8px 0 0; font-size:12px; color:#8b6914; font-family:Georgia,'Times New Roman',serif; font-variant:small-caps; letter-spacing:1px;">Established &middot; Trusted &middot; Open</p>
+      </div>
+
+    </div>
+  </center>
+
+</body>
+</html>

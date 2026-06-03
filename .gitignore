@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+vendor/
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Build artifacts
+*.zip
+*.tar.gz
+
+# Generated preview data (run: go run ./tools/build-preview.go)
+preview/rendered.js

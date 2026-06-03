@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="x-apple-disable-message-reformatting" />
+  <title>{{.locale.Tr "mail.activate_email.title" (.DisplayName|DotEscape)}}</title>
+  <style type="text/css">
+    body,.ExternalClass,.ReadMsgBody{background-color:#0a0a0f}
+    @media only screen and (max-width:480px){
+      .resp-pad{padding-left:16px!important;padding-right:16px!important}
+      .resp-btn{display:block!important;width:auto!important;text-align:center!important}
+      .resp-font{font-size:14px!important}
+    }
+  </style>
+</head>
+<body style="margin:0;padding:0;background:#0a0a0f;font-family:system-ui,-apple-system,sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
+  <center style="width:100%;table-layout:fixed;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background:#0d0d18;border:1px solid #ff2d95;box-shadow:0 0 20px rgba(255,45,149,0.3),0 0 60px rgba(0,212,255,0.1);">
+      <!-- header -->
+      <tr><td height="72" style="padding:0;background:linear-gradient(160deg,#ff2d95 28%,#0d0d18 28.5%);">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td class="resp-pad" style="padding:22px 32px 0;text-align:right;">
+          <span style="font-size:20px;font-weight:900;color:#fff;letter-spacing:3px;text-transform:uppercase;">{{AppName}}</span>
+        </td></tr></table>
+      </td></tr>
+      <!-- greeting -->
+      <tr><td class="resp-pad" style="padding:8px 32px 0;text-align:right;">
+        <p style="margin:0;font-size:15px;color:#00d4ff;font-weight:600;">{{.locale.Tr "mail.hi_user_x" (.DisplayName|DotEscape)}}</p>
+      </td></tr>
+      <!-- body -->
+      <tr><td class="resp-pad" style="padding:8px 32px 24px;color:#e2e8f0;">
+        <p class="resp-font" style="margin:0 0 8px;font-size:14px;line-height:1.7;color:#cbd5e1;">{{.locale.Tr "mail.activate_email.text" .ActiveCodeLives}}</p>
+        <p class="resp-font" style="margin:0 0 24px;font-size:13px;color:#64748b;line-height:1.6;"></p>
+        {{$activate_url := printf "%suser/activate_email?code=%s&email=%s" AppUrl (QueryEscape .Code) (QueryEscape .Email)}}
+        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin:0 0 24px;"><tr><td>
+          <a href="{{$activate_url}}" class="resp-btn" style="display:inline-block;padding:13px 36px;font-size:14px;font-weight:700;color:#0a0a0f;text-decoration:none;background:linear-gradient(135deg,#ff2d95,#e0115f);border:1px solid #ff2d95;box-shadow:0 0 16px rgba(255,45,149,0.4);letter-spacing:1px;text-transform:uppercase;">Verify Email Address</a>
+        </td></tr></table>
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid rgba(0,212,255,0.2);background:rgba(0,212,255,0.04);"><tr><td style="padding:14px 16px;">
+          <p style="margin:0 0 6px;font-size:12px;color:#00d4ff;">{{.locale.Tr "mail.link_not_working_do_paste"}}</p>
+          <p style="margin:0;font-size:11px;font-family:monospace;color:#00d4ff;background:rgba(0,0,0,0.3);padding:8px 10px;border:1px solid rgba(0,212,255,0.15);word-break:break-all;">{{$activate_url}}</p>
+        </td></tr></table>
+      </td></tr>
+      <!-- footer -->
+      <tr><td style="padding:16px 32px;border-top:1px solid rgba(255,45,149,0.15);background:rgba(255,45,149,0.03);">
+        <p style="margin:0;font-size:11px;color:#475569;text-align:center;">&copy; <a href="{{AppUrl}}" style="color:#ff2d95;text-decoration:none;font-weight:600;">{{AppName}}</a> &mdash; Gitea Mail Templates</p>
+      </td></tr>
+    </table>
+  </center>
+</body>
+</html>

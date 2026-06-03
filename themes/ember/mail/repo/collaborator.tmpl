@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{.Subject}}</title>
+  <style type="text/css">
+    body, .ExternalClass, .ReadMsgBody { background-color: #fff7ed; }
+    code { background: #fff7ed; padding: 2px 8px; border-radius: 6px; font-size: 15px; color: #c2410c; font-weight: 600; }
+  </style>
+</head>
+<body style="margin:0; padding:0; background-color:#fff7ed; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%;">
+
+  <center style="width:100%; table-layout:fixed;">
+    <div style="max-width:600px; margin:20px auto; background:#ffffff; border-radius:16px; box-shadow:0 2px 16px rgba(234,88,12,0.08); overflow:hidden; border:1px solid #fed7aa;">
+
+      <div style="padding:28px 32px 16px; border-bottom:1px solid #fed7aa; background:linear-gradient(135deg, #fff7ed, #ffffff);">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+          <tr>
+            <td style="vertical-align:middle;">
+              <span style="font-size:15px;">&#x1f44b;</span>
+              <img src="{{AppUrl}}assets/img/favicon.png" alt="logo" width="30" height="30" style="display:inline-block; vertical-align:middle; margin:0 10px; border:0; outline:none;">
+              <span style="font-size:20px; font-weight:700; color:#9a3412; letter-spacing:-0.3px; vertical-align:middle; font-family:Georgia,'Times New Roman',serif;">{{AppName}}</span>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+      <div style="padding:32px 32px 24px; color:#78350f;">
+        <p style="margin:0 0 20px; font-size:16px; line-height:1.6; color:#78350f;">
+          {{.locale.Tr "mail.repo.collaborator.added.text"}} <code>{{.RepoName}}</code>.
+        </p>
+
+        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin:28px 0 24px; border-collapse:separate;">
+          <tr>
+            <td align="center">
+              <a href="{{.Link}}" style="display:inline-block; padding:14px 40px; font-size:16px; font-weight:600; color:#ffffff; text-decoration:none; background:linear-gradient(135deg, #ea580c, #c2410c); border-radius:50px; font-family:system-ui,sans-serif;">View Repository &#x1f50d;</a>
+            </td>
+          </tr>
+        </table>
+
+        <div style="background:#fff7ed; border:1px solid #fed7aa; border-radius:12px; padding:16px 18px; margin:24px 0 16px;">
+          <p style="margin:0 0 8px; font-size:14px; color:#92400e; line-height:1.5;">
+            {{.locale.Tr "mail.link_not_working_do_paste"}}
+          </p>
+          <p style="margin:0; font-size:13px; color:#c2410c; background:#ffffff; padding:10px 12px; border-radius:8px; border:1px solid #fed7aa; word-break:break-all; font-family:monospace;">
+            {{.Link}}
+          </p>
+        </div>
+      </div>
+
+      <div style="padding:20px 32px 24px; background:#fff7ed; border-top:1px solid #fed7aa;">
+        <p style="margin:0; font-size:14px; color:#92400e;">
+          &copy; <a href="{{AppUrl}}" style="color:#ea580c; text-decoration:none; font-weight:600;">{{AppName}}</a>
+        </p>
+        <p style="margin:8px 0 0; font-size:13px; color:#a8a29e;">Built with &#x2764;&#xfe0f; by the community, for the community.</p>
+      </div>
+
+    </div>
+  </center>
+
+</body>
+</html>

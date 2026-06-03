@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gitea Mail Templates - Live Preview</title>
+<style>
+:root{
+  --bg:#0b1120;--surface:#151d2e;--border:#1e2d45;--text:#d1d9e6;--muted:#6b7d99;
+  --accent:#4da6ff;--green:#34d399;--red:#f87171;--warn:#fbbf24;
+  --nav-h:48px;--panel-w:270px;--rad:6px
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column}
+
+// ── Top bar ──
+#topbar{height:var(--nav-h);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:14px;flex-shrink:0;z-index:10}
+#topbar .brand{font-weight:700;font-size:14px;color:#fff;white-space:nowrap;letter-spacing:-0.2px}
+#topbar .brand span{color:var(--accent);font-weight:400;font-size:11px;margin-left:4px;text-transform:uppercase;letter-spacing:1px}
+#topbar .sep{width:1px;height:20px;background:var(--border)}
+#topbar label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-right:-8px}
+#topbar select{background:var(--bg);color:var(--text);border:1px solid var(--border);padding:6px 10px;border-radius:var(--rad);font-size:12px;cursor:pointer;outline:none;min-width:90px}
+#topbar select:focus{border-color:var(--accent)}
+#topbar .btn-group{display:flex}
+#topbar .btn-group button{background:var(--bg);color:var(--muted);border:1px solid var(--border);padding:6px 14px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
+#topbar .btn-group button:first-child{border-radius:var(--rad) 0 0 var(--rad)}
+#topbar .btn-group button:last-child{border-radius:0 var(--rad) var(--rad) 0}
+#topbar .btn-group button+button{border-left:none}
+#topbar .btn-group button.on{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600}
+#topbar .hint{font-size:10px;color:var(--muted);opacity:.5}
+
+// ── Main layout ──
+#main{flex:1;display:flex;min-height:0}
+#preview-area{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:24px;overflow:auto;background:linear-gradient(135deg,#0b1120,#131c30,#0d1525)}
+
+// ── Viewport ──
+#viewport{border-radius:var(--rad);box-shadow:0 8px 32px rgba(0,0,0,.45);transition:all .3s;flex-shrink:0;overflow:hidden;background:#fff}
+#viewport.desktop{width:1386px;height:780px}
+#viewport.mobile{width:390px;height:780px;border-radius:28px;border:3px solid #1e293b;box-shadow:0 8px 32px rgba(0,0,0,.5),inset 0 0 0 1px #0f172a;display:flex;flex-direction:column}
+#viewport.mobile::before{content:'';display:block;height:24px;background:#1e293b;flex-shrink:0}
+#preview-frame{width:100%;height:100%;border:none;display:block;background:#fff}
+#viewport.desktop #preview-frame{border-radius:var(--rad)}
+
+// ── Side panel ──
+#panel{width:var(--panel-w);background:var(--surface);border-left:1px solid var(--border);overflow-y:auto;flex-shrink:0;display:flex;flex-direction:column}
+#panel section{padding:14px 16px;border-bottom:1px solid var(--border)}
+#panel section:last-child{border-bottom:none}
+#panel h3{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
+#panel .card{background:var(--bg);border-radius:var(--rad);padding:10px 12px;margin-bottom:8px}
+#panel .card .label{font-size:10px;color:var(--muted);margin-bottom:2px}
+#panel .card .value{font-size:12px;color:var(--text)}
+#panel table{width:100%;border-collapse:collapse}
+#panel table td{padding:4px 6px;font-size:11px;border-bottom:1px solid rgba(255,255,255,.03);vertical-align:top}
+#panel table td:first-child{font-family:monospace;color:var(--accent);font-size:10px;width:0;white-space:nowrap}
+#panel table td:last-child{color:var(--muted);text-align:right;font-size:10px;word-break:break-all}
+#panel .badge{display:inline-block;font-size:9px;padding:1px 6px;border-radius:3px;font-weight:600;letter-spacing:.2px;white-space:nowrap}
+.badge-req{background:rgba(52,211,153,.12);color:var(--green)}
+.badge-opt{background:rgba(107,125,153,.1);color:var(--muted)}
+
+// ── Client indicators ──
+#panel .indicators{display:flex;flex-wrap:wrap;gap:4px 12px}
+#panel .indicators span{font-size:11px;color:var(--muted);display:inline-flex;align-items:center;gap:5px}
+.dot{width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0}
+.d-on{background:var(--green)}.d-off{background:var(--red)}.d-warn{background:var(--warn)}
+
+// ── Loading ──
+.loading-wrap{display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-size:13px;flex-direction:column;gap:8px}
+.spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+#panel::-webkit-scrollbar{width:4px}
+#panel::-webkit-scrollbar-track{background:transparent}
+#panel::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+@media(max-width:850px){#panel{display:none}#topbar .hint{display:none}}
+</style>
+</head>
+<body>
+
+<nav id="topbar">
+  <span class="brand">Gitea Mail Templates <span>Preview</span></span>
+  <span class="sep"></span>
+  <label>Theme</label>
+  <select id="sel-theme" onchange="switchTheme(this.value)">
+    <option value="horizon">Horizon</option><option value="terminal">Terminal</option>
+    <option value="ember">Ember</option><option value="bloom">Bloom</option>
+    <option value="heritage">Heritage</option>
+    <option value="neon">Neon</option>
+    <option value="mono">Mono</option>
+    <option value="terra">Terra</option>
+    <option value="ink">Ink</option>
+    <option value="aurora">Aurora</option>
+  </select>
+  <span class="sep"></span>
+  <label>Template</label>
+  <select id="sel-template" onchange="switchTemplate(this.value)"></select>
+  <span class="sep"></span>
+  <label>Client</label>
+  <select id="sel-client" onchange="switchClient(this.value)">
+    <option value="modern">Modern</option><option value="gmail">Gmail</option>
+    <option value="outlook">Outlook</option><option value="raw">Raw Source</option>
+  </select>
+  <span class="sep"></span>
+  <div class="btn-group">
+    <button id="btn-desk" class="on" onclick="setViewport('desktop')">Desktop</button>
+    <button id="btn-mob" onclick="setViewport('mobile')">Mobile</button>
+  </div>
+  <span class="hint">keys: d/m &nbsp; &larr;&rarr;</span>
+</nav>
+
+<div id="main">
+  <div id="preview-area">
+    <div id="viewport" class="desktop">
+      <div class="loading-wrap" id="loading">
+        <div class="spinner"></div>
+        <span>Loading pre-rendered templates...</span>
+      </div>
+      <iframe id="preview-frame" sandbox="allow-same-origin" style="display:none"></iframe>
+    </div>
+  </div>
+
+  <aside id="panel">
+    <section>
+      <h3>Current Template</h3>
+      <div class="card">
+        <div class="label">Type</div>
+        <div class="value" id="panel-name">-</div>
+      </div>
+      <div class="card">
+        <div class="label">Description</div>
+        <div class="value" id="panel-desc" style="font-size:11px;line-height:1.5">-</div>
+      </div>
+    </section>
+    <section style="flex:1;overflow-y:auto">
+      <h3>Parameters</h3>
+      <table id="panel-params"><tr><td colspan="2" style="color:var(--muted)">-</td></tr></table>
+    </section>
+    <section>
+      <h3>Client Simulation</h3>
+      <div class="indicators" id="panel-indicators"></div>
+    </section>
+    <section>
+      <h3>Source</h3>
+      <div class="card" style="font-family:monospace;font-size:10px;color:var(--muted);word-break:break-all" id="panel-path">-</div>
+    </section>
+  </aside>
+</div>
+
+<script src="rendered.js"></script>
+<script>
+//
+// Template registry — mirrors the Go build script definitions
+//
+const REGISTRY = {
+  activate:        {name:'Activate Account',       path:'mail/user/auth/activate.tmpl',         desc:'Account activation — sent when a new user registers.'},
+  activate_email:  {name:'Activate Email',         path:'mail/user/auth/activate_email.tmpl',   desc:'Email address verification — sent when adding or changing an email address.'},
+  register_notify: {name:'Register Notify',        path:'mail/user/auth/register_notify.tmpl',  desc:'Registration notification — confirms successful account registration.'},
+  reset_passwd:    {name:'Reset Password',         path:'mail/user/auth/reset_passwd.tmpl',     desc:'Password reset — sent when user requests a password reset link.'},
+  team_invite:     {name:'Team Invite',            path:'mail/org/team_invite.tmpl',            desc:'Team invitation — sent when a user is invited to join an organization team.'},
+  collaborator:    {name:'Collaborator Added',     path:'mail/repo/collaborator.tmpl',          desc:'Collaborator added — sent when a user is added as a repository collaborator.'},
+  transfer:        {name:'Repository Transfer',    path:'mail/repo/transfer.tmpl',              desc:'Repository transfer — sent when repository ownership is transferred.'},
+  release:         {name:'New Release',            path:'mail/repo/release.tmpl',               desc:'New release — sent when a new release is published.'},
+  workflow_run:    {name:'Workflow Run',           path:'mail/repo/actions/workflow_run.tmpl',  desc:'Workflow run — sent when a CI/CD workflow completes.'},
+  assigned:        {name:'Issue Assigned',         path:'mail/repo/issue/assigned.tmpl',        desc:'Issue/PR assigned — sent when an issue or pull request is assigned.'},
+  default:         {name:'Issue Update',           path:'mail/repo/issue/default.tmpl',         desc:'Issue/PR update — comments, mentions, reviews, merges, and other activity.'}
+};
+
+//
+// Parameter definitions (informational only — rendering is done by Go)
+//
+const PARAMS = {
+  activate:        {'DisplayName':'Alex Johnson','Code':'activation-code-abc123','ActiveCodeLives':'24 hours','AppName':'Gitea','AppUrl':'https://about.gitea.com'},
+  activate_email:  {'DisplayName':'Alex Johnson','Code':'verify-code-xyz789','Email':'alex@example.com','ActiveCodeLives':'24 hours','AppName':'Gitea','AppUrl':'https://about.gitea.com'},
+  register_notify: {'DisplayName':'Alex Johnson','Username':'alexj','AppName':'Gitea','AppUrl':'https://about.gitea.com'},
+  reset_passwd:    {'DisplayName':'Alex Johnson','Code':'reset-token-abc123','ResetPwdCodeLives':'3 hours','AppName':'Gitea','AppUrl':'https://about.gitea.com'},
+  team_invite:     {'AppName':'Gitea','AppUrl':'https://about.gitea.com','Inviter.DisplayName':'Sarah Chen','Team.Name':'Core Developers','Organization.DisplayName':'Acme Corp','InviteURL':'...invite?token=abc','Invite.Email':'alex@example.com'},
+  collaborator:    {'AppName':'Gitea','AppUrl':'https://about.gitea.com','Subject':'Collaborator Added','Link':'.../repo/project','RepoName':'acme/project'},
+  transfer:        {'AppName':'Gitea','AppUrl':'https://about.gitea.com','Subject':'Repository Transfer','Link':'.../transferred-project','Repo':'acme/transferred-project'},
+  release:         {'AppName':'Gitea','AppUrl':'https://about.gitea.com','Subject':'New Release v2.0.0','Link':'.../repo/project/releases/tag/v2.0.0','Release.Publisher.Name':'Sarah Chen','Release.TagName':'v2.0.0','Release.Title':'Version 2.0','Release.HTMLURL':'.../releases/tag/v2.0.0','Release.Repo.HTMLURL':'.../repo/project','Release.Repo.FullName':'acme/project','Release.RenderedNote':'<p>Major new features...</p>','DisableDownloadSourceArchives':'false','Release.Attachments':'[]'},
+  workflow_run:    {'AppName':'Gitea','AppUrl':'https://about.gitea.com','Subject':'Workflow Run: CI','RunStatusText':'All jobs passed','Repo.FullName':'acme/project','Run.WorkflowID':'ci.yml','Run.HTMLURL':'.../actions/runs/42','Jobs':'[3 items]'},
+  assigned:        {'AppName':'Gitea','AppUrl':'https://about.gitea.com','Subject':'Issue #42 Assigned','Link':'.../repo/project/issues/42','Doer.Name':'Sarah Chen','IsPull':'false','Issue.Index':'42','Issue.Repo.HTMLURL':'.../repo/project','Issue.Repo.FullName':'acme/project'},
+  default:         {'AppName':'Gitea','AppUrl':'https://about.gitea.com','Subject':'Re: Issue #42','Link':'.../repo/project/issues/42','ActionName':'comment','Doer.Name':'Sarah Chen','Body':'This is a comment on the issue...','CanReply':'true','IsMention':'false','IsPull':'false','Issue.Index':'42','Issue.PullRequest.BaseBranch':'main','Comment.Commits':'[]','Comment.IsForcePush':'false','ReviewComments':'[]'}
+};
+
+//
+// State
+//
+const state = { theme:'horizon', template:'activate', client:'modern', viewport:'desktop' };
+let rendered = null; // loaded from rendered.js via <script> tag
+
+//
+// Client transforms
+//
+function transform(html, mode) {
+  if(mode==='modern') return html;
+  if(mode==='raw') {
+    const e = html.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return '<!DOCTYPE html><html><head><style>body{background:#0d1117;color:#c9d1d9;font-family:Consolas,monospace;padding:16px;margin:0}pre{white-space:pre-wrap;word-break:break-all;font-size:11px;line-height:1.6;margin:0}</style></head><body><pre>'+e+'</pre></body></html>';
+  }
+  let out = html.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+  if(mode==='gmail') {
+    out = out.replace(/font-family:'Poppins'/gi,'font-family:Arial,sans-serif');
+    out = out.replace(/font-family:'JetBrains Mono'/gi,'font-family:Consolas,monospace');
+  }
+  if(mode==='outlook') {
+    const strip=[/border-radius:[^;"']+/gi,/box-shadow:[^;"']+/gi,/linear-gradient\([^)]*\)/gi,/transition:[^;"']+/gi,/letter-spacing:[^;"']+/gi,/font-variant:small-caps/gi,/-webkit-background-clip:text/gi,/-webkit-text-fill-color:transparent/gi,/overflow:hidden/gi];
+    strip.forEach(r=>{out=out.replace(r,'')});
+    out=out.replace(/background:linear-gradient\([^)]*\)/gi,'background:#f0f0f0');
+    out=out.replace(/style="[^"]*"/g,m=>m.replace(/;\s*;/g,';'));
+    out=out.replace(/font-family:Georgia/gi,'font-family:Georgia,serif');
+    out=out.replace(/font-family:'Charter'/gi,'font-family:Georgia,serif');
+  }
+  return out;
+}
+
+//
+// Render preview
+//
+function render() {
+  const frame = document.getElementById('preview-frame');
+  const loading = document.getElementById('loading');
+  if(!rendered) { loading.style.display='flex'; frame.style.display='none'; return; }
+
+  frame.style.display = 'none';
+  loading.style.display = 'flex';
+
+  const html = rendered[state.theme]?.[state.template];
+  const content = html ? transform(html, state.client) : '<p style="color:red;padding:20px">Not found: '+state.theme+'/'+state.template+'</p>';
+
+  frame.onload = function() {
+    loading.style.display = 'none';
+    frame.style.display = 'block';
+    frame.onload = null;
+  };
+  frame.srcdoc = content;
+  updatePanel();
+}
+
+//
+// Panel updates
+//
+function updatePanel() {
+  const t = REGISTRY[state.template];
+  document.getElementById('panel-name').textContent = t.name;
+  document.getElementById('panel-desc').textContent = t.desc;
+  document.getElementById('panel-path').textContent = 'themes/'+state.theme+'/'+t.path;
+
+  const p = PARAMS[state.template];
+  let rows = '';
+  for(const [k,v] of Object.entries(p)){
+    const isReq = !k.includes('RenderedNote') && !k.includes('Attachments') && !k.includes('DisableDownload') && !k.includes('IsMention') && !k.includes('IsPull') && !k.includes('IsForcePush') && !k.includes('ReviewComments') && !k.includes('Commits') && !k.includes('BaseBranch');
+    rows += '<tr><td>.'+k+'</td><td>'+String(v)+'</td><td><span class="badge '+(isReq?'badge-req':'badge-opt')+'">'+(isReq?'required':'optional')+'</span></td></tr>';
+  }
+  document.getElementById('panel-params').innerHTML = rows;
+
+  // Client simulation indicators
+  const c=state.client,
+    on='<span class="dot d-on"></span>',off='<span class="dot d-off"></span>',warn='<span class="dot d-warn"></span>',
+    items=[
+      [c==='raw'?off:(c==='gmail'||c==='outlook'?warn:on),'CSS'],
+      [c==='raw'?off:(c==='outlook'?warn:on),'Web Fonts'],
+      [c==='modern'?on:off,'Border Radius'],
+      [c==='modern'?on:off,'Shadows'],
+      [c==='modern'?on:off,'Gradients']
+    ];
+  document.getElementById('panel-indicators').innerHTML = items.map(([d,label])=>'<span>'+d+' '+label+'</span>').join('');
+}
+
+//
+// Events
+//
+function switchTheme(v) { state.theme=v; render(); }
+function switchTemplate(v) { state.template=v; render(); }
+function switchClient(v) { state.client=v; render(); }
+function setViewport(v) {
+  state.viewport=v;
+  document.getElementById('btn-desk').classList.toggle('on',v==='desktop');
+  document.getElementById('btn-mob').classList.toggle('on',v==='mobile');
+  document.getElementById('viewport').className=v;
+  render();
+}
+
+//
+// Keyboard
+//
+document.addEventListener('keydown',e=>{
+  if(e.key==='d') setViewport('desktop');
+  if(e.key==='m') setViewport('mobile');
+  const keys=Object.keys(REGISTRY), idx=keys.indexOf(state.template);
+  if(e.key==='ArrowRight'&&idx<keys.length-1){switchTemplate(keys[idx+1]);document.getElementById('sel-template').value=keys[idx+1];}
+  if(e.key==='ArrowLeft'&&idx>0){switchTemplate(keys[idx-1]);document.getElementById('sel-template').value=keys[idx-1];}
+});
+
+//
+// Init
+//
+(function(){
+  const sel=document.getElementById('sel-template');
+  for(const[id,t]of Object.entries(REGISTRY)){
+    const o=document.createElement('option');o.value=id;o.textContent=t.name;sel.appendChild(o);
+  }
+  if(window.__RENDERED__){
+    rendered=window.__RENDERED__;
+    document.getElementById('loading').style.display='none';
+  }else{
+    document.getElementById('loading').innerHTML='<span style="color:var(--red)">rendered.js not found</span><small style="color:var(--muted);margin-top:8px">Run: cd tools && go run build-preview.go</small>';
+  }
+  render();
+})();
+</script>
+</body>
+</html>

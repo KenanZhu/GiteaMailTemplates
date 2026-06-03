@@ -1,0 +1,59 @@
+# 기여 가이드 — Gitea 메일 템플릿
+
+## 기여 방법
+
+### 새 스타일 추가하기
+
+1. 스타일 디렉토리 생성: `themes/<style-name>/`
+2. 기존 스타일에서 디렉토리 구조 복사
+3. 11개 `.tmpl` 파일을 고유한 디자인으로 구현
+4. `tools/build-preview.go`의 `themes` 슬라이스에 추가
+5. 프리뷰 재생성: `go run ./tools/build-preview.go`
+6. `preview/index.html`의 `<select id="sel-theme">`에 추가
+7. 스크린샷과 함께 PR 제출
+
+### 스타일 가이드라인
+
+- 각 스타일에 **11개 템플릿 유형 모두** 포함
+- Gitea 내장 함수만 사용
+- 번역 키는 Gitea 공식 로케일 (`mail.*`) 사용
+- **`.DisplayName` 사용 금지** (collaborator, transfer, release, workflow_run, assigned, default)
+- 600px 너비의 이메일 클라이언트에 맞게 디자인
+- Gmail, Outlook, Apple Mail에서 테스트
+
+### 버그 리포트
+
+1. Go 변수가 올바른지 확인
+2. 번역 키가 Gitea 로케일과 일치하는지 확인
+3. `.DisplayName`이 오용되지 않았는지 확인
+4. 프리뷰 재생성: `go run ./tools/build-preview.go`
+5. 스타일 이름과 메일 유형을 명시하여 이슈 생성
+
+---
+
+## 개발 설정
+
+### 로컬 프리뷰
+
+1. 데이터 생성: `go run ./tools/build-preview.go`
+2. `preview/index.html`을 브라우저에서 열기
+3. Modern, Gmail, Outlook, Raw source 모드 전환 확인
+
+### 통합 테스트
+
+Gitea에 배포: **Site Administration > Configuration > Mailer > Send Test Email**
+
+---
+
+## 커밋 규칙
+
+- `style(<name>):` — 스타일 템플릿 변경
+- `preview:` — 프리뷰 도구 변경
+- `tools:` — Go 빌드 스크립트 변경
+- `docs:` — 문서 및 번역
+- `fix:` — 버그 수정
+- `project:` — README, LICENSE, 메타 파일
+
+## 라이선스
+
+기여함으로써 MIT 라이선스에 동의하게 됩니다.
