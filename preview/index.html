@@ -74,25 +74,42 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .message-error{background:rgba(248,113,113,0.08);color:rgba(248,113,113,0.75);border-color:rgba(248,113,113,0.15)}
 .message code{background:rgba(0,0,0,0.12);padding:1px 6px;border-radius:3px}
 
-/* ── Scrollbar — neutral gray, consistent across browsers ── */
-/* Chrome 121+ / Edge 121+ (standards-track) */
-:root{scrollbar-color:rgba(107,125,153,.25) transparent;scrollbar-width:thin}
-/* WebKit (Chrome, Safari, Edge) */
-::-webkit-scrollbar{width:6px;height:6px}
-::-webkit-scrollbar-track{background:transparent!important}
-::-webkit-scrollbar-thumb{
-  background-color:rgba(107,125,153,.25)!important;
+/* ── Scrollbar — neutral gray, consistent across all browsers ── */
+/* Standards-track: Firefox 64+ / Chrome 121+ / Edge 121+ */
+html,body,#preview-area,#panel{
+  scrollbar-width:thin;
+  scrollbar-color:rgba(107,125,153,.25) transparent;
+}
+/* IE / Legacy Edge */
+#preview-area,#panel{
+  -ms-overflow-style:-ms-autohiding-scrollbar;
+}
+/* WebKit scrollbars — scoped to actual scrollable regions only */
+#preview-area::-webkit-scrollbar,
+#panel::-webkit-scrollbar          { width:6px; height:6px }
+#preview-area::-webkit-scrollbar-track,
+#panel::-webkit-scrollbar-track    { background:transparent }
+#preview-area::-webkit-scrollbar-thumb,
+#panel::-webkit-scrollbar-thumb    {
+  background-color:rgba(107,125,153,.25);
   border-radius:3px;
   border:1px solid rgba(255,255,255,.06);
 }
-::-webkit-scrollbar-thumb:hover{background-color:rgba(107,125,153,.45)!important}
-::-webkit-scrollbar-corner{background:transparent!important}
-/* Firefox */
-#preview-area,#panel{scrollbar-width:thin;scrollbar-color:rgba(107,125,153,.25) transparent}
-/* Legacy Edge / IE */
-#preview-area,#panel{-ms-overflow-style:-ms-autohiding-scrollbar}
-/* Chrome 108+ overlay */
-@supports(overflow:overlay){#preview-area,#panel{overflow:overlay}}
+#preview-area::-webkit-scrollbar-thumb:hover,
+#panel::-webkit-scrollbar-thumb:hover { background-color:rgba(107,125,153,.45) }
+#preview-area::-webkit-scrollbar-corner,
+#panel::-webkit-scrollbar-corner   { background:transparent }
+/* The panel's inner parameter section (flex:1;overflow-y:auto) */
+#panel section::-webkit-scrollbar          { width:6px; height:6px }
+#panel section::-webkit-scrollbar-track    { background:transparent }
+#panel section::-webkit-scrollbar-thumb    {
+  background-color:rgba(107,125,153,.25);
+  border-radius:3px;
+  border:1px solid rgba(255,255,255,.06);
+}
+#panel section::-webkit-scrollbar-thumb:hover { background-color:rgba(107,125,153,.45) }
+#panel section::-webkit-scrollbar-corner   { background:transparent }
+#panel section{scrollbar-width:thin;scrollbar-color:rgba(107,125,153,.25) transparent}
 
 @media(max-width:850px){#panel{display:none}#topbar .hint{display:none}}
 </style>
@@ -118,7 +135,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
     <button id="btn-desk" class="on" onclick="setViewport('desktop')">Desktop</button>
     <button id="btn-mob" onclick="setViewport('mobile')">Mobile</button>
   </div>
-  <span class="hint">keys: d/m &nbsp; &larr;&rarr;</span>
+  <span class="hint">keys: d/m &nbsp; &larr;&rarr; tab &nbsp; &uarr;&darr; select</span>
 </nav>
 
 <div id="messages"></div>
@@ -202,7 +219,7 @@ function render() {
   const raw = rendered[state.theme]?.[state.template];
   let content = raw ? transform(raw, state.client) : '<p style=\"color:red;padding:20px\">Not found: '+state.theme+'/'+state.template+'</p>';
   // Inject invisible scrollbar into iframe content for immersive preview
-  content = content.replace('</head>', '<style>html{scrollbar-color:rgba(107,125,153,.25) transparent;scrollbar-width:thin;-ms-overflow-style:-ms-autohiding-scrollbar}html::-webkit-scrollbar{width:6px;height:6px}html::-webkit-scrollbar-track{background:transparent!important}html::-webkit-scrollbar-thumb{background-color:rgba(107,125,153,.25)!important;border-radius:3px;border:1px solid rgba(128,128,128,.08)}html::-webkit-scrollbar-thumb:hover{background-color:rgba(107,125,153,.45)!important}@supports(overflow:overlay){html{overflow:overlay}}</style></head>');
+  content = content.replace('</head>', '<style>html{scrollbar-color:rgba(107,125,153,.25) transparent;scrollbar-width:thin;-ms-overflow-style:-ms-autohiding-scrollbar}html::-webkit-scrollbar{width:6px;height:6px}html::-webkit-scrollbar-track{background:transparent}html::-webkit-scrollbar-thumb{background-color:rgba(107,125,153,.25);border-radius:3px;border:1px solid rgba(255,255,255,.06)}html::-webkit-scrollbar-thumb:hover{background-color:rgba(107,125,153,.45)}html::-webkit-scrollbar-corner{background:transparent}</style></head>');
 
   frame.onload = function() {
     loading.style.display = 'none';
@@ -274,11 +291,30 @@ function setViewport(v) {
 // Keyboard
 //
 document.addEventListener('keydown',e=>{
-  if(e.key==='d') setViewport('desktop');
-  if(e.key==='m') setViewport('mobile');
-  const keys=Object.keys(REGISTRY), idx=keys.indexOf(state.template);
-  if(e.key==='ArrowRight'&&idx<keys.length-1){switchTemplate(keys[idx+1]);document.getElementById('sel-template').value=keys[idx+1];}
-  if(e.key==='ArrowLeft'&&idx>0){switchTemplate(keys[idx-1]);document.getElementById('sel-template').value=keys[idx-1];}
+  // Viewport shortcuts (no modifiers)
+  if(e.key==='d'&&!e.ctrlKey&&!e.metaKey&&!e.altKey){ setViewport('desktop'); return; }
+  if(e.key==='m'&&!e.ctrlKey&&!e.metaKey&&!e.altKey){ setViewport('mobile'); return; }
+
+  // ← →  cycle focus between Theme / Template / Client selects
+  // When a select dropdown is open the browser captures keys, so this only runs when closed
+  const selects=['sel-theme','sel-template','sel-client'];
+  const activeId=document.activeElement?.id;
+  const cur=selects.indexOf(activeId);
+
+  if(e.key==='ArrowRight'||e.key==='ArrowLeft'){
+    e.preventDefault();
+    if(cur>=0){
+      // Cycle to next/previous select
+      const dir=e.key==='ArrowRight'?1:-1;
+      const next=(cur+dir+selects.length)%selects.length;
+      document.getElementById(selects[next])?.focus();
+    } else {
+      // First press — jump to template (middle)
+      document.getElementById('sel-template')?.focus();
+    }
+  }
+
+  // ↑ ↓ are handled natively by the focused <select> — onchange fires → render()
 });
 
 //

@@ -9,6 +9,12 @@ horizon.png    terminal.png    ember.png    bloom.png    heritage.png
 neon.png       mono.png        terra.png    ink.png      aurora.png
 ```
 
+## Image Size Requirements
+
+- **Maximum:** 50 KiB per image
+- **Recommended:** 10–20 KiB
+- **Format:** PNG, optimised — run through `pngquant` or `optipng` before committing
+
 ## How to Capture
 
 1. Start the dev server: `cd tools && go run . dev` (opens http://localhost:3456)

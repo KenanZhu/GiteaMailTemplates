@@ -11,7 +11,7 @@ Thanks for your interest in contributing! This project aims to provide a diverse
 1. Scaffold the new style: `cd tools && go run . create <your-style-name>` — this creates the directory structure with placeholder `.tmpl` files for all 11 email types
 2. Edit each `.tmpl` file in `themes/<your-style-name>/` with your unique visual design
 3. Regenerate the preview: `cd tools && go run . preview all` — the build script auto-discovers all theme directories under `themes/` and generates the theme selector dynamically
-4. Submit a PR with screenshots of rendered emails
+4. Submit a PR with screenshots of rendered emails (≤ 50 KiB each, 10–20 KiB recommended)
 
 ### Style Guidelines
 
