@@ -19,6 +19,7 @@ func main() {
 			cmds.CreateCommand(),
 			cmds.DeleteCommand(),
 			cmds.PreviewCommand(),
+			cmds.DevCommand(),
 		},
 	}
 

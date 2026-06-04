@@ -18,5 +18,8 @@ Desktop.ini
 *.zip
 *.tar.gz
 
+# Package lock file
+package-lock.json
+
 # Generated preview data (run: cd tools && go run . preview all)
 preview/rendered.js
