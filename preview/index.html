@@ -74,14 +74,19 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .message-error{background:rgba(248,113,113,0.08);color:rgba(248,113,113,0.75);border-color:rgba(248,113,113,0.15)}
 .message code{background:rgba(0,0,0,0.12);padding:1px 6px;border-radius:3px}
 
-/* Scrollbar — ultra-thin, barely visible, immersive */
+/* ── Immersive scrollbar — cross-browser ── */
+/* WebKit (Chrome, Safari, Edge 79+) */
 ::-webkit-scrollbar{width:3px;height:3px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.06);border-radius:3px}
-::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.15)}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.18)}
 ::-webkit-scrollbar-corner{background:transparent}
-/* Firefox */
-*{scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.06) transparent}
+/* Firefox 64+ */
+#preview-area,#panel{scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.06) transparent}
+/* Legacy Edge / IE: auto-hide */
+#preview-area,#panel{-ms-overflow-style:-ms-autohiding-scrollbar}
+/* Chrome 108+: overlay (no layout shift) */
+@supports(overflow:overlay){#preview-area,#panel{overflow:overlay}}
 
 @media(max-width:850px){#panel{display:none}#topbar .hint{display:none}}
 </style>
@@ -191,7 +196,7 @@ function render() {
   const raw = rendered[state.theme]?.[state.template];
   let content = raw ? transform(raw, state.client) : '<p style=\"color:red;padding:20px\">Not found: '+state.theme+'/'+state.template+'</p>';
   // Inject invisible scrollbar into iframe content for immersive preview
-  content = content.replace('</head>', '<style>html{scrollbar-width:thin;scrollbar-color:#fff1 transparent}html::-webkit-scrollbar{width:3px;height:3px}html::-webkit-scrollbar-track{background:transparent}html::-webkit-scrollbar-thumb{background:rgba(0,0,0,.08);border-radius:3px}html::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,.2)}</style></head>');
+  content = content.replace('</head>', '<style>html{scrollbar-width:thin;scrollbar-color:rgba(0,0,0,.06) transparent;-ms-overflow-style:-ms-autohiding-scrollbar}html::-webkit-scrollbar{width:3px;height:3px}html::-webkit-scrollbar-track{background:transparent}html::-webkit-scrollbar-thumb{background:rgba(0,0,0,.08);border-radius:3px}html::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,.22)}@supports(overflow:overlay){html{overflow:overlay}}</style></head>');
 
   frame.onload = function() {
     loading.style.display = 'none';
