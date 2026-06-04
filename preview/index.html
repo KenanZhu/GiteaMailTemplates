@@ -68,7 +68,11 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .loading-wrap{display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-size:13px;flex-direction:column;gap:8px}
 .spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-#static-notice{display:none;background:rgba(251,191,36,0.08);border-bottom:1px solid rgba(251,191,36,0.15);padding:6px 16px;font-size:11px;color:rgba(251,191,36,0.7);text-align:center;flex-shrink:0}
+#messages{flex-shrink:0}
+.message{display:block;padding:6px 16px;font-size:11px;text-align:center;border-bottom:1px solid transparent}
+.message-warn{background:rgba(251,191,36,0.08);color:rgba(251,191,36,0.75);border-color:rgba(251,191,36,0.15)}
+.message-error{background:rgba(248,113,113,0.08);color:rgba(248,113,113,0.75);border-color:rgba(248,113,113,0.15)}
+.message code{background:rgba(0,0,0,0.12);padding:1px 6px;border-radius:3px}
 
 #panel::-webkit-scrollbar{width:4px}
 #panel::-webkit-scrollbar-track{background:transparent}
@@ -101,7 +105,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
   <span class="hint">keys: d/m &nbsp; &larr;&rarr;</span>
 </nav>
 
-<div id="static-notice">Gmail / Outlook simulation is approximate. For more accurate rendering with CSS inlining, use <code style="background:rgba(251,191,36,0.1);padding:1px 6px;border-radius:3px;">cd tools && go run . dev</code></div>
+<div id="messages"></div>
 
 <div id="main">
   <div id="preview-area">
@@ -293,21 +297,34 @@ document.addEventListener('keydown',e=>{
 
     document.getElementById('loading').style.display='none';
   } else {
-    document.getElementById('loading').innerHTML = '<p style="color:var(--red)">rendered.js not found</p><p style="color:var(--muted);margin-top:8px"> Run: cd tools && go run . preview all</p>';
+    showMessage('rendered.js not found — run <code>cd tools &amp;&amp; go run . preview all</code> to generate', 'error');
   }
   render();
 })();
 
+// ── Message helpers ──
+function showMessage(ht, type) {
+  const container = document.getElementById('messages');
+  const el = document.createElement('div');
+  el.className = 'message message-' + (type || 'warn');
+  el.innerHTML = ht;
+  container.appendChild(el);
+  return el;
+}
+function clearMessages() {
+  document.getElementById('messages').innerHTML = '';
+}
+
+// ── Static-mode notice ──
+showMessage('Gmail / Outlook simulation is approximate. For accurate rendering with CSS inlining, use <code>cd tools && go run . dev</code>', 'warn');
+
 // ── Dev-server live-reload (WebSocket) ──
 (function(){
-  const notice = document.getElementById('static-notice');
   let ws;
   try {
     const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
     ws = new WebSocket(proto + '//' + location.host + '/ws');
   } catch(e) {
-    // static mode (file://) — WebSocket constructor throws
-    if (notice) notice.style.display = 'block';
     return;
   }
   ws.onmessage = function(e) {
@@ -323,21 +340,21 @@ document.addEventListener('keydown',e=>{
           render();
         };
         document.head.appendChild(script);
+      } else if (msg.type === 'error') {
+        showMessage(msg.message, 'error');
       }
     } catch(_) {}
   };
   ws.onopen  = function() {
-    if (notice) notice.style.display = 'none';
+    clearMessages();
     console.log('[dev] live-reload connected');
   };
   ws.onclose = function() {
-    if (notice) notice.style.display = 'block';
+    showMessage('Dev server disconnected', 'error');
     console.log('[dev] live-reload disconnected');
   };
   ws.onerror = function() {
-    if (notice) notice.style.display = 'block';
+    showMessage('Dev server connection failed', 'error');
   };
 })();
-</script>
-</body>
-</html>
+
