@@ -76,19 +76,19 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 
 /* ── Scrollbar — neutral gray, consistent across browsers ── */
 /* Chrome 121+ / Edge 121+ (standards-track) */
-:root{scrollbar-color:rgba(128,128,128,.30) transparent;scrollbar-width:thin}
+:root{scrollbar-color:rgba(107,125,153,.25) transparent;scrollbar-width:thin}
 /* WebKit (Chrome, Safari, Edge) */
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:transparent!important}
 ::-webkit-scrollbar-thumb{
-  background-color:rgba(128,128,128,.30)!important;
+  background-color:rgba(107,125,153,.25)!important;
   border-radius:3px;
   border:1px solid rgba(255,255,255,.06);
 }
-::-webkit-scrollbar-thumb:hover{background-color:rgba(128,128,128,.45)!important}
+::-webkit-scrollbar-thumb:hover{background-color:rgba(107,125,153,.45)!important}
 ::-webkit-scrollbar-corner{background:transparent!important}
 /* Firefox */
-#preview-area,#panel{scrollbar-width:thin;scrollbar-color:rgba(128,128,128,.30) transparent}
+#preview-area,#panel{scrollbar-width:thin;scrollbar-color:rgba(107,125,153,.25) transparent}
 /* Legacy Edge / IE */
 #preview-area,#panel{-ms-overflow-style:-ms-autohiding-scrollbar}
 /* Chrome 108+ overlay */
@@ -202,7 +202,7 @@ function render() {
   const raw = rendered[state.theme]?.[state.template];
   let content = raw ? transform(raw, state.client) : '<p style=\"color:red;padding:20px\">Not found: '+state.theme+'/'+state.template+'</p>';
   // Inject invisible scrollbar into iframe content for immersive preview
-  content = content.replace('</head>', '<style>html{scrollbar-color:rgba(128,128,128,.30) transparent;scrollbar-width:thin;-ms-overflow-style:-ms-autohiding-scrollbar}html::-webkit-scrollbar{width:6px;height:6px}html::-webkit-scrollbar-track{background:transparent!important}html::-webkit-scrollbar-thumb{background-color:rgba(128,128,128,.30)!important;border-radius:3px;border:1px solid rgba(128,128,128,.08)}html::-webkit-scrollbar-thumb:hover{background-color:rgba(128,128,128,.45)!important}@supports(overflow:overlay){html{overflow:overlay}}</style></head>');
+  content = content.replace('</head>', '<style>html{scrollbar-color:rgba(107,125,153,.25) transparent;scrollbar-width:thin;-ms-overflow-style:-ms-autohiding-scrollbar}html::-webkit-scrollbar{width:6px;height:6px}html::-webkit-scrollbar-track{background:transparent!important}html::-webkit-scrollbar-thumb{background-color:rgba(107,125,153,.25)!important;border-radius:3px;border:1px solid rgba(128,128,128,.08)}html::-webkit-scrollbar-thumb:hover{background-color:rgba(107,125,153,.45)!important}@supports(overflow:overlay){html{overflow:overlay}}</style></head>');
 
   frame.onload = function() {
     loading.style.display = 'none';
