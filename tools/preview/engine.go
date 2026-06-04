@@ -165,6 +165,11 @@ func renderTheme(themeDir, themeName string, cfg *config.TemplatesConfig) ThemeS
 		}
 		data["locale"] = Locale{}
 
+		// Convert HTML-safe fields from string to template.HTML so Go's
+		// html/template renders them raw instead of escaping. Matches Gitea's
+		// behavior where RenderedNote / Body / RenderedContent are template.HTML.
+		markSafeHTML(data)
+
 		// Parse and execute
 		tmpl, err := template.New(tplID).Funcs(TemplateFuncs).Parse(string(tmplContent))
 		if err != nil {
@@ -274,6 +279,31 @@ func PrintDetailedSummary(result *PreviewResult, themesDir string, cfg *config.T
 		}
 	}
 	fmt.Println()
+}
+
+// markSafeHTML recursively converts known HTML-containing string fields to
+// template.HTML so Go's html/template renders them raw instead of escaping.
+// These fields mirror Gitea's data model where rendered markdown is typed as
+// template.HTML: Release.RenderedNote, Body (comment content), and
+// ReviewComments[].RenderedContent.
+func markSafeHTML(data map[string]any) {
+	for k, v := range data {
+		switch val := v.(type) {
+		case string:
+			if k == "RenderedNote" || k == "Body" || k == "RenderedContent" {
+				data[k] = template.HTML(val)
+			}
+		case map[string]any:
+			markSafeHTML(val)
+		case []any:
+			for i, item := range val {
+				if m, ok := item.(map[string]any); ok {
+					markSafeHTML(m)
+					val[i] = m
+				}
+			}
+		}
+	}
 }
 
 func formatSize(bytes int64) string {

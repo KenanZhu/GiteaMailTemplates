@@ -68,6 +68,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .loading-wrap{display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-size:13px;flex-direction:column;gap:8px}
 .spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+#static-notice{display:none;background:rgba(251,191,36,0.08);border-bottom:1px solid rgba(251,191,36,0.15);padding:6px 16px;font-size:11px;color:rgba(251,191,36,0.7);text-align:center;flex-shrink:0}
 
 #panel::-webkit-scrollbar{width:4px}
 #panel::-webkit-scrollbar-track{background:transparent}
@@ -99,6 +100,8 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
   </div>
   <span class="hint">keys: d/m &nbsp; &larr;&rarr;</span>
 </nav>
+
+<div id="static-notice">Gmail / Outlook simulation is approximate. For accurate rendering with CSS inlining, use <code style="background:rgba(251,191,36,0.1);padding:1px 6px;border-radius:3px;">cd tools && go run . dev</code></div>
 
 <div id="main">
   <div id="preview-area">
@@ -153,25 +156,14 @@ let rendered = null; // window.__RENDERED__
 // Client transforms
 //
 function transform(html, mode) {
-  if(mode==='modern') return html;
   if(mode==='raw') {
     const e = html.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     return '<!DOCTYPE html><html><head><style>body{background:#0d1117;color:#c9d1d9;font-family:Consolas,monospace;padding:16px;margin:0}pre{white-space:pre-wrap;word-break:break-all;font-size:11px;line-height:1.6;margin:0}</style></head><body><pre>'+e+'</pre></body></html>';
   }
-  let out = html.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
-  if(mode==='gmail') {
-    out = out.replace(/font-family:'Poppins'/gi,'font-family:Arial,sans-serif');
-    out = out.replace(/font-family:'JetBrains Mono'/gi,'font-family:Consolas,monospace');
-  }
-  if(mode==='outlook') {
-    const strip=[/border-radius:[^;"']+/gi,/box-shadow:[^;"']+/gi,/linear-gradient\([^)]*\)/gi,/transition:[^;"']+/gi,/letter-spacing:[^;"']+/gi,/font-variant:small-caps/gi,/-webkit-background-clip:text/gi,/-webkit-text-fill-color:transparent/gi,/overflow:hidden/gi];
-    strip.forEach(r=>{out=out.replace(r,'')});
-    out=out.replace(/background:linear-gradient\([^)]*\)/gi,'background:#f0f0f0');
-    out=out.replace(/style="[^"]*"/g,m=>m.replace(/;\s*;/g,';'));
-    out=out.replace(/font-family:Georgia/gi,'font-family:Georgia,serif');
-    out=out.replace(/font-family:'Charter'/gi,'font-family:Georgia,serif');
-  }
-  return out;
+  // Modern, Gmail, Outlook — all render the same raw HTML.
+  // Use the dev server (go run . dev) with Juice CSS inlining
+  // for accurate email client simulation.
+  return html;
 }
 
 //
@@ -302,6 +294,47 @@ document.addEventListener('keydown',e=>{
     document.getElementById('loading').innerHTML = '<span style="color:var(--red)">rendered.js not found</span><small style="color:var(--muted);margin-top:8px">Run: cd tools && go run . preview all</small>';
   }
   render();
+})();
+
+// ── Dev-server live-reload (WebSocket) ──
+(function(){
+  const notice = document.getElementById('static-notice');
+  let ws;
+  try {
+    const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    ws = new WebSocket(proto + '//' + location.host + '/ws');
+  } catch(e) {
+    // static mode (file://) — WebSocket constructor throws
+    if (notice) notice.style.display = '';
+    return;
+  }
+  ws.onmessage = function(e) {
+    try {
+      const msg = JSON.parse(e.data);
+      if (msg.type === 'reload') {
+        const script = document.createElement('script');
+        script.src = 'rendered.js?v=' + Date.now();
+        script.onload = function() {
+          if (window.__RENDERED__) rendered = window.__RENDERED__;
+          if (window.__REGISTRY__) REGISTRY = window.__REGISTRY__;
+          if (window.__PARAMS__)   PARAMS   = window.__PARAMS__;
+          render();
+        };
+        document.head.appendChild(script);
+      }
+    } catch(_) {}
+  };
+  ws.onopen  = function() {
+    if (notice) notice.style.display = 'none';
+    console.log('[dev] live-reload connected');
+  };
+  ws.onclose = function() {
+    if (notice) notice.style.display = '';
+    console.log('[dev] live-reload disconnected');
+  };
+  ws.onerror = function() {
+    if (notice) notice.style.display = '';
+  };
 })();
 </script>
 </body>
