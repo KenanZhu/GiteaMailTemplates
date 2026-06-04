@@ -101,7 +101,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
   <span class="hint">keys: d/m &nbsp; &larr;&rarr;</span>
 </nav>
 
-<div id="static-notice">Gmail / Outlook simulation is approximate. For accurate rendering with CSS inlining, use <code style="background:rgba(251,191,36,0.1);padding:1px 6px;border-radius:3px;">cd tools && go run . dev</code></div>
+<div id="static-notice">Gmail / Outlook simulation is approximate. For more accurate rendering with CSS inlining, use <code style="background:rgba(251,191,36,0.1);padding:1px 6px;border-radius:3px;">cd tools && go run . dev</code></div>
 
 <div id="main">
   <div id="preview-area">
@@ -156,13 +156,15 @@ let rendered = null; // window.__RENDERED__
 // Client transforms
 //
 function transform(html, mode) {
+  // Raw source view — escape HTML for display
   if(mode==='raw') {
     const e = html.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     return '<!DOCTYPE html><html><head><style>body{background:#0d1117;color:#c9d1d9;font-family:Consolas,monospace;padding:16px;margin:0}pre{white-space:pre-wrap;word-break:break-all;font-size:11px;line-height:1.6;margin:0}</style></head><body><pre>'+e+'</pre></body></html>';
   }
-  // Modern, Gmail, Outlook — all render the same raw HTML.
-  // Use the dev server (go run . dev) with Juice CSS inlining
-  // for accurate email client simulation.
+  // Modern, Gmail, Outlook — all show the same rendered HTML.
+  // In dev mode (go run . dev), the server applies Juice CSS inlining
+  // before serving — the output is already email-optimised.
+  // In static mode, the notice bar warns that simulation is approximate.
   return html;
 }
 
@@ -291,7 +293,7 @@ document.addEventListener('keydown',e=>{
 
     document.getElementById('loading').style.display='none';
   } else {
-    document.getElementById('loading').innerHTML = '<span style="color:var(--red)">rendered.js not found</span><small style="color:var(--muted);margin-top:8px">Run: cd tools && go run . preview all</small>';
+    document.getElementById('loading').innerHTML = '<p style="color:var(--red)">rendered.js not found</p><p style="color:var(--muted);margin-top:8px"> Run: cd tools && go run . preview all</p>';
   }
   render();
 })();
@@ -305,7 +307,7 @@ document.addEventListener('keydown',e=>{
     ws = new WebSocket(proto + '//' + location.host + '/ws');
   } catch(e) {
     // static mode (file://) — WebSocket constructor throws
-    if (notice) notice.style.display = '';
+    if (notice) notice.style.display = 'block';
     return;
   }
   ws.onmessage = function(e) {
@@ -329,11 +331,11 @@ document.addEventListener('keydown',e=>{
     console.log('[dev] live-reload connected');
   };
   ws.onclose = function() {
-    if (notice) notice.style.display = '';
+    if (notice) notice.style.display = 'block';
     console.log('[dev] live-reload disconnected');
   };
   ws.onerror = function() {
-    if (notice) notice.style.display = '';
+    if (notice) notice.style.display = 'block';
   };
 })();
 </script>
