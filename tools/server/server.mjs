@@ -1,5 +1,4 @@
 import { readFileSync, writeFileSync, existsSync, watch } from 'fs';
-import { createServer } from 'http';
 import { resolve, dirname, basename, join, relative } from 'path';
 import { fileURLToPath } from 'url';
 import { spawn } from 'child_process';
@@ -7,7 +6,7 @@ import { spawn } from 'child_process';
 import express from 'express';
 import expressWs from 'express-ws';
 
-import { inlineCSS } from './inliner.mjs';
+import { inlineCSS, stripGmail, stripOutlook } from './inliner.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..', '..');       // project root
@@ -17,7 +16,7 @@ const THEMES = join(ROOT, 'themes');                 // themes/
 const RENDERED_JS = join(PREVIEW, 'rendered.js');
 const PORT = parseInt(process.env.PORT || '3456', 10);
 
-// ── Express + WebSocket ──
+// Express + WebSocket
 const app = express();
 expressWs(app);
 
@@ -38,7 +37,7 @@ function broadcast(type, payload = {}) {
 // Serves preview/ as static (index.html, rendered.js)
 app.use(express.static(PREVIEW, { etag: false }));
 
-// ── Rebuild pipeline ──
+// Rebuild pipeline
 let building = false;
 const CHANGED_THEMES = new Set();
 
@@ -86,7 +85,7 @@ async function rebuild() {
   broadcast('reload', { elapsed });
 }
 
-// ── Go preview (child process) ──
+// Go preview (child process)
 function goPreview(themes) {
   return new Promise((resolve, reject) => {
     const args = ['run', '.', 'preview', '--folder', '../themes', '--config', './data/templates_config.json', ...themes];
@@ -110,10 +109,13 @@ function goPreview(themes) {
   });
 }
 
-// ── Juice post-processing ──
+// Juice post-processing
 function juiceRenderedOutput(jsContent) {
   // rendered.js format: window.__RENDERED__ = { "theme": { "tpl": "<html>..." } };
-  // We inline CSS inside each rendered HTML snippet
+  // We inline CSS and produce three client-specific variants:
+  //   __RENDERED__         — modern  (Juice-inlined only)
+  //   __RENDERED_GMAIL__   — Gmail   (Juice + strip unsupported CSS)
+  //   __RENDERED_OUTLOOK__ — Outlook (Juice + aggressive CSS strip)
   const match = jsContent.match(/window\.__RENDERED__\s*=\s*(\{[\s\S]*?\});/);
   if (!match) return Promise.resolve(jsContent);
 
@@ -121,38 +123,48 @@ function juiceRenderedOutput(jsContent) {
   try {
     rendered = JSON.parse(match[1]);
   } catch {
-    return Promise.resolve(jsContent); // can't parse, skip
+    return Promise.resolve(jsContent);
   }
+
+  // Deep-clone for Gmail and Outlook variants
+  const renderedGmail = JSON.parse(JSON.stringify(rendered));
+  const renderedOutlook = JSON.parse(JSON.stringify(rendered));
 
   let changed = false;
   for (const theme of Object.keys(rendered)) {
     for (const tpl of Object.keys(rendered[theme])) {
       const html = rendered[theme][tpl];
       if (typeof html !== 'string') continue;
-      // Only inline HTML that has a <style> block (skip error messages)
       if (!html.includes('<style') && !html.includes('<html')) continue;
       try {
-        const juiced = inlineCSS(html);
-        if (juiced !== html) {
-          rendered[theme][tpl] = juiced;
-          changed = true;
-        }
+        // Modern — Juice inlining only
+        const modern = inlineCSS(html);
+        rendered[theme][tpl] = modern;
+        changed = true;
+
+        // Gmail — Juice + strip unsupported CSS
+        try { renderedGmail[theme][tpl] = stripGmail(modern); } catch {}
+        // Outlook — Juice + aggressive CSS strip
+        try { renderedOutlook[theme][tpl] = stripOutlook(modern); } catch {}
       } catch {
-        // keep original on juice failure
+        // keep original on failure
       }
     }
   }
 
   if (changed) {
-    const newRendered = 'window.__RENDERED__ = ' + JSON.stringify(rendered, null, 2) + ';\n';
-    // Preserve __REGISTRY__ and __PARAMS__ from original
     const rest = jsContent.replace(/window\.__RENDERED__\s*=\s*\{[\s\S]*?\};/, '');
-    return Promise.resolve(newRendered + rest);
+    return Promise.resolve(
+      'window.__RENDERED__ = ' + JSON.stringify(rendered, null, 2) + ';\n' +
+      'window.__RENDERED_GMAIL__ = ' + JSON.stringify(renderedGmail, null, 2) + ';\n' +
+      'window.__RENDERED_OUTLOOK__ = ' + JSON.stringify(renderedOutlook, null, 2) + ';\n' +
+      rest
+    );
   }
   return Promise.resolve(jsContent);
 }
 
-// ── File watcher (native fs.watch, recursive) ──
+// File watcher (native fs.watch, recursive)
 function relPath(absPath) {
   return relative(ROOT, absPath).replace(/\\/g, '/');
 }
@@ -193,10 +205,24 @@ try {
   console.error('[watch] failed:', err.message);
 }
 
-// ── Start server ──
+// Initial Juice pass
+// The Go `preview all` step (dev.go) already generated raw rendered.js.
+// Only run juice inlining — no need to re-render with Go.
+(async function initialJuice() {
+  try {
+    const js = readFileSync(RENDERED_JS, 'utf8');
+    const juiced = await juiceRenderedOutput(js);
+    writeFileSync(RENDERED_JS, juiced, 'utf8');
+    console.log('[init] juice inlining applied');
+  } catch (err) {
+    console.error('[init] juice failed:', err.message);
+  }
+})();
+
+// Start server
 app.get('/health', (_req, res) => res.json({ status: 'ok', port: PORT }));
 
-createServer(app).listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`\n  Gitea Mail Templates — Dev Server`);
   console.log(`  http://localhost:${PORT}\n`);
   console.log(`  Watching themes/ for changes...`);

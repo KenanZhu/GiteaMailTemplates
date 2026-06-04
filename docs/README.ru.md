@@ -42,11 +42,14 @@ cd tools && go run . preview all
 ```
 Затем откройте `preview/index.html`.
 
-**Dev-сервер (live reload + Juice CSS inline):**
+**Dev-сервер (live reload + Juice CSS inline + симуляция клиентов):**
 ```bash
 cd tools && go run . dev     # требуется Node.js
 # → http://localhost:3456
 ```
+
+> [!NOTE]
+> Dev-симуляция не может на 100% воспроизвести рендеринг каждого почтового клиента — только для справки. Всегда проверяйте на реальных клиентах.
 
 ## Совместимость
 

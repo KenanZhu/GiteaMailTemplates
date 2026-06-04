@@ -56,11 +56,26 @@ cd tools && go run . preview all
 ```
 然后打开 `preview/index.html`。
 
-**开发服务器（实时重载 + Juice CSS 内联）：**
+> [!WARNING]
+> 静态模式下 Gmail/Outlook 模拟仅供参考，使用 dev 模式可获得相对准确的 CSS 内联渲染。
+
+**开发服务器（实时重载 + Juice CSS 内联 + Gmail/Outlook 模拟）：**
 ```bash
 cd tools && go run . dev     # 需要 Node.js
 # → http://localhost:3456
 ```
+
+> [!NOTE]
+> Dev 模拟无法 100% 还原各个邮件客户端的渲染差异，仅供参考，请以实际效果为准。
+
+| 功能 | 静态 | Dev |
+|-----------|--------|-----|
+| Go 模板渲染 | ✅ | ✅ |
+| 主题/模板切换 | ✅ | ✅ |
+| Juice CSS 内联 | — | ✅ |
+| Gmail/Outlook CSS 剥离 | — | ✅ |
+| 实时重载 | — | ✅ |
+| 需要 Node.js | — | ✅ |
 
 ---
 

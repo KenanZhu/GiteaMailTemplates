@@ -72,9 +72,10 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .message{display:block;padding:6px 16px;font-size:11px;text-align:center;border-bottom:1px solid transparent}
 .message-warn{background:rgba(251,191,36,0.08);color:rgba(251,191,36,0.75);border-color:rgba(251,191,36,0.15)}
 .message-error{background:rgba(248,113,113,0.08);color:rgba(248,113,113,0.75);border-color:rgba(248,113,113,0.15)}
+.message-info{background:rgba(77,166,255,0.08);color:rgba(77,166,255,0.8);border-color:rgba(77,166,255,0.15)}
 .message code{background:rgba(0,0,0,0.12);padding:1px 6px;border-radius:3px}
 
-/* ── Scrollbar — neutral gray, consistent across all browsers ── */
+/* Scrollbar — neutral gray, consistent across all browsers */
 /* Standards-track: Firefox 64+ / Chrome 121+ / Edge 121+ */
 html,body,#preview-area,#panel{
   scrollbar-width:thin;
@@ -147,7 +148,7 @@ html,body,#preview-area,#panel{
         <div class="spinner"></div>
         <span>Loading pre-rendered templates...</span>
       </div>
-      <iframe id="preview-frame" sandbox="allow-same-origin" style="display:none"></iframe>
+      <iframe id="preview-frame" style="display:none"></iframe>
     </div>
   </div>
 
@@ -187,7 +188,11 @@ html,body,#preview-area,#panel{
 const state = { theme:'', template:'', client:'modern', viewport:'desktop' };
 let REGISTRY = {};
 let PARAMS = {};
-let rendered = null; // window.__RENDERED__
+let rendered = null;        // window.__RENDERED__         (modern / static fallback)
+let renderedGmail = null;   // window.__RENDERED_GMAIL__   (dev mode, Juice + Gmail strip)
+let renderedOutlook = null; // window.__RENDERED_OUTLOOK__ (dev mode, Juice + Outlook strip)
+let devMode = false;        // true once WebSocket connects
+let devCheckTimer = null;   // delayed static-notice timer
 
 //
 // Client transforms
@@ -198,11 +203,18 @@ function transform(html, mode) {
     const e = html.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     return '<!DOCTYPE html><html><head><style>body{background:#0d1117;color:#c9d1d9;font-family:Consolas,monospace;padding:16px;margin:0}pre{white-space:pre-wrap;word-break:break-all;font-size:11px;line-height:1.6;margin:0}</style></head><body><pre>'+e+'</pre></body></html>';
   }
-  // Modern, Gmail, Outlook — all show the same rendered HTML.
-  // In dev mode (go run . dev), the server applies Juice CSS inlining
-  // before serving — the output is already email-optimised.
-  // In static mode, the notice bar warns that simulation is approximate.
+  // Modern, Gmail, Outlook — the HTML is pre-processed server-side.
+  // In dev mode rendered.js contains three variants (modern / gmail / outlook);
+  // the caller picks the right one before passing to transform().
   return html;
+}
+
+/** Pick the right rendered object for the current client mode. */
+function getRendered() {
+  if (!devMode) return rendered;                     // static: always modern
+  if (state.client==='gmail')   return renderedGmail || rendered;
+  if (state.client==='outlook') return renderedOutlook || rendered;
+  return rendered;
 }
 
 //
@@ -213,20 +225,31 @@ function render() {
   const loading = document.getElementById('loading');
   if(!rendered) return; // no data yet — init handles the error display
 
+  // Sandbox only in dev mode; file: protocol rejects sandboxed srcdoc
+  if (location.protocol !== 'file:') {
+    frame.setAttribute('sandbox', '');
+  }
+
   frame.style.display = 'none';
   loading.style.display = 'flex';
 
-  const raw = rendered[state.theme]?.[state.template];
+  const src = getRendered();
+  const raw = src[state.theme]?.[state.template];
   let content = raw ? transform(raw, state.client) : '<p style=\"color:red;padding:20px\">Not found: '+state.theme+'/'+state.template+'</p>';
   // Inject invisible scrollbar into iframe content for immersive preview
   content = content.replace('</head>', '<style>html{scrollbar-color:rgba(107,125,153,.25) transparent;scrollbar-width:thin;-ms-overflow-style:-ms-autohiding-scrollbar}html::-webkit-scrollbar{width:6px;height:6px}html::-webkit-scrollbar-track{background:transparent}html::-webkit-scrollbar-thumb{background-color:rgba(107,125,153,.25);border-radius:3px;border:1px solid rgba(255,255,255,.06)}html::-webkit-scrollbar-thumb:hover{background-color:rgba(107,125,153,.45)}html::-webkit-scrollbar-corner{background:transparent}</style></head>');
 
-  frame.onload = function() {
+  let done = false;
+  function finish() {
+    if (done) return; done = true;
     loading.style.display = 'none';
     frame.style.display = 'block';
     frame.onload = null;
-  };
+  }
+  frame.onload = finish;
   frame.srcdoc = content;
+  // Safety timeout — force-hide loading if onload stalls (max 5 s)
+  setTimeout(finish, 5000);
   updatePanel();
 }
 
@@ -327,6 +350,8 @@ document.addEventListener('keydown',e=>{
 
   if(window.__RENDERED__){
     rendered = window.__RENDERED__;
+    if(window.__RENDERED_GMAIL__)   renderedGmail   = window.__RENDERED_GMAIL__;
+    if(window.__RENDERED_OUTLOOK__) renderedOutlook = window.__RENDERED_OUTLOOK__;
 
     // Populate theme selector from rendered data
     const themeKeys = Object.keys(rendered).sort();
@@ -348,8 +373,6 @@ document.addEventListener('keydown',e=>{
       selTpl.appendChild(o);
     }
     state.template = Object.keys(REGISTRY)[0] || '';
-
-    document.getElementById('loading').style.display='none';
   } else {
     document.getElementById('loading').style.display='none';
     showMessage('rendered.js not found — run <code>cd tools &amp;&amp; go run . preview all</code> to generate', 'error');
@@ -357,7 +380,7 @@ document.addEventListener('keydown',e=>{
   render();
 })();
 
-// ── Message helpers ──
+// Message helpers
 function showMessage(ht, type) {
   const container = document.getElementById('messages');
   const el = document.createElement('div');
@@ -370,10 +393,38 @@ function clearMessages() {
   document.getElementById('messages').innerHTML = '';
 }
 
-// ── Static-mode notice ──
-showMessage('Gmail / Outlook simulation is approximate. For more accurate rendering with CSS inlining, use <code>cd tools && go run . dev</code>', 'warn');
+// Dev-mode detection
+// Don't show static warnings if the dev server is running.
+// The WebSocket open handler will call setDevMode() which clears anything stale.
 
-// ── Dev-server live-reload (WebSocket) ──
+function setDevMode(on) {
+  devMode = on;
+  if (devCheckTimer) { clearTimeout(devCheckTimer); devCheckTimer = null; }
+  if (on) {
+    clearMessages();
+    // Remove any stale static-mode notice injected by a previous check
+    const stale = document.getElementById('msg-static-notice');
+    if (stale) stale.remove();
+    // Dev-mode disclaimer — simulation is never 100% accurate
+    showMessage(
+      'Dev simulation cannot 100% reproduce every client — for reference only; always verify against real clients.',
+      'info'
+    ).id = 'msg-dev-disclaimer';
+  }
+}
+
+// Static-mode notice (delayed — only shown if no WebSocket within 1 s)
+devCheckTimer = setTimeout(function() {
+  devCheckTimer = null;
+  if (!devMode) {
+    showMessage(
+      'Gmail / Outlook simulation is approximate. For more accurate rendering with CSS inlining, use <code>cd tools && go run . dev</code>',
+      'warn'
+    ).id = 'msg-static-notice';
+  }
+}, 1000);
+
+// Dev-server live-reload (WebSocket)
 (function(){
   let ws;
   try {
@@ -389,9 +440,11 @@ showMessage('Gmail / Outlook simulation is approximate. For more accurate render
         const script = document.createElement('script');
         script.src = 'rendered.js?v=' + Date.now();
         script.onload = function() {
-          if (window.__RENDERED__) rendered = window.__RENDERED__;
-          if (window.__REGISTRY__) REGISTRY = window.__REGISTRY__;
-          if (window.__PARAMS__)   PARAMS   = window.__PARAMS__;
+          if (window.__RENDERED__)         rendered        = window.__RENDERED__;
+          if (window.__RENDERED_GMAIL__)   renderedGmail   = window.__RENDERED_GMAIL__;
+          if (window.__RENDERED_OUTLOOK__) renderedOutlook = window.__RENDERED_OUTLOOK__;
+          if (window.__REGISTRY__)         REGISTRY        = window.__REGISTRY__;
+          if (window.__PARAMS__)           PARAMS          = window.__PARAMS__;
           render();
         };
         document.head.appendChild(script);
@@ -401,15 +454,20 @@ showMessage('Gmail / Outlook simulation is approximate. For more accurate render
     } catch(_) {}
   };
   ws.onopen  = function() {
-    clearMessages();
+    setDevMode(true);
     console.log('[dev] live-reload connected');
   };
   ws.onclose = function() {
-    showMessage('Dev server disconnected', 'error');
+    // Only alert if the server was previously connected (crash / shutdown)
+    if (devMode) {
+      showMessage('Dev server disconnected — reload the page to reconnect', 'error');
+      setDevMode(false);
+    }
     console.log('[dev] live-reload disconnected');
   };
   ws.onerror = function() {
-    showMessage('Dev server connection failed', 'error');
+    // onerror always fires before onclose — let onclose decide whether to show a message
+    console.log('[dev] WebSocket error (dev server may be offline)');
   };
 })();
 </script>

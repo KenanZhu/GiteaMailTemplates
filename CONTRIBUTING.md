@@ -49,9 +49,10 @@ Documentation updates, preview screenshots, installation guides, and translation
 2. Open `preview/index.html` directly in a browser — no server needed
 3. Use the theme switcher, template selector, and client mode toggles
 
-> Static Gmail/Outlook simulation is approximate. Use dev mode for accurate rendering.
+> [!WARNING]
+> Static Gmail/Outlook simulation is approximate. Use dev mode for relatively accurate rendering.
 
-### Dev Server (Live Reload + CSS Inlining)
+### Dev Server (Live Reload + CSS Inlining + Client Simulation)
 
 ```bash
 cd tools && go run . dev
@@ -60,9 +61,12 @@ cd tools && go run . dev
 
 - Watches `themes/**/*.tmpl` — auto-rebuilds on save
 - Runs [Juice](https://github.com/Automattic/juice) to inline `<style>` into `style=""` attributes
-- Adds Outlook-compatible `bgcolor`/`width` HTML attributes
+- Generates three `rendered.js` variants: modern (Juice only), Gmail (Juice + CSS strip), Outlook (Juice + aggressive CSS strip)
 - Pushes live reload to browser via WebSocket
 - Terminal output: `themes/aurora/mail/repo/release.tmpl edited` → `[rebuild] done in 480ms`
+
+> [!NOTE]
+> Dev simulation cannot 100% reproduce every email client — for reference only; always verify against real clients.
 
 ### Integration Testing
 

@@ -42,11 +42,14 @@ cd tools && go run . preview all
 ```
 その後 `preview/index.html` を開く。
 
-**開発サーバー（ライブリロード + Juice CSSインライン）:**
+**開発サーバー（ライブリロード + Juice CSSインライン + クライアントシミュレーション）:**
 ```bash
 cd tools && go run . dev     # Node.jsが必要です
 # → http://localhost:3456
 ```
+
+> [!NOTE]
+> Dev シミュレーションは各メールクライアントのレンダリングを完全には再現できません — 参考用です。実際のクライアントで必ず確認してください。
 
 ## 互換性
 

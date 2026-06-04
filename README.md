@@ -89,7 +89,8 @@ cd tools && go run . preview all
 open preview/index.html        # no server needed
 ```
 
-> Gmail/Outlook simulation in static mode is approximate. Use dev mode for accurate CSS inlining.
+> [!WARNING]
+> Gmail/Outlook simulation in static mode is approximate. Use dev mode for relatively accurate CSS inlining.
 
 ### Dev Server (Live Reload + Juice CSS Inlining)
 
@@ -105,18 +106,21 @@ open http://localhost:3456
 | Go template rendering | ✅ | ✅ |
 | Theme/template switching | ✅ | ✅ |
 | Juice CSS inlining | — | ✅ |
-| Outlook `bgcolor` attrs | — | ✅ |
+| Gmail/Outlook CSS stripping | — | ✅ |
 | Live reload on save | — | ✅ |
 | Node.js required | — | ✅ |
+
+> [!NOTE]
+> Dev simulation cannot 100% reproduce every email client — for reference only; always verify against real clients.
 
 ### Features
 
 - Theme switcher — browse all 10 visual styles
 - Template switcher — all 11 email types
-- Client simulation — Modern, Gmail, Outlook, Raw Source
+- Client simulation — Modern, Gmail, Outlook, Raw Source (CSS stripping in dev mode)
 - Viewport toggle — Desktop 1386×780 / Mobile 390×780
 - Parameter panel — mock data per email type
-- Keyboard shortcuts — `←→` templates, `d`/`m` viewport
+- Keyboard shortcuts — `←→` tab between Theme/Template/Client, `↑↓` select within, `d`/`m` viewport
 
 ---
 

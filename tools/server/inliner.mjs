@@ -19,6 +19,70 @@ export function inlineCSS(html) {
   return juice(html, JUICE_OPTIONS);
 }
 
+// Gmail / Outlook CSS stripping
+
+const GMAIL_UNSUPPORTED = [
+  'border-radius','box-shadow','text-shadow',
+  'backdrop-filter','filter',
+  'animation','transition','transform',
+  'background-image\\s*:\\s*(linear|radial|conic)-gradient',
+];
+const OUTLOOK_UNSUPPORTED = GMAIL_UNSUPPORTED.concat([
+  'display\\s*:\\s*(flex|grid|inline-flex|inline-grid)',
+  'flex[^;]*','grid[^;]*','gap\\s*:','order\\s*:',
+]);
+
+function stripDeclarations(styleValue, patterns) {
+  let v = styleValue;
+  for (const p of patterns) {
+    v = v.replace(new RegExp('(^|;\\s*)' + p + '[^;]*(;|$)', 'gi'), (m) => m.endsWith(';') ? ';' : '');
+    v = v.replace(new RegExp(p + '[^;]*;', 'gi'), '');
+  }
+  return v.replace(/;;+/g, ';').replace(/^\s*;\s*/, '').replace(/\s*;\s*$/, '').trim();
+}
+
+/**
+ * Strip CSS properties unsupported by Gmail from inline styles and <style> blocks.
+ */
+export function stripGmail(html) {
+  return stripClientCSS(html, GMAIL_UNSUPPORTED, false);
+}
+
+/**
+ * Strip CSS properties unsupported by Outlook (more aggressive than Gmail).
+ */
+export function stripOutlook(html) {
+  return stripClientCSS(html, OUTLOOK_UNSUPPORTED, true);
+}
+
+function stripClientCSS(html, patterns, isOutlook) {
+  let result = html;
+
+  // 1. Strip from inline style="..." attributes
+  result = result.replace(/style="([^"]*)"/gi, (_, styles) => {
+    const cleaned = stripDeclarations(styles, patterns);
+    return cleaned ? 'style="' + cleaned + '"' : '';
+  });
+
+  // 2. Strip from <style> blocks
+  result = result.replace(/<style[^>]*>([\s\S]*?)<\/style>/gi, (_, cssContent) => {
+    let cleaned = cssContent;
+    for (const p of patterns) {
+      const re = new RegExp(p + '[^;{}]*[;}]?', 'gi');
+      cleaned = cleaned.replace(re, (m) => m.endsWith('}') ? '}' : '');
+    }
+    return '<style>' + cleaned + '</style>';
+  });
+
+  // 3. Outlook: replace CSS custom properties with initial
+  if (isOutlook) {
+    result = result.replace(/style="([^"]*)"/gi,
+      (_, s) => 'style="' + s.replace(/var\(--[^)]*\)/g, 'initial') + '"');
+  }
+
+  return result;
+}
+
 /**
  * Apply juice inlining to a rendered.js-style HTML snippet and return the
  * result. Handles escaped HTML (JSON-stringified) by first unescaping,

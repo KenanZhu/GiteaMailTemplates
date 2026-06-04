@@ -49,9 +49,11 @@ docs/               # Multi-language documentation
 ### Preview System
 - `preview/index.html` loads `preview/rendered.js` (pre-rendered by Go) and displays in iframes
 - Supports theme/template switching, client simulation (Modern/Gmail/Outlook/Raw), and viewport toggle (Desktop 1386x780 / Mobile 390x780)
+- Keyboard navigation: `←→` cycles focus between Theme/Template/Client selects, `↑↓` selects within the focused dropdown, `d`/`m` toggles viewport
 - `REGISTRY` and `PARAMS` are auto-generated from `templates_config.json` — no manual syncing needed
-- Static preview (open `index.html` directly) provides approximate client simulation
-- Dev server (`go run . dev`) provides accurate rendering via Juice CSS inlining + live reload
+- Static preview (open `index.html` directly) — all client modes show the same HTML; simulation warning is displayed
+- Dev server (`go run . dev`) — applies Juice CSS inlining server-side, generates three `rendered.js` variants (modern/gmail/outlook) with client-specific CSS stripping; includes live reload via WebSocket
+- Dev mode shows an info notice: simulation cannot 100% reproduce every email client — always verify against real clients
 
 ### Build Tool
 - `tools/tools.go` is the main entry point for the modular CLI

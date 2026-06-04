@@ -56,11 +56,14 @@ cd tools && go run . preview all
 ```
 然後開啟 `preview/index.html`。
 
-**開發伺服器（即時重載 + Juice CSS 內聯）：**
+**開發伺服器（即時重載 + Juice CSS 內聯 + 客戶端模擬）：**
 ```bash
 cd tools && go run . dev     # 需要 Node.js
 # → http://localhost:3456
 ```
+
+> [!NOTE]
+> Dev 模擬無法 100% 還原各個郵件用戶端的渲染差異，僅供參考，請以實際效果為準。
 
 ---
 
