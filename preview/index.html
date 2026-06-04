@@ -183,7 +183,7 @@ function transform(html, mode) {
 function render() {
   const frame = document.getElementById('preview-frame');
   const loading = document.getElementById('loading');
-  if(!rendered) { loading.style.display='flex'; frame.style.display='none'; return; }
+  if(!rendered) return; // no data yet — init handles the error display
 
   frame.style.display = 'none';
   loading.style.display = 'flex';
