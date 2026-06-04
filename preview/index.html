@@ -8,12 +8,12 @@
 :root{
   --bg:#0b1120;--surface:#151d2e;--border:#1e2d45;--text:#d1d9e6;--muted:#6b7d99;
   --accent:#4da6ff;--green:#34d399;--red:#f87171;--warn:#fbbf24;
-  --nav-h:48px;--panel-w:270px;--rad:6px
+  --nav-h:48px;--panel-w:540px;--rad:6px
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column}
 
-// ── Top bar ──
+/* Top bar */
 #topbar{height:var(--nav-h);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:14px;flex-shrink:0;z-index:10}
 #topbar .brand{font-weight:700;font-size:14px;color:#fff;white-space:nowrap;letter-spacing:-0.2px}
 #topbar .brand span{color:var(--accent);font-weight:400;font-size:11px;margin-left:4px;text-transform:uppercase;letter-spacing:1px}
@@ -29,11 +29,11 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 #topbar .btn-group button.on{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600}
 #topbar .hint{font-size:10px;color:var(--muted);opacity:.5}
 
-// ── Main layout ──
+/* Main layout */
 #main{flex:1;display:flex;min-height:0}
 #preview-area{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:24px;overflow:auto;background:linear-gradient(135deg,#0b1120,#131c30,#0d1525)}
 
-// ── Viewport ──
+/* Viewport */
 #viewport{border-radius:var(--rad);box-shadow:0 8px 32px rgba(0,0,0,.45);transition:all .3s;flex-shrink:0;overflow:hidden;background:#fff}
 #viewport.desktop{width:1386px;height:780px}
 #viewport.mobile{width:390px;height:780px;border-radius:28px;border:3px solid #1e293b;box-shadow:0 8px 32px rgba(0,0,0,.5),inset 0 0 0 1px #0f172a;display:flex;flex-direction:column}
@@ -41,7 +41,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 #preview-frame{width:100%;height:100%;border:none;display:block;background:#fff}
 #viewport.desktop #preview-frame{border-radius:var(--rad)}
 
-// ── Side panel ──
+/* Side panel */
 #panel{width:var(--panel-w);background:var(--surface);border-left:1px solid var(--border);overflow-y:auto;flex-shrink:0;display:flex;flex-direction:column}
 #panel section{padding:14px 16px;border-bottom:1px solid var(--border)}
 #panel section:last-child{border-bottom:none}
@@ -58,13 +58,13 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .badge-opt{background:rgba(107,125,153,.1);color:var(--muted)}
 #panel .stat{font-size:10px;color:var(--muted);margin-top:6px}
 
-// ── Client indicators ──
+/* Client indicators */
 #panel .indicators{display:flex;flex-wrap:wrap;gap:4px 12px}
 #panel .indicators span{font-size:11px;color:var(--muted);display:inline-flex;align-items:center;gap:5px}
 .dot{width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0}
 .d-on{background:var(--green)}.d-off{background:var(--red)}.d-warn{background:var(--warn)}
 
-// ── Loading ──
+/* Loading */
 .loading-wrap{display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-size:13px;flex-direction:column;gap:8px}
 .spinner{width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -74,18 +74,24 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .message-error{background:rgba(248,113,113,0.08);color:rgba(248,113,113,0.75);border-color:rgba(248,113,113,0.15)}
 .message code{background:rgba(0,0,0,0.12);padding:1px 6px;border-radius:3px}
 
-/* ── Immersive scrollbar — cross-browser ── */
-/* WebKit (Chrome, Safari, Edge 79+) */
-::-webkit-scrollbar{width:3px;height:3px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:rgba(255,255,255,.06);border-radius:3px}
-::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.18)}
-::-webkit-scrollbar-corner{background:transparent}
-/* Firefox 64+ */
-#preview-area,#panel{scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.06) transparent}
-/* Legacy Edge / IE: auto-hide */
+/* ── Scrollbar — neutral gray, consistent across browsers ── */
+/* Chrome 121+ / Edge 121+ (standards-track) */
+:root{scrollbar-color:rgba(128,128,128,.30) transparent;scrollbar-width:thin}
+/* WebKit (Chrome, Safari, Edge) */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent!important}
+::-webkit-scrollbar-thumb{
+  background-color:rgba(128,128,128,.30)!important;
+  border-radius:3px;
+  border:1px solid rgba(255,255,255,.06);
+}
+::-webkit-scrollbar-thumb:hover{background-color:rgba(128,128,128,.45)!important}
+::-webkit-scrollbar-corner{background:transparent!important}
+/* Firefox */
+#preview-area,#panel{scrollbar-width:thin;scrollbar-color:rgba(128,128,128,.30) transparent}
+/* Legacy Edge / IE */
 #preview-area,#panel{-ms-overflow-style:-ms-autohiding-scrollbar}
-/* Chrome 108+: overlay (no layout shift) */
+/* Chrome 108+ overlay */
 @supports(overflow:overlay){#preview-area,#panel{overflow:overlay}}
 
 @media(max-width:850px){#panel{display:none}#topbar .hint{display:none}}
@@ -196,7 +202,7 @@ function render() {
   const raw = rendered[state.theme]?.[state.template];
   let content = raw ? transform(raw, state.client) : '<p style=\"color:red;padding:20px\">Not found: '+state.theme+'/'+state.template+'</p>';
   // Inject invisible scrollbar into iframe content for immersive preview
-  content = content.replace('</head>', '<style>html{scrollbar-width:thin;scrollbar-color:rgba(0,0,0,.06) transparent;-ms-overflow-style:-ms-autohiding-scrollbar}html::-webkit-scrollbar{width:3px;height:3px}html::-webkit-scrollbar-track{background:transparent}html::-webkit-scrollbar-thumb{background:rgba(0,0,0,.08);border-radius:3px}html::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,.22)}@supports(overflow:overlay){html{overflow:overlay}}</style></head>');
+  content = content.replace('</head>', '<style>html{scrollbar-color:rgba(128,128,128,.30) transparent;scrollbar-width:thin;-ms-overflow-style:-ms-autohiding-scrollbar}html::-webkit-scrollbar{width:6px;height:6px}html::-webkit-scrollbar-track{background:transparent!important}html::-webkit-scrollbar-thumb{background-color:rgba(128,128,128,.30)!important;border-radius:3px;border:1px solid rgba(128,128,128,.08)}html::-webkit-scrollbar-thumb:hover{background-color:rgba(128,128,128,.45)!important}@supports(overflow:overlay){html{overflow:overlay}}</style></head>');
 
   frame.onload = function() {
     loading.style.display = 'none';
@@ -329,7 +335,7 @@ function clearMessages() {
 }
 
 // ── Static-mode notice ──
-showMessage('Gmail / Outlook simulation is approximate. For accurate rendering with CSS inlining, use <code>cd tools && go run . dev</code>', 'warn');
+showMessage('Gmail / Outlook simulation is approximate. For more accurate rendering with CSS inlining, use <code>cd tools && go run . dev</code>', 'warn');
 
 // ── Dev-server live-reload (WebSocket) ──
 (function(){
