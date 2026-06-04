@@ -18,5 +18,5 @@ Desktop.ini
 *.zip
 *.tar.gz
 
-# Generated preview data (run: go run ./tools/build-preview.go)
+# Generated preview data (run: cd tools && go run . preview all)
 preview/rendered.js

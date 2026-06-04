@@ -1,0 +1,176 @@
+{
+  "templates": {
+    "activate": {
+      "name": "Activate Account",
+      "desc": "Account activation — sent when a new user registers.",
+      "path": ["mail", "user", "auth", "activate.tmpl"],
+      "params": {
+        "DisplayName": "Alex Johnson",
+        "Code": "activation-code-abc123",
+        "ActiveCodeLives": "24 hours"
+      }
+    },
+    "activate_email": {
+      "name": "Activate Email",
+      "desc": "Email address verification — sent when adding or changing an email address.",
+      "path": ["mail", "user", "auth", "activate_email.tmpl"],
+      "params": {
+        "DisplayName": "Alex Johnson",
+        "Code": "verify-code-xyz789",
+        "Email": "alex@example.com",
+        "ActiveCodeLives": "24 hours"
+      }
+    },
+    "register_notify": {
+      "name": "Register Notify",
+      "desc": "Registration notification — confirms successful account registration.",
+      "path": ["mail", "user", "auth", "register_notify.tmpl"],
+      "params": {
+        "DisplayName": "Alex Johnson",
+        "Username": "alexj"
+      }
+    },
+    "reset_passwd": {
+      "name": "Reset Password",
+      "desc": "Password reset — sent when user requests a password reset link.",
+      "path": ["mail", "user", "auth", "reset_passwd.tmpl"],
+      "params": {
+        "DisplayName": "Alex Johnson",
+        "Code": "reset-token-abc123",
+        "ResetPwdCodeLives": "3 hours"
+      }
+    },
+    "team_invite": {
+      "name": "Team Invite",
+      "desc": "Team invitation — sent when a user is invited to join an organization team.",
+      "path": ["mail", "org", "team_invite.tmpl"],
+      "params": {
+        "Inviter": { "DisplayName": "Sarah Chen" },
+        "Team": { "Name": "Core Developers" },
+        "Organization": { "DisplayName": "Acme Corp" },
+        "InviteURL": "https://gitea.example.com/org/team/invite?token=invite-abc",
+        "Invite": { "Email": "alex@example.com" }
+      }
+    },
+    "collaborator": {
+      "name": "Collaborator Added",
+      "desc": "Collaborator added — sent when a user is added as a repository collaborator.",
+      "path": ["mail", "repo", "collaborator.tmpl"],
+      "params": {
+        "Subject": "Collaborator Added to repo",
+        "Link": "https://gitea.example.com/repo/project",
+        "RepoName": "acme/project"
+      }
+    },
+    "transfer": {
+      "name": "Repository Transfer",
+      "desc": "Repository transfer — sent when repository ownership is transferred.",
+      "path": ["mail", "repo", "transfer.tmpl"],
+      "params": {
+        "Subject": "Repository Transfer",
+        "Link": "https://gitea.example.com/repo/transferred-project",
+        "Repo": "acme/transferred-project"
+      }
+    },
+    "release": {
+      "name": "New Release",
+      "desc": "New release — sent when a new release is published.",
+      "path": ["mail", "repo", "release.tmpl"],
+      "params": {
+        "Subject": "New Release v2.0.0",
+        "Link": "https://gitea.example.com/repo/project/releases/tag/v2.0.0",
+        "Release": {
+          "Publisher": { "Name": "Sarah Chen" },
+          "HTMLURL": "https://gitea.example.com/repo/project/releases/tag/v2.0.0",
+          "TagName": "v2.0.0",
+          "Title": "Version 2.0 -- Major Update",
+          "RenderedNote": "<p>Major new features and performance improvements in this release.</p>",
+          "Repo": {
+            "HTMLURL": "https://gitea.example.com/repo/project",
+            "FullName": "acme/project"
+          },
+          "Attachments": []
+        },
+        "DisableDownloadSourceArchives": false
+      }
+    },
+    "workflow_run": {
+      "name": "Workflow Run",
+      "desc": "Workflow run — sent when a CI/CD workflow completes.",
+      "path": ["mail", "repo", "actions", "workflow_run.tmpl"],
+      "params": {
+        "Subject": "Workflow Run: CI",
+        "RunStatusText": "All jobs passed",
+        "Repo": { "FullName": "acme/project" },
+        "Run": {
+          "WorkflowID": "ci.yml",
+          "HTMLURL": "https://gitea.example.com/repo/project/actions/runs/42"
+        },
+        "Jobs": [
+          { "Name": "build", "Status": "success", "Attempt": 1, "HTMLURL": "https://gitea.example.com/job/1", "Duration": "2m34s" },
+          { "Name": "test", "Status": "success", "Attempt": 1, "HTMLURL": "https://gitea.example.com/job/2", "Duration": "1m12s" },
+          { "Name": "deploy", "Status": "success", "Attempt": 2, "HTMLURL": "https://gitea.example.com/job/3", "Duration": "45s" }
+        ]
+      }
+    },
+    "assigned": {
+      "name": "Issue Assigned",
+      "desc": "Issue/PR assigned — sent when an issue or pull request is assigned.",
+      "path": ["mail", "repo", "issue", "assigned.tmpl"],
+      "params": {
+        "Subject": "Issue #42 Assigned",
+        "Link": "https://gitea.example.com/repo/project/issues/42",
+        "Doer": { "Name": "Sarah Chen" },
+        "IsPull": false,
+        "Issue": {
+          "Index": 42,
+          "Repo": {
+            "HTMLURL": "https://gitea.example.com/repo/project",
+            "FullName": "acme/project"
+          }
+        }
+      }
+    },
+    "default": {
+      "name": "Issue Update",
+      "desc": "Issue/PR update — comments, mentions, reviews, merges, and other activity.",
+      "path": ["mail", "repo", "issue", "default.tmpl"],
+      "params": {
+        "Subject": "Re: Issue #42 -- Bug fix",
+        "Link": "https://gitea.example.com/repo/project/issues/42",
+        "ActionName": "comment",
+        "Doer": { "Name": "Sarah Chen" },
+        "Body": "This is a comment on the issue with details about the fix.",
+        "CanReply": true,
+        "IsMention": false,
+        "IsPull": false,
+        "Issue": {
+          "Index": 42,
+          "PullRequest": {
+            "BaseBranch": "main",
+            "BaseRepo": {
+              "HTMLURL": "https://gitea.example.com/repo/project"
+            },
+            "HeadBranch": "feature/fix"
+          }
+        },
+        "Comment": {
+          "Commits": [],
+          "IsForcePush": false,
+          "OldCommit": "",
+          "NewCommit": "",
+          "Review": { "Reviewer": { "Name": "Taylor Kim" } },
+          "Issue": {
+            "PullRequest": {
+              "BaseRepo": {
+                "HTMLURL": "https://gitea.example.com/repo/project"
+              },
+              "HeadBranch": "feature/fix"
+            }
+          }
+        },
+        "ReviewComments": []
+      }
+    }
+  }
+}

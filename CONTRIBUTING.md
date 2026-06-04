@@ -8,12 +8,10 @@ Thanks for your interest in contributing! This project aims to provide a diverse
 
 ### Adding a New Style
 
-1. Create the style directory: `themes/<your-style-name>/`
-2. Copy the directory structure from an existing style
-3. Implement all 11 `.tmpl` files with your unique visual design
-4. Regenerate preview data: `go run ./tools/build-preview.go` — the build script auto-discovers all theme directories under `themes/`
-5. Add your theme as an `<option>` in `<select id="sel-theme">` in `preview/index.html`
-6. Submit a PR with screenshots of rendered emails
+1. Scaffold the new style: `cd tools && go run . create <your-style-name>` — this creates the directory structure with placeholder `.tmpl` files for all 11 email types
+2. Edit each `.tmpl` file in `themes/<your-style-name>/` with your unique visual design
+3. Regenerate the preview: `cd tools && go run . preview all` — the build script auto-discovers all theme directories under `themes/` and generates the theme selector dynamically
+4. Submit a PR with screenshots of rendered emails
 
 ### Style Guidelines
 
@@ -31,7 +29,7 @@ If a template doesn't render correctly:
 1. Check that all referenced Go template variables exist — compare against the Gitea source mail templates
 2. Verify translation keys match Gitea's locale files
 3. Confirm `.DisplayName` isn't used in templates that lack it
-4. Regenerate the preview: `go run ./tools/build-preview.go`
+4. Regenerate the preview: `cd tools && go run . preview all`
 5. Open an issue with: the style name, which email type, and the error or unexpected output
 
 ### Documentation Improvements
@@ -53,10 +51,10 @@ No build tools or dependencies are needed — these are raw Go HTML templates.
 ### Regenerating Previews
 
 ```bash
-go run ./tools/build-preview.go
+cd tools && go run . preview all
 ```
 
-This renders all templates (themes auto-discovered from the themes/ directory) using Go's native `html/template` package and writes the output to `preview/rendered.js`.
+This renders all templates (themes auto-discovered from the themes/ directory) using Go's native `html/template` package and writes the output to `preview/rendered.js`. The `--folder` and `--config` flags default to `../themes` and `./data/templates_config.json` respectively — override them only when using a custom layout.
 
 ### Integration Testing
 

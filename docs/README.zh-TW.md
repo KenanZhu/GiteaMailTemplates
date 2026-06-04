@@ -51,7 +51,7 @@ systemctl restart gitea
 ## 預覽
 
 ```bash
-go run ./tools/build-preview.go
+cd tools && go run . preview all
 ```
 然後開啟 `preview/index.html`。
 

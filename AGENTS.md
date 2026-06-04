@@ -7,15 +7,24 @@ A curated collection of email template themes (10 visual styles) for self-hosted
 ## Repository Layout
 
 ```
-themes/             # Template themes (5 styles, 11 .tmpl each = 55 source files)
-  horizon/          #   Enterprise / Corporate
-  terminal/         #   Developers / Tech
-  ember/            #   Community / Open Source
+themes/             # Template themes (10 styles, 11 .tmpl each = 110 source files)
+  aurora/           #   Ethereal / Dreamlike
   bloom/            #   Creative / Startup (glassmorphism)
+  ember/            #   Community / Open Source
   heritage/         #   Education / Research
-tools/              # Go build tooling
-  build-preview.go  # Pre-renders all templates into preview/rendered.js
-  go.mod            # Go module (stdlib only, zero dependencies)
+  horizon/          #   Enterprise / Corporate
+  ink/              #   Editorial / Publishing
+  mono/             #   Minimal / Swiss design
+  neon/             #   Cyberpunk / Gaming
+  terminal/         #   Developers / Tech
+  terra/            #   Nature / Sustainability
+tools/              # Go CLI tooling (modular, zero dependencies)
+  tools.go          #   Main entry point
+  cli/              #   CLI subcommands: list, create, delete, preview
+  config/           #   Config types and templates_config.json loading
+  data/             #   templates_config.json — single source of truth for template metadata
+  preview/          #   Template rendering engine (funcs, locale, engine)
+  go.mod            #   Go module (stdlib only, zero dependencies)
 preview/            # Browser-based live preview
   index.html        # SPA with style/template/client/viewport switching
   rendered.js       # Pre-rendered HTML (generated, committed for clone-and-preview)
@@ -32,30 +41,34 @@ docs/               # Multi-language documentation
 - Each style must have all 11 template types
 
 ### Adding a New Theme
-1. Create `themes/<name>/` with the full `mail/` directory structure
+1. Scaffold the new theme: `cd tools && go run . create <name>` — creates the full directory structure with placeholder `.tmpl` files for all 11 email types
 2. Write all 11 `.tmpl` files with unique visual design
-3. Run `go run ./tools/build-preview.go` to regenerate preview data
-4. Add the theme to the `<select id="sel-theme">` in `preview/index.html`
-5. Update README.md style gallery table
+3. Run `cd tools && go run . preview all` to regenerate preview data
+4. Update README.md style gallery table
 
 ### Preview System
 - `preview/index.html` loads `preview/rendered.js` (pre-rendered by Go) and displays in iframes
 - Supports theme switching, template type switching, client simulation (Modern/Gmail/Outlook/Raw), and viewport toggle (Desktop 1386x780 / Mobile 390x780)
-- Entries in `REGISTRY` and `PARAMS` objects must match the Go build script's template definitions
+- `REGISTRY` and `PARAMS` are auto-generated from `templates_config.json` by the build tool — no manual syncing needed
 
-### Build Script
-- `tools/build-preview.go` uses Go's native `html/template` package
-- Defines mock data for each template type matching Gitea's actual data contexts
-- Post-processes favicon URLs for preview display
-- Zero external dependencies (stdlib only)
+### Build Tool
+- `tools/tools.go` is the main entry point for the modular CLI
+- Subcommands: `list`, `create`, `delete`, `preview`
+- Template metadata lives in `tools/data/templates_config.json` — the single source of truth
+- `tools/config/` handles config loading and data flattening
+- `tools/preview/` implements the rendering engine (template funcs, locale, engine)
+- `tools/cli/` implements CLI subcommands using `github.com/urfave/cli/v2`
+- Uses Go's native `html/template` package for template rendering
 
 ## Commit Conventions
 - `style(name):` — template changes for a specific theme
 - `preview:` — preview tooling changes
-- `tools:` — Go build script changes
+- `tools:` — Go CLI/build tooling changes
 - `docs:` — documentation and translations
 - `fix:` — bug fixes
 - `project:` — README, LICENSE, AGENTS.md, meta
+- `refactor:` — code restructuring (e.g. modularization)
+- `chore:` — maintenance (config updates, build scripts)
 
 ## Constraints
 - No JavaScript framework dependencies — preview is vanilla JS

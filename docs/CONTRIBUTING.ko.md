@@ -4,12 +4,10 @@
 
 ### 새 스타일 추가하기
 
-1. 스타일 디렉토리 생성: `themes/<style-name>/`
-2. 기존 스타일에서 디렉토리 구조 복사
-3. 11개 `.tmpl` 파일을 고유한 디자인으로 구현
-4. 프리뷰 재생성: `go run ./tools/build-preview.go` (빌드 스크립트가 `themes/` 아래의 모든 테마 디렉토리를 자동으로 찾습니다)
-5. `preview/index.html`의 `<select id="sel-theme">`에 추가
-6. 스크린샷과 함께 PR 제출
+1. 도구로 스캐폴드: `cd tools && go run . create <style-name>` — 11개 이메일 유형 모두에 대한 플레이스홀더 `.tmpl` 파일이 포함된 완전한 디렉토리 구조를 생성합니다
+2. `themes/<style-name>/`에서 각 `.tmpl` 파일을 고유한 디자인으로 편집
+3. 프리뷰 재생성: `cd tools && go run . preview all` (빌드 스크립트가 `themes/` 아래의 모든 테마 디렉토리를 자동으로 찾고 테마 선택기도 자동 생성합니다)
+4. 스크린샷과 함께 PR 제출
 
 ### 스타일 가이드라인
 
@@ -25,7 +23,7 @@
 1. Go 변수가 올바른지 확인
 2. 번역 키가 Gitea 로케일과 일치하는지 확인
 3. `.DisplayName`이 오용되지 않았는지 확인
-4. 프리뷰 재생성: `go run ./tools/build-preview.go`
+4. 프리뷰 재생성: `cd tools && go run . preview all`
 5. 스타일 이름과 메일 유형을 명시하여 이슈 생성
 
 ---
@@ -34,7 +32,7 @@
 
 ### 로컬 프리뷰
 
-1. 데이터 생성: `go run ./tools/build-preview.go`
+1. 데이터 생성: `cd tools && go run . preview all`
 2. `preview/index.html`을 브라우저에서 열기
 3. Modern, Gmail, Outlook, Raw source 모드 전환 확인
 

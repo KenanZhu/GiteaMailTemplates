@@ -56,6 +56,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 #panel .badge{display:inline-block;font-size:9px;padding:1px 6px;border-radius:3px;font-weight:600;letter-spacing:.2px;white-space:nowrap}
 .badge-req{background:rgba(52,211,153,.12);color:var(--green)}
 .badge-opt{background:rgba(107,125,153,.1);color:var(--muted)}
+#panel .stat{font-size:10px;color:var(--muted);margin-top:6px}
 
 // ── Client indicators ──
 #panel .indicators{display:flex;flex-wrap:wrap;gap:4px 12px}
@@ -81,16 +82,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
   <span class="brand">Gitea Mail Templates <span>Preview</span></span>
   <span class="sep"></span>
   <label>Theme</label>
-  <select id="sel-theme" onchange="switchTheme(this.value)">
-    <option value="horizon">Horizon</option><option value="terminal">Terminal</option>
-    <option value="ember">Ember</option><option value="bloom">Bloom</option>
-    <option value="heritage">Heritage</option>
-    <option value="neon">Neon</option>
-    <option value="mono">Mono</option>
-    <option value="terra">Terra</option>
-    <option value="ink">Ink</option>
-    <option value="aurora">Aurora</option>
-  </select>
+  <select id="sel-theme" onchange="switchTheme(this.value)"></select>
   <span class="sep"></span>
   <label>Template</label>
   <select id="sel-template" onchange="switchTemplate(this.value)"></select>
@@ -130,6 +122,7 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
         <div class="label">Description</div>
         <div class="value" id="panel-desc" style="font-size:11px;line-height:1.5">-</div>
       </div>
+      <div class="stat" id="panel-stats"></div>
     </section>
     <section style="flex:1;overflow-y:auto">
       <h3>Parameters</h3>
@@ -149,44 +142,12 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 <script src="rendered.js"></script>
 <script>
 //
-// Template registry — mirrors the Go build script definitions
+// State — REGISTRY and PARAMS are loaded from rendered.js (single source of truth)
 //
-const REGISTRY = {
-  activate:        {name:'Activate Account',       path:'mail/user/auth/activate.tmpl',         desc:'Account activation — sent when a new user registers.'},
-  activate_email:  {name:'Activate Email',         path:'mail/user/auth/activate_email.tmpl',   desc:'Email address verification — sent when adding or changing an email address.'},
-  register_notify: {name:'Register Notify',        path:'mail/user/auth/register_notify.tmpl',  desc:'Registration notification — confirms successful account registration.'},
-  reset_passwd:    {name:'Reset Password',         path:'mail/user/auth/reset_passwd.tmpl',     desc:'Password reset — sent when user requests a password reset link.'},
-  team_invite:     {name:'Team Invite',            path:'mail/org/team_invite.tmpl',            desc:'Team invitation — sent when a user is invited to join an organization team.'},
-  collaborator:    {name:'Collaborator Added',     path:'mail/repo/collaborator.tmpl',          desc:'Collaborator added — sent when a user is added as a repository collaborator.'},
-  transfer:        {name:'Repository Transfer',    path:'mail/repo/transfer.tmpl',              desc:'Repository transfer — sent when repository ownership is transferred.'},
-  release:         {name:'New Release',            path:'mail/repo/release.tmpl',               desc:'New release — sent when a new release is published.'},
-  workflow_run:    {name:'Workflow Run',           path:'mail/repo/actions/workflow_run.tmpl',  desc:'Workflow run — sent when a CI/CD workflow completes.'},
-  assigned:        {name:'Issue Assigned',         path:'mail/repo/issue/assigned.tmpl',        desc:'Issue/PR assigned — sent when an issue or pull request is assigned.'},
-  default:         {name:'Issue Update',           path:'mail/repo/issue/default.tmpl',         desc:'Issue/PR update — comments, mentions, reviews, merges, and other activity.'}
-};
-
-//
-// Parameter definitions (informational only — rendering is done by Go)
-//
-const PARAMS = {
-  activate:        {'DisplayName':'Alex Johnson','Code':'activation-code-abc123','ActiveCodeLives':'24 hours','AppName':'Gitea','AppUrl':'https://about.gitea.com'},
-  activate_email:  {'DisplayName':'Alex Johnson','Code':'verify-code-xyz789','Email':'alex@example.com','ActiveCodeLives':'24 hours','AppName':'Gitea','AppUrl':'https://about.gitea.com'},
-  register_notify: {'DisplayName':'Alex Johnson','Username':'alexj','AppName':'Gitea','AppUrl':'https://about.gitea.com'},
-  reset_passwd:    {'DisplayName':'Alex Johnson','Code':'reset-token-abc123','ResetPwdCodeLives':'3 hours','AppName':'Gitea','AppUrl':'https://about.gitea.com'},
-  team_invite:     {'AppName':'Gitea','AppUrl':'https://about.gitea.com','Inviter.DisplayName':'Sarah Chen','Team.Name':'Core Developers','Organization.DisplayName':'Acme Corp','InviteURL':'...invite?token=abc','Invite.Email':'alex@example.com'},
-  collaborator:    {'AppName':'Gitea','AppUrl':'https://about.gitea.com','Subject':'Collaborator Added','Link':'.../repo/project','RepoName':'acme/project'},
-  transfer:        {'AppName':'Gitea','AppUrl':'https://about.gitea.com','Subject':'Repository Transfer','Link':'.../transferred-project','Repo':'acme/transferred-project'},
-  release:         {'AppName':'Gitea','AppUrl':'https://about.gitea.com','Subject':'New Release v2.0.0','Link':'.../repo/project/releases/tag/v2.0.0','Release.Publisher.Name':'Sarah Chen','Release.TagName':'v2.0.0','Release.Title':'Version 2.0','Release.HTMLURL':'.../releases/tag/v2.0.0','Release.Repo.HTMLURL':'.../repo/project','Release.Repo.FullName':'acme/project','Release.RenderedNote':'<p>Major new features...</p>','DisableDownloadSourceArchives':'false','Release.Attachments':'[]'},
-  workflow_run:    {'AppName':'Gitea','AppUrl':'https://about.gitea.com','Subject':'Workflow Run: CI','RunStatusText':'All jobs passed','Repo.FullName':'acme/project','Run.WorkflowID':'ci.yml','Run.HTMLURL':'.../actions/runs/42','Jobs':'[3 items]'},
-  assigned:        {'AppName':'Gitea','AppUrl':'https://about.gitea.com','Subject':'Issue #42 Assigned','Link':'.../repo/project/issues/42','Doer.Name':'Sarah Chen','IsPull':'false','Issue.Index':'42','Issue.Repo.HTMLURL':'.../repo/project','Issue.Repo.FullName':'acme/project'},
-  default:         {'AppName':'Gitea','AppUrl':'https://about.gitea.com','Subject':'Re: Issue #42','Link':'.../repo/project/issues/42','ActionName':'comment','Doer.Name':'Sarah Chen','Body':'This is a comment on the issue...','CanReply':'true','IsMention':'false','IsPull':'false','Issue.Index':'42','Issue.PullRequest.BaseBranch':'main','Comment.Commits':'[]','Comment.IsForcePush':'false','ReviewComments':'[]'}
-};
-
-//
-// State
-//
-const state = { theme:'horizon', template:'activate', client:'modern', viewport:'desktop' };
-let rendered = null; // loaded from rendered.js via <script> tag
+const state = { theme:'', template:'', client:'modern', viewport:'desktop' };
+let REGISTRY = {};
+let PARAMS = {};
+let rendered = null; // window.__RENDERED__
 
 //
 // Client transforms
@@ -240,18 +201,31 @@ function render() {
 // Panel updates
 //
 function updatePanel() {
-  const t = REGISTRY[state.template];
-  document.getElementById('panel-name').textContent = t.name;
-  document.getElementById('panel-desc').textContent = t.desc;
-  document.getElementById('panel-path').textContent = 'themes/'+state.theme+'/'+t.path;
+  const r = REGISTRY[state.template];
+  document.getElementById('panel-name').textContent = r ? r.name : state.template;
+  document.getElementById('panel-desc').textContent = r ? r.desc : '';
+  document.getElementById('panel-path').textContent = r ? 'themes/'+state.theme+'/'+r.path : '-';
 
-  const p = PARAMS[state.template];
+  // Template stats
+  const themes = rendered ? Object.keys(rendered).length : 0;
+  let totalTemplates = 0, totalFailed = 0;
+  if (rendered && rendered[state.theme]) {
+    const themeData = rendered[state.theme];
+    totalTemplates = Object.keys(themeData).length;
+    for (const v of Object.values(themeData)) {
+      if (v.startsWith('<p style=\'color:red\'')) totalFailed++;
+    }
+  }
+  document.getElementById('panel-stats').textContent =
+    themes + ' themes loaded · ' + totalTemplates + ' templates (' + (totalTemplates - totalFailed) + ' ok, ' + totalFailed + ' failed)';
+
+  const p = PARAMS[state.template] || {};
   let rows = '';
   for(const [k,v] of Object.entries(p)){
     const isReq = !k.includes('RenderedNote') && !k.includes('Attachments') && !k.includes('DisableDownload') && !k.includes('IsMention') && !k.includes('IsPull') && !k.includes('IsForcePush') && !k.includes('ReviewComments') && !k.includes('Commits') && !k.includes('BaseBranch');
     rows += '<tr><td>.'+k+'</td><td>'+String(v)+'</td><td><span class="badge '+(isReq?'badge-req':'badge-opt')+'">'+(isReq?'required':'optional')+'</span></td></tr>';
   }
-  document.getElementById('panel-params').innerHTML = rows;
+  document.getElementById('panel-params').innerHTML = rows || '<tr><td colspan="3" style="color:var(--muted)">-</td></tr>';
 
   // Client simulation indicators
   const c=state.client,
@@ -292,18 +266,40 @@ document.addEventListener('keydown',e=>{
 });
 
 //
-// Init
+// Init — load everything from rendered.js (single source of truth)
 //
 (function(){
-  const sel=document.getElementById('sel-template');
-  for(const[id,t]of Object.entries(REGISTRY)){
-    const o=document.createElement('option');o.value=id;o.textContent=t.name;sel.appendChild(o);
-  }
+  // Load REGISTRY and PARAMS from rendered.js
+  if(window.__REGISTRY__) REGISTRY = window.__REGISTRY__;
+  if(window.__PARAMS__)   PARAMS   = window.__PARAMS__;
+
   if(window.__RENDERED__){
-    rendered=window.__RENDERED__;
+    rendered = window.__RENDERED__;
+
+    // Populate theme selector from rendered data
+    const themeKeys = Object.keys(rendered).sort();
+    const selTheme = document.getElementById('sel-theme');
+    themeKeys.forEach(t => {
+      const o = document.createElement('option');
+      o.value = t;
+      o.textContent = t.charAt(0).toUpperCase() + t.slice(1);
+      selTheme.appendChild(o);
+    });
+    state.theme = themeKeys[0] || '';
+
+    // Populate template selector from REGISTRY
+    const selTpl = document.getElementById('sel-template');
+    for(const [id, t] of Object.entries(REGISTRY)){
+      const o = document.createElement('option');
+      o.value = id;
+      o.textContent = t.name;
+      selTpl.appendChild(o);
+    }
+    state.template = Object.keys(REGISTRY)[0] || '';
+
     document.getElementById('loading').style.display='none';
-  }else{
-    document.getElementById('loading').innerHTML='<span style="color:var(--red)">rendered.js not found</span><small style="color:var(--muted);margin-top:8px">Run: cd tools && go run build-preview.go</small>';
+  } else {
+    document.getElementById('loading').innerHTML = '<span style="color:var(--red)">rendered.js not found</span><small style="color:var(--muted);margin-top:8px">Run: cd tools && go run . preview all</small>';
   }
   render();
 })();

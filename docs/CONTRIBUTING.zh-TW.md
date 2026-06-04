@@ -4,12 +4,10 @@
 
 ### 新增風格
 
-1. 建立風格目錄：`themes/<風格名稱>/`
-2. 從現有風格複製目錄結構
-3. 以獨特的視覺設計實作全部 11 個 `.tmpl` 檔案
-4. 重新產生預覽：`go run ./tools/build-preview.go`（建置腳本會自動發現 `themes/` 下的所有主題目錄）
-5. 在 `preview/index.html` 的 `<select id="sel-theme">` 中新增選項
-6. 提交包含螢幕截圖的 PR
+1. 使用工具腳手架：`cd tools && go run . create <風格名稱>` — 這會建立完整的目錄結構和全部 11 種郵件類型的佔位 `.tmpl` 檔案
+2. 在 `themes/<風格名稱>/` 中編寫每個 `.tmpl` 檔案，套用獨特的視覺設計
+3. 重新產生預覽：`cd tools && go run . preview all`（建置腳本會自動發現 `themes/` 下的所有主題目錄並動態生成主題選擇器）
+4. 提交包含螢幕截圖的 PR
 
 ### 風格指南
 
@@ -25,7 +23,7 @@
 1. 檢查引用的 Go 模板變數是否存在
 2. 驗證翻譯鍵是否與 Gitea 語系檔案相符
 3. 確認 `.DisplayName` 未在不支援的模板中使用
-4. 重新產生預覽：`go run ./tools/build-preview.go`
+4. 重新產生預覽：`cd tools && go run . preview all`
 5. 提交 issue，註明風格名稱、郵件類型及錯誤描述
 
 ### 改善文件
@@ -40,7 +38,7 @@
 
 ### 本機預覽
 
-1. 先生成預覽資料：`go run ./tools/build-preview.go`
+1. 先生成預覽資料：`cd tools && go run . preview all`
 2. 在瀏覽器中開啟 `preview/index.html`
 3. 在 Modern、Gmail、Outlook、Raw source 模式間切換驗證效果
 

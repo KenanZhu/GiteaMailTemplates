@@ -4,12 +4,10 @@
 
 ### 新しいスタイルの追加
 
-1. スタイルディレクトリを作成: `themes/<style-name>/`
-2. 既存スタイルからディレクトリ構造をコピー
-3. 11個の `.tmpl` ファイルを独自デザインで実装
-4. プレビューを再生成: `go run ./tools/build-preview.go`（ビルドスクリプトが `themes/` 以下の全テーマを自動検出します）
-5. `preview/index.html` の `<select id="sel-theme">` に追加
-6. スクリーンショット付きで PR を提出
+1. ツールでスキャフォールド: `cd tools && go run . create <style-name>` — 全11種類のメールタイプ用のプレースホルダ `.tmpl` ファイルを含む完全なディレクトリ構造を作成します
+2. `themes/<style-name>/` 内の各 `.tmpl` ファイルを独自デザインで編集
+3. プレビューを再生成: `cd tools && go run . preview all`（ビルドスクリプトが `themes/` 以下の全テーマを自動検出し、テーマセレクターも自動生成されます）
+4. スクリーンショット付きで PR を提出
 
 ### スタイルガイドライン
 
@@ -25,7 +23,7 @@
 1. Go 変数が正しいか確認
 2. 翻訳キーが Gitea ロケールと一致するか確認
 3. `.DisplayName` が誤用されていないか確認
-4. プレビューを再生成: `go run ./tools/build-preview.go`
+4. プレビューを再生成: `cd tools && go run . preview all`
 5. スタイル名とメールタイプを明記して issue を作成
 
 ---
@@ -34,7 +32,7 @@
 
 ### ローカルプレビュー
 
-1. データを生成: `go run ./tools/build-preview.go`
+1. データを生成: `cd tools && go run . preview all`
 2. `preview/index.html` をブラウザで開く
 3. Modern, Gmail, Outlook, Raw source を切り替えて確認
 
