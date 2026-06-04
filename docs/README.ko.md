@@ -36,10 +36,17 @@ systemctl restart gitea
 
 ## 프리뷰
 
+**정적 모드:**
 ```bash
 cd tools && go run . preview all
 ```
 그런 다음 `preview/index.html` 열기.
+
+**개발 서버 (실시간 리로드 + Juice CSS 인라인):**
+```bash
+cd tools && go run . dev     # Node.js 필요
+# → http://localhost:3456
+```
 
 ## 호환성
 

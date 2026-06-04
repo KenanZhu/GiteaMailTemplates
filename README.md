@@ -78,28 +78,45 @@ Send a test email from the Gitea admin panel:
 
 ## Preview
 
-A live preview tool is included to browse all styles and email types without deploying to a Gitea instance.
+Two modes are available — a zero-dependency static preview for quick checks, and a live-reload dev server for design work.
 
-### Quick Start
+### Static Preview
 
-First, generate the preview data (requires Go):
+Generate the preview data once (Go only), then open in a browser:
 
 ```bash
 cd tools && go run . preview all
+open preview/index.html        # no server needed
 ```
 
-Then open `preview/index.html` directly in a browser. No server required.
+> Gmail/Outlook simulation in static mode is approximate. Use dev mode for accurate CSS inlining.
 
-> `preview/rendered.js` is generated and git-ignored. Re-run `cd tools && go run . preview all` after modifying templates. Use `cd tools && go run .` to see all commands (list, create, delete, preview). Most flags have sensible defaults — just `go run . create <name>` or `go run . preview all` works out of the box.
+### Dev Server (Live Reload + Juice CSS Inlining)
+
+Start a development server that watches for `.tmpl` changes, auto-rebuilds, inlines CSS for email client compatibility, and pushes live updates to the browser:
+
+```bash
+cd tools && go run . dev      # requires Node.js
+open http://localhost:3456
+```
+
+| Capability | Static | Dev |
+|-----------|--------|-----|
+| Go template rendering | ✅ | ✅ |
+| Theme/template switching | ✅ | ✅ |
+| Juice CSS inlining | — | ✅ |
+| Outlook `bgcolor` attrs | — | ✅ |
+| Live reload on save | — | ✅ |
+| Node.js required | — | ✅ |
 
 ### Features
 
-- Theme switcher — toggle between all 10 visual styles
-- Template switcher — browse all 11 email types
-- Client simulation — Modern, Gmail (no `<style>`), Outlook Desktop, Raw source
-- Viewport toggle — Desktop (1386x780) / Mobile (390x780)
-- Parameter panel — view template variables and mock data per email type
-- Keyboard shortcuts — `←→` templates, `d` desktop, `m` mobile
+- Theme switcher — browse all 10 visual styles
+- Template switcher — all 11 email types
+- Client simulation — Modern, Gmail, Outlook, Raw Source
+- Viewport toggle — Desktop 1386×780 / Mobile 390×780
+- Parameter panel — mock data per email type
+- Keyboard shortcuts — `←→` templates, `d`/`m` viewport
 
 ---
 

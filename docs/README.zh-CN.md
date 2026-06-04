@@ -50,10 +50,17 @@ systemctl restart gitea
 
 ## 预览
 
+**静态模式：**
 ```bash
 cd tools && go run . preview all
 ```
 然后打开 `preview/index.html`。
+
+**开发服务器（实时重载 + Juice CSS 内联）：**
+```bash
+cd tools && go run . dev     # 需要 Node.js
+# → http://localhost:3456
+```
 
 ---
 

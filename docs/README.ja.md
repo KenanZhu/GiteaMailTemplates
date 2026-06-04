@@ -36,10 +36,17 @@ systemctl restart gitea
 
 ## プレビュー
 
+**静的モード:**
 ```bash
 cd tools && go run . preview all
 ```
 その後 `preview/index.html` を開く。
+
+**開発サーバー（ライブリロード + Juice CSSインライン）:**
+```bash
+cd tools && go run . dev     # Node.jsが必要です
+# → http://localhost:3456
+```
 
 ## 互換性
 

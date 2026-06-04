@@ -11,8 +11,9 @@ neon.png       mono.png        terra.png    ink.png      aurora.png
 
 ## How to Capture
 
-1. Run `cd tools && go run . preview all` from the project root
-2. Open `preview/index.html` in a browser
-3. For each style, select the "Activate Account" template and "Modern" client mode
-4. Take a screenshot of the rendered email (600px width recommended)
-5. Save as `<style-name>.png` in this directory
+1. Start the dev server: `cd tools && go run . dev` (opens http://localhost:3456)
+2. For each style, select the "Activate Account" template and "Modern" client mode
+3. Take a screenshot of the rendered email (600px width recommended)
+4. Save as `<style-name>.png` in this directory
+
+> For static preview, run `cd tools && go run . preview all` then open `preview/index.html` directly.

@@ -30,11 +30,24 @@
 
 ## 開発セットアップ
 
-### ローカルプレビュー
+- **Go 1.21+** テンプレートレンダリングとCLI用
+- **Node.js 18+**（任意）開発サーバーとJuice CSSインライン用
+
+### ローカルプレビュー（静的）
 
 1. データを生成: `cd tools && go run . preview all`
 2. `preview/index.html` をブラウザで開く
-3. Modern, Gmail, Outlook, Raw source を切り替えて確認
+
+> 静的Gmail/Outlookシミュレーションは参考用です。正確なレンダリングにはdevモードを使用してください。
+
+### 開発サーバー（ライブリロード + CSSインライン）
+
+```bash
+cd tools && go run . dev
+# → http://localhost:3456
+```
+
+`.tmpl` ファイルを編集すると自動的に再構築されブラウザに反映されます。
 
 ### 結合テスト
 

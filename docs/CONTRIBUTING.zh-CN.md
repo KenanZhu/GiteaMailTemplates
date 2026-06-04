@@ -34,13 +34,24 @@
 
 ## 开发环境
 
-无需构建工具或依赖。
+- **Go 1.21+** 用于模板渲染和 CLI 工具
+- **Node.js 18+**（可选）用于实时开发服务器与 Juice CSS 内联
 
-### 本地预览
+### 本地预览（静态）
 
 1. 先生成预览数据：`cd tools && go run . preview all`
-2. 在浏览器中打开 `preview/index.html`
-3. 在 Modern、Gmail、Outlook、Raw source 模式间切换验证效果
+2. 在浏览器中打开 `preview/index.html` — 无需服务器
+
+> 静态 Gmail/Outlook 模拟仅供参考，使用 dev 模式可获得准确的 CSS 内联渲染。
+
+### 开发服务器（实时重载 + CSS 内联）
+
+```bash
+cd tools && go run . dev
+# → http://localhost:3456
+```
+
+修改 `.tmpl` 文件后自动重建并推送至浏览器。
 
 ### 集成测试
 

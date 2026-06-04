@@ -36,10 +36,17 @@ systemctl restart gitea
 
 ## Предпросмотр
 
+**Статический режим:**
 ```bash
 cd tools && go run . preview all
 ```
 Затем откройте `preview/index.html`.
+
+**Dev-сервер (live reload + Juice CSS inline):**
+```bash
+cd tools && go run . dev     # требуется Node.js
+# → http://localhost:3456
+```
 
 ## Совместимость
 

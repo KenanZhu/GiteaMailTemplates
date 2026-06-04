@@ -40,21 +40,29 @@ Documentation updates, preview screenshots, installation guides, and translation
 
 ## Development Setup
 
-No build tools or dependencies are needed — these are raw Go HTML templates.
+- **Go 1.21+** for template rendering and the CLI tool
+- **Node.js 18+** (optional) for the live-reload dev server with Juice CSS inlining
 
-### Previewing Locally
+### Previewing Locally (Static)
 
-1. Open `preview/index.html` directly in a browser — no server needed
-2. Use the theme switcher, template selector, and client mode toggles to review designs
-3. Toggle between Modern, Gmail, Outlook, and Raw source modes to verify degradation
+1. Run `cd tools && go run . preview all` to generate rendered data
+2. Open `preview/index.html` directly in a browser — no server needed
+3. Use the theme switcher, template selector, and client mode toggles
 
-### Regenerating Previews
+> Static Gmail/Outlook simulation is approximate. Use dev mode for accurate rendering.
+
+### Dev Server (Live Reload + CSS Inlining)
 
 ```bash
-cd tools && go run . preview all
+cd tools && go run . dev
+# → http://localhost:3456
 ```
 
-This renders all templates (themes auto-discovered from the themes/ directory) using Go's native `html/template` package and writes the output to `preview/rendered.js`. The `--folder` and `--config` flags default to `../themes` and `./data/templates_config.json` respectively — override them only when using a custom layout.
+- Watches `themes/**/*.tmpl` — auto-rebuilds on save
+- Runs [Juice](https://github.com/Automattic/juice) to inline `<style>` into `style=""` attributes
+- Adds Outlook-compatible `bgcolor`/`width` HTML attributes
+- Pushes live reload to browser via WebSocket
+- Terminal output: `themes/aurora/mail/repo/release.tmpl edited` → `[rebuild] done in 480ms`
 
 ### Integration Testing
 

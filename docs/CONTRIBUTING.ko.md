@@ -30,11 +30,24 @@
 
 ## 개발 설정
 
-### 로컬 프리뷰
+- **Go 1.21+** 템플릿 렌더링 및 CLI 도구
+- **Node.js 18+** (선택) 개발 서버 및 Juice CSS 인라인
+
+### 로컬 프리뷰 (정적)
 
 1. 데이터 생성: `cd tools && go run . preview all`
 2. `preview/index.html`을 브라우저에서 열기
-3. Modern, Gmail, Outlook, Raw source 모드 전환 확인
+
+> 정적 Gmail/Outlook 시뮬레이션은 참고용입니다. 정확한 렌더링은 dev 모드를 사용하세요.
+
+### 개발 서버 (실시간 리로드 + CSS 인라인)
+
+```bash
+cd tools && go run . dev
+# → http://localhost:3456
+```
+
+`.tmpl` 파일 수정 시 자동 재빌드되어 브라우저에 반영됩니다.
 
 ### 통합 테스트
 

@@ -48,16 +48,19 @@ docs/               # Multi-language documentation
 
 ### Preview System
 - `preview/index.html` loads `preview/rendered.js` (pre-rendered by Go) and displays in iframes
-- Supports theme switching, template type switching, client simulation (Modern/Gmail/Outlook/Raw), and viewport toggle (Desktop 1386x780 / Mobile 390x780)
-- `REGISTRY` and `PARAMS` are auto-generated from `templates_config.json` by the build tool — no manual syncing needed
+- Supports theme/template switching, client simulation (Modern/Gmail/Outlook/Raw), and viewport toggle (Desktop 1386x780 / Mobile 390x780)
+- `REGISTRY` and `PARAMS` are auto-generated from `templates_config.json` — no manual syncing needed
+- Static preview (open `index.html` directly) provides approximate client simulation
+- Dev server (`go run . dev`) provides accurate rendering via Juice CSS inlining + live reload
 
 ### Build Tool
 - `tools/tools.go` is the main entry point for the modular CLI
-- Subcommands: `list`, `create`, `delete`, `preview`
+- Subcommands: `list`, `create`, `delete`, `preview`, `dev`
 - Template metadata lives in `tools/data/templates_config.json` — the single source of truth
 - `tools/config/` handles config loading and data flattening
-- `tools/preview/` implements the rendering engine (template funcs, locale, engine)
+- `tools/preview/` implements the rendering engine (template funcs, locale, engine, markSafeHTML)
 - `tools/cli/` implements CLI subcommands using `github.com/urfave/cli/v2`
+- `tools/server/` Node.js dev server with Juice CSS inlining and live reload (Express + WebSocket + fs.watch)
 - Uses Go's native `html/template` package for template rendering
 
 ## Commit Conventions
