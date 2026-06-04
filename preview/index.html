@@ -297,6 +297,7 @@ document.addEventListener('keydown',e=>{
 
     document.getElementById('loading').style.display='none';
   } else {
+    document.getElementById('loading').style.display='none';
     showMessage('rendered.js not found — run <code>cd tools &amp;&amp; go run . preview all</code> to generate', 'error');
   }
   render();
