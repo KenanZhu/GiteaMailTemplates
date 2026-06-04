@@ -141,7 +141,7 @@
         "ActionName": "comment",
         "Doer": { "Name": "Sarah Chen" },
         "Body": "This is a comment on the issue with details about the fix.",
-        "CanReply": true,
+        "CanReply": false,
         "IsMention": false,
         "IsPull": false,
         "Issue": {
