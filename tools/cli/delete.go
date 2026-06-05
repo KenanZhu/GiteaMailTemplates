@@ -37,14 +37,14 @@ func runDelete(c *cli.Context) error {
 		styleDir := filepath.Join(folder, styleName)
 
 		if _, err := os.Stat(styleDir); os.IsNotExist(err) {
-			fmt.Printf("  [skip] '%s' does not exist\n", styleName)
+			fmt.Printf("\033[33m[W]\033[0m [CLI] '%s' does not exist, skipped\n", styleName)
 			continue
 		}
 
 		if err := os.RemoveAll(styleDir); err != nil {
 			return fmt.Errorf("cannot delete %s: %w", styleDir, err)
 		}
-		fmt.Printf("  Deleted style '%s'\n", styleName)
+		fmt.Printf("\033[32m[I]\033[0m [CLI] Deleted style '%s'\n", styleName)
 	}
 
 	return nil

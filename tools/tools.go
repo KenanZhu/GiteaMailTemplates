@@ -24,7 +24,7 @@ func main() {
 	}
 
 	if err := app.Run(os.Args); err != nil {
-		fmt.Fprintf(os.Stderr, "error: %v\n", err)
+		fmt.Fprintf(os.Stderr, "\033[31m[E]\033[0m [CLI] %v\n", err)
 		os.Exit(1)
 	}
 }

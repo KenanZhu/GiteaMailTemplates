@@ -8,6 +8,15 @@ import expressWs from 'express-ws';
 
 import { inlineCSS, stripGmail, stripOutlook } from './inliner.mjs';
 
+// ANSI color helpers
+const G = '\x1b[32m';   // green (Info)
+const Y = '\x1b[33m';   // yellow (Warn)
+const R = '\x1b[31m';   // red (Error)
+const Z = '\x1b[0m';    // reset
+const I = `${G}[I]${Z}`;
+const W = `${Y}[W]${Z}`;
+const E = `${R}[E]${Z}`;
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..', '..');       // project root
 const TOOLS = join(ROOT, 'tools');                   // tools/ (for go run)
@@ -55,13 +64,13 @@ async function rebuild() {
   CHANGED_THEMES.clear();
 
   const start = Date.now();
-  console.log(`\n[rebuild] ${themes.length > 0 ? themes.join(', ') : 'all'} changed`);
+  console.log(`${I} [Builder] Rebuilding: ${themes.length > 0 ? themes.join(', ') : 'all'} changed`);
 
   // Step 1: Go render
   try {
     await goPreview(themes.length > 0 ? themes : ['all']);
   } catch (err) {
-    console.error('[rebuild] go render failed:', err.message);
+    console.error(`${E} [Builder] Go render failed: ${err.message}`);
     building = false;
     broadcast('error', { message: err.message });
     return;
@@ -73,11 +82,11 @@ async function rebuild() {
     const juiced = await juiceRenderedOutput(renderedJS);
     writeFileSync(RENDERED_JS, juiced, 'utf8');
   } catch (err) {
-    console.error('[rebuild] juice step failed:', err.message);
+    console.error(`${E} [Builder] Juice step failed: ${err.message}`);
   }
 
   const elapsed = Date.now() - start;
-  console.log(`[rebuild] done in ${elapsed}ms`);
+  console.log(`${I} [Builder] Rebuild done in ${elapsed}ms`);
 
   building = false;
 
@@ -190,19 +199,19 @@ try {
     const fullPath = join(THEMES, fname);
     // event is 'rename' for both create and delete; 'change' for modifications
     if (event === 'change') {
-      console.log('[watch] ' + relPath(fullPath) + ' edited');
+      console.log(`${I} [Watcher] ${relPath(fullPath)} changed`);
       scheduleRebuild(fullPath);
     } else if (event === 'rename') {
       if (existsSync(fullPath)) {
-        console.log('[watch] ' + relPath(fullPath) + ' created');
+        console.log(`${I} [Watcher] ${relPath(fullPath)} created`);
       } else {
-        console.log('[watch] ' + relPath(fullPath) + ' deleted');
+        console.log(`${I} [Watcher] ${relPath(fullPath)} deleted`);
       }
     }
   });
-  console.log('[watch] themes/ (recursive)');
+  console.log(`${I} [Watcher] Watching themes/ (recursive)`);
 } catch (err) {
-  console.error('[watch] failed:', err.message);
+  console.error(`${E} [Watcher] File watch failed: ${err.message}`);
 }
 
 // Initial Juice pass
@@ -213,9 +222,9 @@ try {
     const js = readFileSync(RENDERED_JS, 'utf8');
     const juiced = await juiceRenderedOutput(js);
     writeFileSync(RENDERED_JS, juiced, 'utf8');
-    console.log('[init] juice inlining applied');
+    console.log(`${I} [Builder] CSS inlining applied`);
   } catch (err) {
-    console.error('[init] juice failed:', err.message);
+    console.error(`${E} [Builder] CSS inlining failed: ${err.message}`);
   }
 })();
 
@@ -223,8 +232,8 @@ try {
 app.get('/health', (_req, res) => res.json({ status: 'ok', port: PORT }));
 
 app.listen(PORT, () => {
-  console.log(`\n  Gitea Mail Templates — Dev Server`);
-  console.log(`  http://localhost:${PORT}\n`);
-  console.log(`  Watching themes/ for changes...`);
-  console.log(`  WebSocket  ws://localhost:${PORT}/ws`);
+  console.log(`${I} [Server] Gitea Mail Templates — Dev Server`);
+  console.log(`${I} [Server] http://localhost:${PORT}`);
+  console.log(`${I} [Watcher] Watching themes/ for changes`);
+  console.log(`${I} [Server] WebSocket ws://localhost:${PORT}/ws\n`);
 });

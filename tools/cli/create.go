@@ -49,7 +49,7 @@ func runCreate(c *cli.Context) error {
 
 		if info, err := os.Stat(styleDir); err == nil {
 			if info.IsDir() {
-				fmt.Printf("  [skip] '%s' already exists\n", styleName)
+				fmt.Printf("\033[32m[I]\033[0m [CLI] '%s' already exists, skipped\n", styleName)
 				continue
 			}
 			return fmt.Errorf("'%s' exists but is not a directory", styleName)
@@ -79,7 +79,7 @@ func runCreate(c *cli.Context) error {
 			created++
 		}
 
-		fmt.Printf("  Created style '%s' with %d template files\n", styleName, created)
+		fmt.Printf("\033[32m[I]\033[0m [CLI] Created style '%s' with %d template files\n", styleName, created)
 	}
 
 	return nil

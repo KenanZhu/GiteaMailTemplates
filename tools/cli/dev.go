@@ -48,7 +48,7 @@ func runDev(c *cli.Context) error {
 
 	// Verify node_modules are installed
 	if _, err := os.Stat(filepath.Join(serverDir, "node_modules")); os.IsNotExist(err) {
-		fmt.Println("Installing Node.js dependencies...")
+		fmt.Println("\033[32m[I]\033[0m [Builder] Installing Node.js dependencies...")
 		cmd := exec.Command("npm", "install")
 		cmd.Dir = serverDir
 		cmd.Stdout = os.Stdout
@@ -64,7 +64,7 @@ func runDev(c *cli.Context) error {
 	initCmd.Stdout = os.Stdout
 	initCmd.Stderr = os.Stderr
 	if err := initCmd.Run(); err != nil {
-		fmt.Println("Warning: initial preview generation failed, starting anyway...")
+		fmt.Println("\033[33m[W]\033[0m [Builder] Initial preview generation failed, starting anyway")
 	}
 
 	// Start the Node.js dev server
@@ -78,8 +78,8 @@ func runDev(c *cli.Context) error {
 		return fmt.Errorf("failed to start dev server: %w", err)
 	}
 
-	fmt.Printf("\nDev server running at http://localhost:%d\n", port)
-	fmt.Print("Press Ctrl+C to stop.\n\n")
+	fmt.Printf("\033[32m[I]\033[0m [Server] Dev server running at http://localhost:%d\n", port)
+	fmt.Print("\033[32m[I]\033[0m [Server] Press Ctrl+C to stop\n")
 
 	// Handle graceful shutdown
 	sigCh := make(chan os.Signal, 1)
@@ -87,7 +87,7 @@ func runDev(c *cli.Context) error {
 
 	go func() {
 		<-sigCh
-		fmt.Println("\nShutting down...")
+		fmt.Println("\033[32m[I]\033[0m [Server] Shutting down")
 		if err := serverCmd.Process.Signal(os.Interrupt); err != nil {
 			serverCmd.Process.Kill()
 		}

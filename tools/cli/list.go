@@ -37,7 +37,7 @@ func runList(c *cli.Context) error {
 	}
 
 	absDir, _ := filepath.Abs(folder)
-	fmt.Printf("Available styles in '%s' (%d):\n", filepath.Base(absDir), len(themes))
+	fmt.Printf("\033[32m[I]\033[0m [Preview] Available styles in '%s' (%d):\n", filepath.Base(absDir), len(themes))
 
 	sort.Strings(themes)
 	for _, t := range themes {
@@ -51,7 +51,7 @@ func runList(c *cli.Context) error {
 			}
 			return nil
 		})
-		fmt.Printf("  %-16s (%d .tmpl files)\n", t, count)
+		fmt.Printf("\033[32m[I]\033[0m [Preview]    %-16s (%d .tmpl files)\n", t, count)
 	}
 	return nil
 }

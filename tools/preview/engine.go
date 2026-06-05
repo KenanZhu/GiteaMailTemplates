@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -67,7 +66,7 @@ func DiscoverThemes(themesDir string) ([]string, error) {
 func RenderAll(themesDir string, cfg *config.TemplatesConfig, themeFilter map[string]bool) *PreviewResult {
 	themes, err := DiscoverThemes(themesDir)
 	if err != nil {
-		log.Printf("ERROR: %v", err)
+		fmt.Fprintf(os.Stderr, "\033[31m[E]\033[0m [Preview] Error discovering themes: %v\n", err)
 		return nil
 	}
 
@@ -81,7 +80,7 @@ func RenderAll(themesDir string, cfg *config.TemplatesConfig, themeFilter map[st
 		}
 		themes = filtered
 		if len(themes) == 0 {
-			log.Printf("WARN: no themes matched the requested filter")
+			fmt.Println("\033[33m[W]\033[0m [Preview] No themes matched the requested filter")
 			return nil
 		}
 	}
@@ -249,36 +248,35 @@ func WriteRenderedJS(result *PreviewResult, outputPath string) error {
 // PrintDetailedSummary prints a human-readable summary of the preview results.
 func PrintDetailedSummary(result *PreviewResult, themesDir string, cfg *config.TemplatesConfig) {
 	absDir, _ := filepath.Abs(themesDir)
-	fmt.Printf("\nfound %d styles of possible Gitea mail template in '%s' folder:\n\n",
+	fmt.Printf("\033[32m[I]\033[0m [Preview] Found %d styles in '%s':\n",
 		len(result.Summaries), filepath.Base(absDir))
 
 	for _, s := range result.Summaries {
 		if s.MissingCount == 0 && s.ErrorCount == 0 {
-			fmt.Printf("    %-16s all required mail templates are properly rendered, (total %d .tmpl files, %s after, %v)\n",
+			fmt.Printf("\033[32m[I]\033[0m [Preview]    %-16s all required templates OK (total %d .tmpl, %s, %v)\n",
 				s.Name, s.TotalFiles,
 				formatSize(s.RenderedSize),
 				s.RenderDuration.Round(time.Millisecond))
 		} else {
-			fmt.Printf("    %-16s only %d required mail templates are properly rendered:\n",
+			fmt.Printf("\033[33m[W]\033[0m [Preview]    %-16s only %d required templates rendered:\n",
 				s.Name, s.RenderedCount)
 			for _, tplID := range s.Missing {
 				if t, ok := cfg.Templates[tplID]; ok {
-					fmt.Printf("        [%s] not found, expected at 'themes/%s/%s'\n",
+					fmt.Printf("\033[31m[E]\033[0m [Preview]    |-> %s not found, expected at 'themes/%s/%s'\n",
 						filepath.Base(t.PathStr()), s.Name, t.PathStr())
 				} else {
-					fmt.Printf("        [%s] not found\n", tplID)
+					fmt.Printf("\033[31m[E]\033[0m [Preview]    |-> %s not found\n", tplID)
 				}
 			}
 			for _, tplID := range s.Errors {
 				if rr, ok := s.Results[tplID]; ok && rr.Error != "" {
-					fmt.Printf("        [%s] render error: %s\n", tplID, rr.Error)
+					fmt.Printf("\033[31m[E]\033[0m [Preview]    |-> %s render error: %s\n", tplID, rr.Error)
 				} else {
-					fmt.Printf("        [%s] render error\n", tplID)
+					fmt.Printf("\033[31m[E]\033[0m [Preview]    |-> %s render error\n", tplID)
 				}
 			}
 		}
 	}
-	fmt.Println()
 }
 
 // markSafeHTML recursively converts known HTML-containing string fields to

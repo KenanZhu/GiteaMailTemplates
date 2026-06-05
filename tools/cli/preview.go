@@ -2,7 +2,6 @@ package cli
 
 import (
 	"fmt"
-	"log"
 	"path/filepath"
 
 	"github.com/urfave/cli/v2"
@@ -78,7 +77,7 @@ func runPreview(c *cli.Context) error {
 
 	preview.PrintDetailedSummary(result, folder, cfg)
 
-	log.Printf("Wrote %d themes x %d templates to %s",
+	fmt.Printf("\033[32m[I]\033[0m [Preview] Wrote %d themes x %d templates to %s\n",
 		len(result.Summaries), len(cfg.Templates), outputPath)
 
 	return nil
