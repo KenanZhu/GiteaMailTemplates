@@ -2,58 +2,91 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{.locale.Tr "mail.reset_password.title" (.DisplayName|DotEscape)}}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="x-apple-disable-message-reformatting" />
+
+  <title>
+    {{.locale.Tr "mail.reset_password.title" (.DisplayName|DotEscape)}}
+  </title>
+
   <style type="text/css">
-    body, .ExternalClass, .ReadMsgBody { background-color: #faf8f5; }
+    /* Base */
+    body,.ExternalClass,.ReadMsgBody { background-color:#faf8f5 }
+
+    /* Header */
+    .email-logo { display:inline-block;margin:0 auto 12px;border:0;outline:none }
+    .email-brand { margin:0;font-size:20px;font-weight:700;color:#1e3a5f;letter-spacing:2px;font-variant:small-caps;font-family:Georgia,'Times New Roman',serif }
+    .email-header { padding:32px 36px 20px;text-align:center;border-bottom:1px solid #c4a97d }
+
+    /* Card */
+    .email-card { max-width:600px;margin:24px auto;background:#ffffff;border:3px double #c4a97d;padding:0 }
+    .email-heading { margin:0 0 14px;font-size:17px;line-height:1.5;color:#1e3a5f;font-weight:600;font-family:Georgia,'Times New Roman',serif }
+    .email-text { margin:0 0 20px;font-size:16px;line-height:1.7;color:#2c1810 }
+
+    /* Button */
+    .email-btn-row { margin:28px 0 24px;border-collapse:separate }
+    .email-btn { display:inline-block;padding:13px 38px;font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;background-color:#1e3a5f;border:2px solid #8b6914;font-family:Georgia,'Times New Roman',serif;font-variant:small-caps;letter-spacing:1px }
+
+    /* Fallback link */
+    .email-link-box { background:#faf8f5;border:2px solid #d4c4a8;padding:16px 18px;margin:24px 0 16px }
+    .email-link-label { margin:0 0 8px;font-size:14px;color:#5c4a3a;line-height:1.5;font-style:italic }
+    .email-link-url { margin:0;font-size:13px;color:#1e3a5f;background:#ffffff;padding:10px 12px;border:1px solid #d4c4a8;word-break:break-all;font-family:monospace }
+
+    /* Footer */
+    .email-footer { padding:20px 36px 24px;background:#faf8f5;border-top:3px double #c4a97d;text-align:center }
+    .email-footer-text { margin:0;font-size:13px;color:#5c4a3a }
+    .email-footer-link { color:#1e3a5f;text-decoration:none;font-weight:600 }
   </style>
 </head>
-<body style="margin:0; padding:0; background-color:#faf8f5; font-family: 'Charter', 'Georgia', 'Times New Roman', serif; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%;">
 
-  <center style="width:100%; table-layout:fixed;">
-    <div style="max-width:600px; margin:24px auto; background:#ffffff; border:3px double #c4a97d; padding:0;">
+<body style="margin:0;padding:0;background-color:#faf8f5;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
+  <center style="width:100%;table-layout:fixed;">
+    <div class="email-card">
 
-      <div style="padding:32px 36px 20px; text-align:center; border-bottom:1px solid #c4a97d;">
-        <img src="{{AppUrl}}assets/img/favicon.png" alt="logo" width="40" height="40" style="display:inline-block; margin:0 auto 12px; border:0; outline:none;">
-        <p style="margin:0; font-size:20px; font-weight:700; color:#1e3a5f; letter-spacing:2px; font-variant:small-caps; font-family:Georgia,'Times New Roman',serif;">{{AppName}}</p>
+      <!-- Floating Title -->
+      <div class="email-header">
+        <img src="{{AppUrl}}assets/img/favicon.png" alt="logo" width="40" height="40" class="email-logo" />
+        <p class="email-brand">{{AppName}}</p>
       </div>
 
-      <div style="padding:32px 36px 24px; color:#2c1810;">
-        <p style="margin:0 0 14px; font-size:17px; line-height:1.5; color:#1e3a5f; font-weight:600; font-family:Georgia,'Times New Roman',serif;">
+      <!-- Card -->
+      <div style="padding:32px 36px 24px;color:#2c1810;">
+
+        <p class="email-heading">
           {{.locale.Tr "mail.hi_user_x" (.DisplayName|DotEscape)}}
         </p>
-        <p style="margin:0 0 20px; font-size:16px; line-height:1.7; color:#2c1810;">
+
+        <p class="email-text">
           {{.locale.Tr "mail.reset_password.text" .ResetPwdCodeLives}}
         </p>
 
+        <!-- Button -->
         {{$recover_url := printf "%suser/recover_account?code=%s" AppUrl (QueryEscape .Code)}}
-        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin:28px 0 24px; border-collapse:separate;">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%" class="email-btn-row">
           <tr>
             <td align="center">
-              <a href="{{$recover_url}}" style="display:inline-block; padding:13px 38px; font-size:15px; font-weight:600; color:#ffffff; text-decoration:none; background-color:#1e3a5f; border:2px solid #8b6914; font-family:Georgia,'Times New Roman',serif; font-variant:small-caps; letter-spacing:1px;">Reset Password &#x2192;</a>
+              <a href="{{$recover_url}}" class="email-btn">{{.locale.Tr "mail.reset_password"}}</a>
             </td>
           </tr>
         </table>
 
-        <div style="background:#faf8f5; border:2px solid #d4c4a8; padding:16px 18px; margin:24px 0 16px;">
-          <p style="margin:0 0 8px; font-size:14px; color:#5c4a3a; line-height:1.5; font-style:italic;">
-            {{.locale.Tr "mail.link_not_working_do_paste"}}
-          </p>
-          <p style="margin:0; font-size:13px; color:#1e3a5f; background:#ffffff; padding:10px 12px; border:1px solid #d4c4a8; word-break:break-all; font-family:monospace;">
-            {{$recover_url}}
-          </p>
+        <!-- Fallback link -->
+        <div class="email-link-box">
+          <p class="email-link-label">{{.locale.Tr "mail.link_not_working_do_paste"}}</p>
+          <p class="email-link-url">{{$recover_url}}</p>
         </div>
       </div>
 
-      <div style="padding:20px 36px 24px; background:#faf8f5; border-top:3px double #c4a97d; text-align:center;">
-        <p style="margin:0; font-size:13px; color:#5c4a3a;">
-          &copy; <a href="{{AppUrl}}" style="color:#1e3a5f; text-decoration:none; font-weight:600;">{{AppName}}</a>
+      <!-- Footer -->
+      <div class="email-footer">
+        <p class="email-footer-text">
+          &copy;
+          <a href="{{AppUrl}}" class="email-footer-link">{{AppName}}</a>
+          &mdash; Gitea Mail Templates
         </p>
-        <p style="margin:8px 0 0; font-size:12px; color:#8b6914; font-family:Georgia,'Times New Roman',serif; font-variant:small-caps; letter-spacing:1px;">Established &middot; Trusted &middot; Open</p>
       </div>
 
     </div>
   </center>
-
 </body>
 </html>

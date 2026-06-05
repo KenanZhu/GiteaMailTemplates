@@ -4,46 +4,137 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="x-apple-disable-message-reformatting" />
-  <title>{{.Subject}}</title>
+
+  <title>
+    {{.Subject}}
+  </title>
+
   <style type="text/css">
-    body,.ExternalClass,.ReadMsgBody{background-color:#0a0a0f}
-    @media only screen and (max-width:480px){
-      .resp-pad{padding-left:16px!important;padding-right:16px!important}
-      .resp-btn{display:block!important;width:auto!important;text-align:center!important}
-      .resp-font{font-size:14px!important}
+    /* Base */
+    body,.ExternalClass,.ReadMsgBody { background-color:#0a0a0f }
+    .email-wrap { max-width:600px;margin:40px auto;font-family:system-ui,-apple-system,sans-serif;background:#0d0d18;border:1px solid #ff2d95;box-shadow:0 0 20px rgba(255,45,149,0.3),0 0 60px rgba(0,212,255,0.1) }
+
+    /* Header */
+    .email-logo { display:block;margin:0 auto 14px;border:0;outline:none;opacity:0.5 }
+    .email-brand { font-size:20px;font-weight:900;color:#fff;letter-spacing:3px;text-transform:uppercase }
+    .email-header { padding:0;background:linear-gradient(160deg,#ff2d95 28%,#0d0d18 28.5%);height:72px;text-align:right;vertical-align:bottom }
+
+    /* Card */
+    .email-card { padding:8px 32px 24px;color:#cbd5e1 }
+    .email-heading { margin:0 0 20px;font-size:15px;font-weight:600;color:#00d4ff;line-height:1.3 }
+    .email-text { margin:0 0 24px;font-size:14px;line-height:1.7;color:#cbd5e1;font-weight:400 }
+    .email-subtext { margin:0;font-size:13px;line-height:1.6;color:#64748b;font-weight:400 }
+
+    /* Divider */
+    .email-divider { height:1px;background:linear-gradient(90deg,transparent,rgba(255,45,149,0.3),transparent) }
+
+    /* Button */
+    .email-btn-row { padding:40px 40px;text-align:center }
+    .email-btn { display:inline-block;padding:13px 36px;font-size:14px;font-weight:700;color:#0a0a0f;text-decoration:none;background:linear-gradient(135deg,#ff2d95,#e0115f);border:1px solid #ff2d95;box-shadow:0 0 16px rgba(255,45,149,0.4);letter-spacing:1px;text-transform:uppercase }
+    .email-btn-table { margin:0 0 24px }
+
+    /* Fallback link */
+    .email-link-box { border:1px solid rgba(0,212,255,0.2);background:rgba(0,212,255,0.04) }
+    .email-link-label { margin:0 0 8px;font-size:12px;color:#64748b;font-weight:400 }
+    .email-link-url { margin:0;font-size:11px;font-family:monospace;color:#00d4ff;background:rgba(0,0,0,0.3);padding:8px 10px;border:1px solid rgba(0,212,255,0.15);word-break:break-all }
+
+    /* Footer */
+    .email-footer { padding:16px 32px;border-top:1px solid rgba(255,45,149,0.15);background:rgba(255,45,149,0.03);text-align:center }
+    .email-footer-text { margin:0;font-size:11px;color:#475569;font-weight:400 }
+    .email-footer-link { color:#ff2d95;text-decoration:none;font-weight:600 }
+
+    /* Typography utilities */
+    .card-body h1,.card-body h2,.card-body h3,.card-body h4,.card-body h5,.card-body h6 { color:#00d4ff!important }
+    .card-body a,.card-body a:link,.card-body a:visited { color:#ff2d95!important;text-decoration:underline!important }
+    .card-body a:hover,.card-body a:active { color:#ff6db5!important }
+    .card-body li { color:#cbd5e1!important }
+
+    /* Responsive */
+    @media only screen and (max-width:480px) {
+      .email-card { padding:32px 20px!important }
+      .email-btn-row { padding:24px 20px!important }
+      .email-heading { font-size:14px!important }
     }
   </style>
 </head>
-<body style="margin:0;padding:0;background:#0a0a0f;font-family:system-ui,-apple-system,sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
+
+<body style="margin:0;padding:0;background:#0a0a0f;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
   <center style="width:100%;table-layout:fixed;">
-    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background:#0d0d18;border:1px solid #ff2d95;box-shadow:0 0 20px rgba(255,45,149,0.3),0 0 60px rgba(0,212,255,0.1);">
-      <!-- header -->
-      <tr><td height="72" style="padding:0;background:linear-gradient(160deg,#ff2d95 28%,#0d0d18 28.5%);">
-        <table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td class="resp-pad" style="padding:22px 32px 0;text-align:right;">
-          <span style="font-size:20px;font-weight:900;color:#fff;letter-spacing:3px;text-transform:uppercase;">{{AppName}}</span>
-        </td></tr></table>
-      </td></tr>
-      <!-- greeting -->
-      <tr><td class="resp-pad" style="padding:8px 32px 0;text-align:right;">
-        <p style="margin:0;font-size:15px;color:#00d4ff;font-weight:600;"></p>
-      </td></tr>
-      <!-- body -->
-      <tr><td class="resp-pad" style="padding:8px 32px 24px;color:#e2e8f0;">
-        <p class="resp-font" style="margin:0 0 8px;font-size:14px;line-height:1.7;color:#cbd5e1;"><h2>{{.Repo.FullName}} - {{.Run.WorkflowID}}: {{.RunStatusText}}</h2><ul>{{range $job := .Jobs}}<li><a href="{{$job.HTMLURL}}">{{$job.Status}}: {{$job.Name}}{{if gt $job.Attempt 1}} (retry #{{$job.Attempt}}){{end}} - {{$job.Duration}}</a></li>{{end}}</ul></p>
-        <p class="resp-font" style="margin:0 0 24px;font-size:13px;color:#64748b;line-height:1.6;"></p>
-        
-        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin:0 0 24px;"><tr><td>
-          <a href="{{.Run.HTMLURL}}" class="resp-btn" style="display:inline-block;padding:13px 36px;font-size:14px;font-weight:700;color:#0a0a0f;text-decoration:none;background:linear-gradient(135deg,#ff2d95,#e0115f);border:1px solid #ff2d95;box-shadow:0 0 16px rgba(255,45,149,0.4);letter-spacing:1px;text-transform:uppercase;">{{.locale.Tr "mail.view_it_on" AppName}}</a>
-        </td></tr></table>
-        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid rgba(0,212,255,0.2);background:rgba(0,212,255,0.04);"><tr><td style="padding:14px 16px;">
-          <p style="margin:0 0 6px;font-size:12px;color:#00d4ff;"><span style="color:#64748b;">{{.locale.Tr "mail.link_not_working_do_paste"}}</span></p>
-          <p style="margin:0;font-size:11px;font-family:monospace;color:#00d4ff;background:rgba(0,0,0,0.3);padding:8px 10px;border:1px solid rgba(0,212,255,0.15);word-break:break-all;">{{.Run.HTMLURL}}</p>
-        </td></tr></table>
-      </td></tr>
-      <!-- footer -->
-      <tr><td style="padding:16px 32px;border-top:1px solid rgba(255,45,149,0.15);background:rgba(255,45,149,0.03);">
-        <p style="margin:0;font-size:11px;color:#475569;text-align:center;">&copy; <a href="{{AppUrl}}" style="color:#ff2d95;text-decoration:none;font-weight:600;">{{AppName}}</a> &mdash; Gitea Mail Templates</p>
-      </td></tr>
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" class="email-wrap">
+
+      <!-- Floating Title -->
+      <tr>
+        <td class="email-header">
+
+          <span class="email-brand">{{AppName}}</span>
+
+        </td>
+      </tr>
+
+      <!-- Card -->
+      <tr>
+        <td class="email-card card-body">
+
+          <p class="email-heading"></p>
+
+          <p class="email-text">
+            <h2>{{.Repo.FullName}} - {{.Run.WorkflowID}}: {{.RunStatusText}}</h2>
+            <ul>
+              {{range $job := .Jobs}}
+                <li>
+                  <a href="{{$job.HTMLURL}}">{{$job.Status}}: {{$job.Name}}{{if gt $job.Attempt 1}} (retry #{{$job.Attempt}}){{end}} - {{$job.Duration}}</a>
+                </li>
+              {{end}}
+            </ul>
+          </p>
+
+          <p class="email-subtext"></p>
+
+        </td>
+      </tr>
+
+      <!-- Divider -->
+      <tr>
+        <td class="email-divider"></td>
+      </tr>
+
+      <!-- Button & Link -->
+      <tr>
+        <td class="email-btn-row">
+
+          <table border="0" cellpadding="0" cellspacing="0" width="100%" class="email-btn-table">
+            <tr>
+              <td align="center">
+                <a href="{{.Run.HTMLURL}}" class="email-btn">{{.locale.Tr "mail.view_it_on" AppName}}</a>
+              </td>
+            </tr>
+          </table>
+
+          <table width="100%" cellpadding="0" cellspacing="0" border="0" class="email-link-box">
+            <tr>
+              <td style="padding:14px 16px;">
+                <p class="email-link-label">{{.locale.Tr "mail.link_not_working_do_paste"}}</p>
+                <p class="email-link-url">{{.Run.HTMLURL}}</p>
+              </td>
+            </tr>
+          </table>
+
+        </td>
+      </tr>
+
+      <!-- Footer -->
+      <tr>
+        <td class="email-footer">
+
+          <p class="email-footer-text">
+            &copy;
+            <a href="{{AppUrl}}" class="email-footer-link">{{AppName}}</a>
+            &mdash; Gitea Mail Templates
+          </p>
+
+        </td>
+      </tr>
+
     </table>
   </center>
 </body>

@@ -2,129 +2,207 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{.Subject}}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="x-apple-disable-message-reformatting" />
+
+  <title>
+    {{.Subject}}
+  </title>
+
   <style type="text/css">
-    body, .ExternalClass, .ReadMsgBody { background-color: #0d1117; }
-    blockquote { padding-left: 1em; margin: 1em 0; border-left: 2px solid #30363d; color: #8b949e; }
-    pre { background: #0d1117; padding: 12px; overflow-x: auto; font-size: 13px; line-height: 1.5; color: #c9d1d9; border: 1px solid #30363d; }
-    hr { border: none; border-top: 1px solid #30363d; margin: 20px 0; }
+    /* Base */
+    body,.ExternalClass,.ReadMsgBody { background-color:#0d1117 }
+    .email-wrap { max-width:600px;margin:40px auto;font-family:'JetBrains Mono','Fira Code','Consolas','Courier New',monospace }
+
+    /* Header */
+    .email-logo { display:block;margin:0 auto 14px;border:0;outline:none;opacity:0.5 }
+    .email-brand { font-size:16px;font-weight:700;color:#00ff41;letter-spacing:0.5px }
+    .email-header { padding:24px 28px 16px;text-align:left;border-bottom:2px solid #30363d;background:#161b22 }
+
+    /* Card */
+    .email-card { padding:28px 28px 20px;background:#161b22;color:#c9d1d9 }
+    .email-heading { margin:0 0 12px;font-size:15px;font-weight:400;color:#58a6ff;line-height:1.6 }
+    .email-text { margin:0 0 8px;font-size:14px;line-height:1.6;color:#c9d1d9;font-weight:400 }
+    .email-subtext { margin:0 0 20px;font-size:14px;line-height:1.6;color:#8b949e;font-weight:400 }
+
+    /* Divider */
+    .email-divider { height:2px;background:#30363d;margin:0 }
+
+    /* Button */
+    .email-btn-row { padding:28px 28px 20px;text-align:left;background:#161b22 }
+    .email-btn { display:inline-block;padding:11px 24px;font-size:14px;font-weight:700;color:#0d1117;text-decoration:none;background-color:#00ff41;border:2px solid #00ff41;font-family:'JetBrains Mono','Fira Code','Consolas',monospace;letter-spacing:0.5px }
+    .email-btn-table { margin:24px 0 20px;border-collapse:separate }
+
+    /* Fallback link */
+    .email-link-box { background:#0d1117;border:1px solid #30363d;margin:20px 0 12px }
+    .email-link-label { margin:0 0 6px;font-size:12px;color:#8b949e;font-weight:400 }
+    .email-link-url { margin:0;font-size:12px;color:#58a6ff;word-break:break-all;line-height:1.6 }
+
+    /* Footer */
+    .email-footer { padding:16px 28px 20px;text-align:left;border-top:1px solid #30363d;background:#0d1117 }
+    .email-footer-text { margin:0;font-size:12px;color:#484f58;font-weight:400 }
+    .email-footer-link { color:#58a6ff;text-decoration:none;font-weight:400 }
+
+    /* Typography utilities */
+    .card-body h1,.card-body h2,.card-body h3,.card-body h4,.card-body h5,.card-body h6 { color:#58a6ff!important }
+    .card-body a,.card-body a:link,.card-body a:visited { color:#58a6ff!important;text-decoration:underline!important }
+    .card-body a:hover,.card-body a:active { color:#79c0ff!important }
+    .card-body li { color:#c9d1d9!important }
+    .card-body blockquote { padding-left:1em;margin:1em 0;border-left:2px solid #30363d;color:#8b949e }
+    .card-body pre { background:#0d1117;padding:12px;overflow-x:auto;font-size:13px;line-height:1.5;color:#c9d1d9;border:1px solid #30363d }
+    .card-body hr { border:none;border-top:1px solid #30363d;margin:20px 0 }
+    .card-body img { border:0;max-width:100% }
+
+    /* Responsive */
+    @media only screen and (max-width:480px) {
+      .email-card { padding:20px 16px!important }
+      .email-btn-row { padding:20px 16px!important }
+      .email-heading { font-size:14px!important }
+    }
   </style>
 </head>
-<body style="margin:0; padding:0; background-color:#0d1117; font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Courier New', monospace; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%;">
 
-  <center style="width:100%; table-layout:fixed;">
-    <div style="max-width:600px; margin:20px auto; background:#161b22; border:2px solid #30363d;">
+<body style="margin:0;padding:0;background:#0d1117;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
+  <center style="width:100%;table-layout:fixed;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" class="email-wrap">
 
-      <div style="padding:24px 28px 16px; border-bottom:2px solid #30363d;">
-        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
-          <tr>
-            <td style="vertical-align:middle;">
-              <span style="font-size:16px; font-weight:700; color:#00ff41; letter-spacing:0.5px;">&gt; {{AppName}}</span>
-            </td>
-          </tr>
-        </table>
-      </div>
+      <!-- Floating Title -->
+      <tr>
+        <td class="email-header">
 
-      <div style="padding:28px 28px 20px; color:#c9d1d9;">
-        {{if .IsMention}}<p style="margin:0 0 16px; font-size:14px; line-height:1.6; color:#c9d1d9;">{{.locale.Tr "mail.issue.x_mentioned_you" .Doer.Name}}</p>{{end}}
-        {{if eq .ActionName "push"}}
-          <p style="margin:0 0 16px; font-size:14px; line-height:1.6; color:#c9d1d9;">
-          {{if .Comment.IsForcePush}}
-            {{$oldCommitUrl := printf "%s/commit/%s" .Comment.Issue.PullRequest.BaseRepo.HTMLURL .Comment.OldCommit}}
-            {{$oldShortSha := ShortSha .Comment.OldCommit}}
-            {{$oldCommitLink := HTMLFormat "<a href='%[1]s' style='color:#58a6ff; text-decoration:none; font-weight:700;'>%[2]s</a>" $oldCommitUrl $oldShortSha}}
+          <span class="email-brand">&gt; {{AppName}}</span>
 
-            {{$newCommitUrl := printf "%s/commit/%s" .Comment.Issue.PullRequest.BaseRepo.HTMLURL .Comment.NewCommit}}
-            {{$newShortSha := ShortSha .Comment.NewCommit}}
-            {{$newCommitLink := HTMLFormat "<a href='%[1]s' style='color:#58a6ff; text-decoration:none; font-weight:700;'>%[2]s</a>" $newCommitUrl $newShortSha}}
+        </td>
+      </tr>
 
-            {{.locale.Tr "mail.issue.action.force_push" .Doer.Name .Comment.Issue.PullRequest.HeadBranch $oldCommitLink $newCommitLink}}
-          {{else}}
-            {{.locale.TrN (len .Comment.Commits) "mail.issue.action.push_1" "mail.issue.action.push_n" .Doer.Name .Comment.Issue.PullRequest.HeadBranch (len .Comment.Commits)}}
-          {{end}}
+      <!-- Card -->
+      <tr>
+        <td class="email-card card-body">
+
+          <p class="email-heading"></p>
+
+          <p class="email-text">
+            {{if .IsMention}}
+              <p>{{.locale.Tr "mail.issue.x_mentioned_you" .Doer.Name}}</p>
+            {{end}}
+
+            {{if eq .ActionName "push"}}
+              <p>
+                {{if .Comment.IsForcePush}}
+                  {{$oldCommitUrl := printf "%s/commit/%s" .Comment.Issue.PullRequest.BaseRepo.HTMLURL .Comment.OldCommit}}
+                  {{$oldShortSha := ShortSha .Comment.OldCommit}}
+                  {{$oldCommitLink := HTMLFormat "<a href=\047%[1]s\047>%[2]s</a>" $oldCommitUrl $oldShortSha}}
+                  {{$newCommitUrl := printf "%s/commit/%s" .Comment.Issue.PullRequest.BaseRepo.HTMLURL .Comment.NewCommit}}
+                  {{$newShortSha := ShortSha .Comment.NewCommit}}
+                  {{$newCommitLink := HTMLFormat "<a href=\047%[1]s\047>%[2]s</a>" $newCommitUrl $newShortSha}}
+                  {{.locale.Tr "mail.issue.action.force_push" .Doer.Name .Comment.Issue.PullRequest.HeadBranch $oldCommitLink $newCommitLink}}
+                {{else}}
+                  {{.locale.TrN (len .Comment.Commits) "mail.issue.action.push_1" "mail.issue.action.push_n" .Doer.Name .Comment.Issue.PullRequest.HeadBranch (len .Comment.Commits)}}
+                {{end}}
+              </p>
+            {{end}}
+
+            <p>
+              {{if eq .ActionName "close"}}
+                {{.locale.Tr "mail.issue.action.close" .Doer.Name .Issue.Index}}
+              {{else if eq .ActionName "reopen"}}
+                {{.locale.Tr "mail.issue.action.reopen" .Doer.Name .Issue.Index}}
+              {{else if eq .ActionName "merge"}}
+                {{.locale.Tr "mail.issue.action.merge" .Doer.Name .Issue.Index .Issue.PullRequest.BaseBranch}}
+              {{else if eq .ActionName "approve"}}
+                {{.locale.Tr "mail.issue.action.approve" .Doer.Name}}
+              {{else if eq .ActionName "reject"}}
+                {{.locale.Tr "mail.issue.action.reject" .Doer.Name}}
+              {{else if eq .ActionName "review"}}
+                {{.locale.Tr "mail.issue.action.review" .Doer.Name}}
+              {{else if eq .ActionName "review_dismissed"}}
+                {{.locale.Tr "mail.issue.action.review_dismissed" .Doer.Name .Comment.Review.Reviewer.Name}}
+              {{else if eq .ActionName "ready_for_review"}}
+                {{.locale.Tr "mail.issue.action.ready_for_review" .Doer.Name}}
+              {{end}}
+              {{- if eq .Body ""}}
+                {{if eq .ActionName "new"}}
+                  {{.locale.Tr "mail.issue.action.new" .Doer.Name .Issue.Index}}
+                {{end}}
+              {{else}}
+                <span>{{.Body}}</span>
+              {{end -}}
+            </p>
+
+            {{- range .ReviewComments}}
+              <hr>
+              <p>{{$.locale.Tr "mail.issue.in_tree_path" .TreePath}}</p>
+              <pre>{{.Patch}}</pre>
+              <div>{{.RenderedContent}}</div>
+            {{end -}}
+
+            {{if eq .ActionName "push"}}
+              <ul>
+                {{range .Comment.Commits}}
+                  <li>
+                    <a href="{{$.Comment.Issue.PullRequest.BaseRepo.HTMLURL}}/commit/{{.ID}}">{{ShortSha .ID.String}}</a> - {{.MessageTitle}}
+                  </li>
+                {{end}}
+              </ul>
+            {{end}}
           </p>
-        {{end}}
-        <p style="margin:0 0 16px; font-size:14px; line-height:1.6; color:#c9d1d9;">
-        {{if eq .ActionName "close"}}
-          {{.locale.Tr "mail.issue.action.close" .Doer.Name .Issue.Index}}
-        {{else if eq .ActionName "reopen"}}
-          {{.locale.Tr "mail.issue.action.reopen" .Doer.Name .Issue.Index}}
-        {{else if eq .ActionName "merge"}}
-          {{.locale.Tr "mail.issue.action.merge" .Doer.Name .Issue.Index .Issue.PullRequest.BaseBranch}}
-        {{else if eq .ActionName "approve"}}
-          {{.locale.Tr "mail.issue.action.approve" .Doer.Name}}
-        {{else if eq .ActionName "reject"}}
-          {{.locale.Tr "mail.issue.action.reject" .Doer.Name}}
-        {{else if eq .ActionName "review"}}
-          {{.locale.Tr "mail.issue.action.review" .Doer.Name}}
-        {{else if eq .ActionName "review_dismissed"}}
-          {{.locale.Tr "mail.issue.action.review_dismissed" .Doer.Name .Comment.Review.Reviewer.Name}}
-        {{else if eq .ActionName "ready_for_review"}}
-          {{.locale.Tr "mail.issue.action.ready_for_review" .Doer.Name}}
-        {{end}}
 
-        {{- if eq .Body ""}}
-          {{if eq .ActionName "new"}}
-            {{.locale.Tr "mail.issue.action.new" .Doer.Name .Issue.Index}}
-          {{end}}
-        {{else}}
-          {{.Body}}
-        {{end -}}
-        </p>
+          <p class="email-subtext"></p>
 
-        {{- range .ReviewComments}}
-          <hr>
-          <p style="margin:8px 0; font-size:13px; color:#8b949e;">{{$.locale.Tr "mail.issue.in_tree_path" .TreePath}}</p>
-          <div style="padding-left: 1em; margin: 1em 0;">
-            <pre>{{.Patch}}</pre>
-            <div style="margin-top:8px; font-size:14px; line-height:1.6;">{{.RenderedContent}}</div>
-          </div>
-        {{end -}}
+        </td>
+      </tr>
 
-        {{if eq .ActionName "push"}}
-          <ul style="margin:16px 0; padding-left:18px;">
-          {{range .Comment.Commits}}
-            <li style="margin-bottom:6px; font-size:14px;">
-              <a href="{{$.Comment.Issue.PullRequest.BaseRepo.HTMLURL}}/commit/{{.ID}}" style="color:#58a6ff; text-decoration:none; font-weight:700;">
-                {{ShortSha .ID.String}}
-              </a>  —  {{.MessageTitle}}
-            </li>
-          {{end}}
-          </ul>
-        {{end}}
+      <!-- Divider -->
+      <tr>
+        <td class="email-divider"></td>
+      </tr>
 
-        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin:24px 0 20px; border-collapse:separate;">
-          <tr>
-            <td align="left">
-              <a href="{{.Link}}" style="display:inline-block; padding:11px 24px; font-size:14px; font-weight:700; color:#0d1117; text-decoration:none; background-color:#00ff41; border:2px solid #00ff41; font-family:'JetBrains Mono','Fira Code','Consolas',monospace; letter-spacing:0.5px;">{{.locale.Tr "mail.view_it_on" AppName}}</a>
-            </td>
-          </tr>
-        </table>
+      <!-- Button & Link -->
+      <tr>
+        <td class="email-btn-row">
 
-        <div style="background:#0d1117; border:1px solid #30363d; padding:14px 16px; margin:20px 0 12px;">
-          <p style="margin:0 0 6px; font-size:12px; color:#8b949e;">
-            {{.locale.Tr "mail.link_not_working_do_paste"}}
+          <table border="0" cellpadding="0" cellspacing="0" width="100%" class="email-btn-table">
+            <tr>
+              <td align="left">
+                <a href="{{.Link}}" class="email-btn">{{.locale.Tr "mail.view_it_on" AppName}}</a>
+              </td>
+            </tr>
+          </table>
+
+          <table width="100%" cellpadding="0" cellspacing="0" border="0" class="email-link-box">
+            <tr>
+              <td style="padding:14px 16px;">
+                <p class="email-link-label">{{.locale.Tr "mail.link_not_working_do_paste"}}</p>
+                <p class="email-link-url">
+                  ┌─<br>
+                  │ {{.Link}}<br>
+                  └─
+                </p>
+              </td>
+            </tr>
+          </table>
+
+        </td>
+      </tr>
+
+      <!-- Footer -->
+      <tr>
+        <td class="email-footer">
+
+          <p class="email-footer-text">
+            <span style="color:#8b949e;">#</span> &copy;
+            <a href="{{AppUrl}}" class="email-footer-link">{{AppName}}</a>
+            {{if .CanReply}}&nbsp;{{.locale.Tr "mail.reply"}}{{end}}
           </p>
-          <p style="margin:0; font-size:12px; color:#58a6ff; word-break:break-all; line-height:1.6;">
-            ┌─<br>
-            │ {{.Link}}<br>
-            └─
+
+          <p class="email-footer-text" style="margin:4px 0 0;font-size:11px;">
+            <span style="color:#8b949e;">#</span> if (!$expecting) { ignore(); }
           </p>
-        </div>
-      </div>
 
-      <div style="padding:16px 28px 20px; border-top:1px solid #30363d; background:#0d1117;">
-        <p style="margin:0; font-size:12px; color:#484f58;">
-          <span style="color:#8b949e;">#</span> &copy; <a href="{{AppUrl}}" style="color:#58a6ff; text-decoration:none;">{{AppName}}</a>{{if .CanReply}}&nbsp;{{.locale.Tr "mail.reply"}}{{end}}
-        </p>
-        <p style="margin:4px 0 0; font-size:11px; color:#484f58;">
-          <span style="color:#8b949e;">#</span> if (!$expecting) { ignore(); }
-        </p>
-      </div>
+        </td>
+      </tr>
 
-    </div>
+    </table>
   </center>
-
 </body>
 </html>

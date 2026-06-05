@@ -4,53 +4,131 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="x-apple-disable-message-reformatting" />
-  <title>{{.Subject}}</title>
+
+  <title>
+    {{.Subject}}
+  </title>
+
   <style type="text/css">
-    body,.ExternalClass,.ReadMsgBody{background-color:#fafafa}
-    @media only screen and (max-width:480px){
-      .resp-pad{padding-left:16px!important;padding-right:16px!important}
-      .resp-full{width:100%!important;display:block!important}
-      .resp-hide{display:none!important}
-      .resp-btn{display:block!important;width:auto!important}
-      .resp-heading{font-size:22px!important}
+    /* Base */
+    body,.ExternalClass,.ReadMsgBody { background-color:#fafafa }
+    .email-wrap { max-width:600px;margin:20px auto;font-family:system-ui,-apple-system,sans-serif;background:#fff;border:2px solid #000 }
+
+    /* Header */
+    .email-logo { display:inline-block;vertical-align:middle;margin-right:8px;border:0;outline:none }
+    .email-brand { font-size:14px;font-weight:900;color:#000;letter-spacing:-0.5px;text-transform:uppercase }
+    .email-brand-star { color:#e03131;margin-left:4px }
+    .email-header { padding:24px 32px 0 }
+
+    /* Card */
+    .email-card { padding:32px 0 0;vertical-align:top }
+    .email-heading { margin:0 0 32px;font-size:28px;font-weight:900;color:#000;line-height:1.1;letter-spacing:-1px }
+    .email-text { margin:0 0 8px;font-size:13px;line-height:1.8;color:#333;font-weight:500 }
+    .email-subtext { margin:0 0 32px;font-size:12px;line-height:1.8;color:#888;border-left:2px solid #e03131;padding-left:12px }
+
+    /* Button */
+    .email-btn-row { padding:0 32px 24px }
+    .email-btn { display:inline-block;padding:14px 32px;font-size:14px;font-weight:900;color:#000;text-decoration:none;border:2px solid #000;letter-spacing:-0.3px;text-transform:uppercase }
+    .email-btn-table { margin:0 }
+
+    /* Fallback link */
+    .email-link-box { margin-top:24px;border:1px solid #ccc;background:#f5f5f5 }
+    .email-link-label { margin:0 0 6px;font-size:11px;color:#888 }
+    .email-link-url { margin:0;font-size:11px;font-family:monospace;color:#000;background:#fff;padding:8px 10px;border:1px solid #000;word-break:break-all }
+
+    /* Footer */
+    .email-footer { padding:16px 32px;border-top:2px solid #000 }
+    .email-footer-text { margin:0;font-size:11px;color:#888 }
+    .email-footer-link { color:#e03131;text-decoration:underline;font-weight:600 }
+
+    /* Typography utilities */
+    .card-body a,.card-body a:link,.card-body a:visited { color:#000!important;text-decoration:underline!important;font-weight:600!important }
+
+    /* Responsive */
+    @media only screen and (max-width:480px) {
+      .email-header { padding-left:16px!important;padding-right:16px!important }
+      .email-card { width:100%!important;display:block!important }
+      .resp-hide { display:none!important }
+      .email-btn { display:block!important;width:auto!important }
+      .email-heading { font-size:22px!important }
+      .email-footer { padding-left:16px!important;padding-right:16px!important }
     }
   </style>
 </head>
-<body style="margin:0;padding:0;background:#fafafa;font-family:system-ui,-apple-system,sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
-  <center style="width:100%;table-layout:fixed;">
-    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background:#fff;border:2px solid #000;">
-      <!-- header -->
-      <tr><td class="resp-pad" style="padding:24px 32px 0;">
-        <span style="font-size:14px;font-weight:900;color:#000;letter-spacing:-0.5px;text-transform:uppercase;">{{AppName}}<span style="color:#e03131;margin-left:4px;">*</span></span>
-      </td></tr>
-      <!-- split: left 60% content, right 40% whitespace -->
-      <tr><td class="resp-pad" style="padding:0 32px 0;">
-        <table width="100%" cellpadding="0" cellspacing="0" border="0">
-          <tr>
-            <td class="resp-full" width="60%" style="padding:32px 0 0;">
-              <p class="resp-heading" style="margin:0 0 32px;font-size:28px;font-weight:900;color:#000;line-height:1.1;letter-spacing:-1px;"></p>
-              <p style="margin:0 0 8px;font-size:13px;line-height:1.8;color:#333;font-weight:500;">{{$repo_url := HTMLFormat "<a href=\047%s\047>%s</a>" .Issue.Repo.HTMLURL .Issue.Repo.FullName}}{{$link := HTMLFormat "<a href=\047%s\047>#%d</a>" .Link .Issue.Index}}{{if .IsPull}}{{.locale.Tr "mail.issue_assigned.pull" .Doer.Name $link $repo_url}}{{else}}{{.locale.Tr "mail.issue_assigned.issue" .Doer.Name $link $repo_url}}{{end}}</p>
-              <p style="margin:0 0 32px;font-size:12px;line-height:1.8;color:#888;border-left:2px solid #e03131;padding-left:12px;"></p>
-            </td>
-            <td class="resp-hide" width="40%" style="padding:32px 0 0 0;vertical-align:top;"></td>
-          </tr>
-        </table>
-      </td></tr>
-      <!-- button -->
-      <tr><td class="resp-pad" style="padding:0 32px 24px;">
 
-        <table border="0" cellpadding="0" cellspacing="0"><tr><td style="border:2px solid #000;padding:14px 32px;">
-          <a href="{{.Link}}" class="resp-btn" style="display:inline-block;font-size:14px;font-weight:900;color:#000;text-decoration:none;letter-spacing:-0.3px;">{{.locale.Tr "mail.view_it_on" AppName}}</a>
-        </td></tr></table>
-        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:24px 0 0;"><tr><td style="padding:12px 16px;background:#f5f5f5;border:1px solid #ccc;">
-          <p style="margin:0 0 6px;font-size:11px;color:#888;">{{.locale.Tr "mail.link_not_working_do_paste"}}</p>
-          <p style="margin:0;font-size:11px;font-family:monospace;color:#000;background:#fff;padding:8px 10px;border:1px solid #000;word-break:break-all;">{{.Link}}</p>
-        </td></tr></table>
-      </td></tr>
-      <!-- footer -->
-      <tr><td style="padding:16px 32px;border-top:2px solid #000;">
-        <p style="margin:0;font-size:11px;color:#888;"><a href="{{AppUrl}}" style="color:#e03131;text-decoration:underline;font-weight:600;">{{AppName}}</a> &mdash; Gitea Mail Templates</p>
-      </td></tr>
+<body style="margin:0;padding:0;background:#fafafa;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
+  <center style="width:100%;table-layout:fixed;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" class="email-wrap">
+
+      <!-- Floating Title -->
+      <tr>
+        <td class="email-header">
+
+          <span class="email-brand">{{AppName}}<span class="email-brand-star">*</span></span>
+
+        </td>
+      </tr>
+
+      <!-- Card -->
+      <tr>
+        <td class="resp-pad" style="padding:0 32px;">
+          <table width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td width="60%" class="email-card card-body">
+
+                {{$repo_url := HTMLFormat "<a href='%s'>%s</a>" .Issue.Repo.HTMLURL .Issue.Repo.FullName}}
+                {{$link := HTMLFormat "<a href='%s'>#%d</a>" .Link .Issue.Index}}
+                <p class="email-heading">
+                  {{if .IsPull}}
+                    {{.locale.Tr "mail.issue_assigned.pull" .Doer.Name $link $repo_url}}
+                  {{else}}
+                    {{.locale.Tr "mail.issue_assigned.issue" .Doer.Name $link $repo_url}}
+                  {{end}}
+                </p>
+
+              </td>
+              <td width="40%" class="resp-hide" style="padding:32px 0 0;vertical-align:top;"></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+
+      <!-- Button & Link -->
+      <tr>
+        <td class="email-btn-row">
+
+          <table border="0" cellpadding="0" cellspacing="0" class="email-btn-table">
+            <tr>
+              <td>
+                <a href="{{.Link}}" class="email-btn">{{.locale.Tr "mail.view_it_on" AppName}}</a>
+              </td>
+            </tr>
+          </table>
+
+          <table width="100%" cellpadding="0" cellspacing="0" border="0" class="email-link-box">
+            <tr>
+              <td style="padding:12px 16px;">
+                <p class="email-link-label">{{.locale.Tr "mail.link_not_working_do_paste"}}</p>
+                <p class="email-link-url">{{.Link}}</p>
+              </td>
+            </tr>
+          </table>
+
+        </td>
+      </tr>
+
+      <!-- Footer -->
+      <tr>
+        <td class="email-footer">
+
+          <p class="email-footer-text">
+            <a href="{{AppUrl}}" class="email-footer-link">{{AppName}}</a>
+            &mdash; Gitea Mail Templates
+          </p>
+
+        </td>
+      </tr>
+
     </table>
   </center>
 </body>

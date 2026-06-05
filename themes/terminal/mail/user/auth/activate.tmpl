@@ -2,69 +2,146 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{.locale.Tr "mail.activate_account.title" (.DisplayName|DotEscape)}}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="x-apple-disable-message-reformatting" />
+
+  <title>
+    {{.locale.Tr "mail.activate_account.title" (.DisplayName|DotEscape)}}
+  </title>
+
   <style type="text/css">
-    body, .ExternalClass, .ReadMsgBody { background-color: #0d1117; }
+    /* Base */
+    body,.ExternalClass,.ReadMsgBody { background-color:#0d1117 }
+    .email-wrap { max-width:600px;margin:40px auto;font-family:'JetBrains Mono','Fira Code','Consolas','Courier New',monospace }
+
+    /* Header */
+    .email-logo { display:block;margin:0 auto 14px;border:0;outline:none;opacity:0.5 }
+    .email-brand { font-size:16px;font-weight:700;color:#00ff41;letter-spacing:0.5px }
+    .email-header { padding:24px 28px 16px;text-align:left;border-bottom:2px solid #30363d;background:#161b22 }
+
+    /* Card */
+    .email-card { padding:28px 28px 20px;background:#161b22;color:#c9d1d9 }
+    .email-heading { margin:0 0 12px;font-size:15px;font-weight:400;color:#58a6ff;line-height:1.6 }
+    .email-text { margin:0 0 8px;font-size:14px;line-height:1.6;color:#c9d1d9;font-weight:400 }
+    .email-subtext { margin:0 0 20px;font-size:14px;line-height:1.6;color:#8b949e;font-weight:400 }
+
+    /* Divider */
+    .email-divider { height:2px;background:#30363d;margin:0 }
+
+    /* Button */
+    .email-btn-row { padding:28px 28px 20px;text-align:left;background:#161b22 }
+    .email-btn { display:inline-block;padding:11px 24px;font-size:14px;font-weight:700;color:#0d1117;text-decoration:none;background-color:#00ff41;border:2px solid #00ff41;font-family:'JetBrains Mono','Fira Code','Consolas',monospace;letter-spacing:0.5px }
+    .email-btn-table { margin:24px 0 20px;border-collapse:separate }
+
+    /* Fallback link */
+    .email-link-box { background:#0d1117;border:1px solid #30363d;margin:20px 0 12px }
+    .email-link-label { margin:0 0 6px;font-size:12px;color:#8b949e;font-weight:400 }
+    .email-link-url { margin:0;font-size:12px;color:#58a6ff;word-break:break-all;line-height:1.6 }
+
+    /* Footer */
+    .email-footer { padding:16px 28px 20px;text-align:left;border-top:1px solid #30363d;background:#0d1117 }
+    .email-footer-text { margin:0;font-size:12px;color:#484f58;font-weight:400 }
+    .email-footer-link { color:#58a6ff;text-decoration:none;font-weight:400 }
+
+    /* Typography utilities */
+    .card-body h1,.card-body h2,.card-body h3,.card-body h4,.card-body h5,.card-body h6 { color:#58a6ff!important }
+    .card-body a,.card-body a:link,.card-body a:visited { color:#58a6ff!important;text-decoration:underline!important }
+    .card-body a:hover,.card-body a:active { color:#79c0ff!important }
+    .card-body li { color:#c9d1d9!important }
+
+    /* Responsive */
+    @media only screen and (max-width:480px) {
+      .email-card { padding:20px 16px!important }
+      .email-btn-row { padding:20px 16px!important }
+      .email-heading { font-size:14px!important }
+    }
   </style>
 </head>
-<body style="margin:0; padding:0; background-color:#0d1117; font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Courier New', monospace; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%;">
 
-  <center style="width:100%; table-layout:fixed;">
-    <div style="max-width:600px; margin:20px auto; background:#161b22; border:2px solid #30363d;">
+<body style="margin:0;padding:0;background:#0d1117;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
+  <center style="width:100%;table-layout:fixed;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" class="email-wrap">
 
-      <div style="padding:24px 28px 16px; border-bottom:2px solid #30363d;">
-        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
-          <tr>
-            <td style="vertical-align:middle;">
-              <span style="font-size:16px; font-weight:700; color:#00ff41; letter-spacing:0.5px;">&gt; {{AppName}}</span>
-            </td>
-          </tr>
-        </table>
-      </div>
+      <!-- Floating Title -->
+      <tr>
+        <td class="email-header">
 
-      <div style="padding:28px 28px 20px; color:#c9d1d9;">
-        <p style="margin:0 0 12px; font-size:15px; line-height:1.6; color:#58a6ff;">
-          {{.locale.Tr "mail.hi_user_x" (.DisplayName|DotEscape)}}
-        </p>
-        <p style="margin:0 0 8px; font-size:14px; line-height:1.6; color:#c9d1d9;">
-          {{.locale.Tr "mail.activate_account.text_1" (.DisplayName|DotEscape) AppName}}
-        </p>
-        <p style="margin:0 0 20px; font-size:14px; line-height:1.6; color:#8b949e;">
-          {{.locale.Tr "mail.activate_account.text_2" .ActiveCodeLives}}
-        </p>
+          <span class="email-brand">&gt; {{AppName}}</span>
 
-        {{$activate_url := printf "%suser/activate?code=%s" AppUrl (QueryEscape .Code)}}
-        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="margin:24px 0 20px; border-collapse:separate;">
-          <tr>
-            <td align="left">
-              <a href="{{$activate_url}}" style="display:inline-block; padding:11px 24px; font-size:14px; font-weight:700; color:#0d1117; text-decoration:none; background-color:#00ff41; border:2px solid #00ff41; font-family:'JetBrains Mono','Fira Code','Consolas',monospace; letter-spacing:0.5px;">$ activate_account</a>
-            </td>
-          </tr>
-        </table>
+        </td>
+      </tr>
 
-        <div style="background:#0d1117; border:1px solid #30363d; padding:14px 16px; margin:20px 0 12px;">
-          <p style="margin:0 0 6px; font-size:12px; color:#8b949e;"><span style="color:#8b949e;">{{.locale.Tr "mail.link_not_working_do_paste"}}</span>
+      <!-- Card -->
+      <tr>
+        <td class="email-card card-body">
+
+          <p class="email-heading">
+            {{.locale.Tr "mail.hi_user_x" (.DisplayName|DotEscape)}}
           </p>
-          <p style="margin:0; font-size:12px; color:#58a6ff; word-break:break-all; line-height:1.6;">
-            ┌─<br>
-            │ {{$activate_url}}<br>
-            └─
+
+          <p class="email-text">
+            {{.locale.Tr "mail.activate_account.text_1" (.DisplayName|DotEscape) AppName}}
           </p>
-        </div>
-      </div>
 
-      <div style="padding:16px 28px 20px; border-top:1px solid #30363d; background:#0d1117;">
-        <p style="margin:0; font-size:12px; color:#484f58;">
-          <span style="color:#8b949e;">#</span> &copy; <a href="{{AppUrl}}" style="color:#58a6ff; text-decoration:none;">{{AppName}}</a>
-        </p>
-        <p style="margin:4px 0 0; font-size:11px; color:#484f58;">
-          <span style="color:#8b949e;">#</span> if (!$expecting) { ignore(); }
-        </p>
-      </div>
+          <p class="email-subtext">
+            {{.locale.Tr "mail.activate_account.text_2" .ActiveCodeLives}}
+          </p>
 
-    </div>
+        </td>
+      </tr>
+
+      <!-- Divider -->
+      <tr>
+        <td class="email-divider"></td>
+      </tr>
+
+      <!-- Button & Link -->
+      <tr>
+        <td class="email-btn-row">
+
+          {{$activate_url := printf "%suser/activate?code=%s" AppUrl (QueryEscape .Code)}}
+
+          <table border="0" cellpadding="0" cellspacing="0" width="100%" class="email-btn-table">
+            <tr>
+              <td align="left">
+                <a href="{{$activate_url}}" class="email-btn">{{.locale.Tr "mail.activate_account"}}</a>
+              </td>
+            </tr>
+          </table>
+
+          <table width="100%" cellpadding="0" cellspacing="0" border="0" class="email-link-box">
+            <tr>
+              <td style="padding:14px 16px;">
+                <p class="email-link-label">{{.locale.Tr "mail.link_not_working_do_paste"}}</p>
+                <p class="email-link-url">
+                  ┌─<br>
+                  │ {{$activate_url}}<br>
+                  └─
+                </p>
+              </td>
+            </tr>
+          </table>
+
+        </td>
+      </tr>
+
+      <!-- Footer -->
+      <tr>
+        <td class="email-footer">
+
+          <p class="email-footer-text">
+            <span style="color:#8b949e;">#</span> &copy;
+            <a href="{{AppUrl}}" class="email-footer-link">{{AppName}}</a>
+          </p>
+
+          <p class="email-footer-text" style="margin:4px 0 0;font-size:11px;">
+            <span style="color:#8b949e;">#</span> if (!$expecting) { ignore(); }
+          </p>
+
+        </td>
+      </tr>
+
+    </table>
   </center>
-
 </body>
 </html>
