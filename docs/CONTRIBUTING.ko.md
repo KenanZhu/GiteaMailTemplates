@@ -55,7 +55,15 @@ cd tools && go run . dev
 
 ### 통합 테스트
 
-Gitea에 배포: **Site Administration > Configuration > Mailer > Send Test Email**
+Gitea에 배포 후 실제 트랜잭션 이메일로 검증하세요. 관리자 테스트 이메일
+（**Site Administration > Configuration > Mailer > Send Test Email**）은 커스텀
+메일 템플릿을 사용하지 않습니다——내장 코드 경로를 따릅니다.
+
+가장 확실한 방법은 실제 알림을 트리거하는 것입니다. 예를 들어, 비밀번호 재설정 흐름:
+
+1. 로그아웃 후 로그인 페이지에서 **"Forgot password"** 클릭
+2. 계정 이메일을 입력하고 제출
+3. 비밀번호 재설정 이메일 확인——커스텀 메일 템플릿으로 렌더링됩니다
 
 ---
 

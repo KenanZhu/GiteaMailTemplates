@@ -59,8 +59,15 @@ cd tools && go run . dev
 
 ### 整合測試
 
-將模板部署至 Gitea 實例，使用管理後台的測試郵件功能：
-**Site Administration > Configuration > Mailer > Send Test Email**
+將模板部署至 Gitea 實例後，請透過真實的郵件通知進行驗證。管理後台的測試郵件
+（**Site Administration > Configuration > Mailer > Send Test Email**）不會使用
+自訂郵件模板——它走的是內置程式碼路徑。
+
+最可靠的驗證方式是觸發一次真實的郵件通知，推薦使用密碼重設流程：
+
+1. 登出帳號，點擊登入頁的**"忘記密碼"**
+2. 輸入帳戶郵箱並提交
+3. 查看密碼重設郵件——它將使用你的自訂郵件模板渲染
 
 ---
 

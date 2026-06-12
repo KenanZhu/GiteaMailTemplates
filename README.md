@@ -29,7 +29,7 @@ Every template is a drop-in replacement. All Go template variables, translation 
 | ![Ink](docs/images/ink.png) | **Ink** | Publishing / News / Literature | Editorial print, navy & gold, newspaper layout, drop caps |
 | ![Aurora](docs/images/aurora.png) | **Aurora** | Premium SaaS / Mindfulness | Ethereal light gradients, deep purple & teal, atmospheric glow |
 
-> Images are 600px screenshots from the [live preview](preview/index.html). See [docs/images/README.md](docs/images/README.md) for capture instructions.
+> Images are screenshots from the [live preview](preview/index.html). See [docs/images/README.md](docs/images/README.md) for capture instructions.
 
 [**Live preview gallery**](preview/index.html) — open in a browser for an interactive style switcher with desktop/mobile viewports and email client simulation (Modern, Gmail, Outlook, Raw source).
 
@@ -71,8 +71,10 @@ systemctl restart gitea
 
 ### Confirming It Works
 
-Send a test email from the Gitea admin panel:
-**Site Administration > Configuration > Mailer > Send Test Email**
+The admin test email does not use custom mail templates. To verify your templates
+are active, trigger a real email notification. The quickest way is the password
+reset flow: log out, click **"Forgot password"** on the login page, and check the
+reset email — it will render with your custom styles.
 
 ---
 
@@ -168,7 +170,7 @@ gitea-mail-templates/
 
 ## Compatibility
 
-- **Gitea 1.21+** (all versions with Go 1.21 template support)
+- **Gitea 1.25+** — matches the refactored mail template directory structure introduced in v1.25
 - 100% variable-compatible with official Gitea templates
 - Uses only built-in Gitea template functions
 - Uses only official Gitea translation keys

@@ -55,7 +55,15 @@ cd tools && go run . dev
 
 ### 結合テスト
 
-Gitea にデプロイ: **Site Administration > Configuration > Mailer > Send Test Email**
+Gitea にデプロイ後、実際のトランザクションメールで検証してください。管理画面のテストメール
+（**Site Administration > Configuration > Mailer > Send Test Email**）はカスタム
+メールテンプレートを使用しません——組み込みのコードパスを通ります。
+
+最も確実な方法は実際の通知をトリガーすることです。例えば、パスワードリセットフロー：
+
+1. ログアウトし、ログインページで **"Forgot password"** をクリック
+2. アカウントのメールアドレスを入力して送信
+3. パスワードリセットメールを確認——カスタムメールテンプレートでレンダリングされます
 
 ---
 

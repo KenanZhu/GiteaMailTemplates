@@ -34,6 +34,13 @@ cp -r themes/horizon/mail/* /var/lib/gitea/custom/templates/mail/
 systemctl restart gitea
 ```
 
+### 작동 확인
+
+관리자 테스트 이메일은 커스텀 템플릿을 사용하지 않습니다. 템플릿이 활성화
+되었는지 확인하려면 실제 이메일 알림을 트리거하세요. 가장 빠른 방법은 비밀번호
+재설정입니다: 로그아웃 후 로그인 페이지에서 **"Forgot password"** 를 클릭하고
+재설정 이메일을 확인하세요.
+
 ## 프리뷰
 
 **정적 모드:**
@@ -53,7 +60,7 @@ cd tools && go run . dev     # Node.js 필요
 
 ## 호환성
 
-- **Gitea 1.21+**, 100% 호환, 내장 함수만 사용
+- **Gitea 1.25+**, 100% 호환, 내장 함수만 사용
 
 ## 라이선스
 

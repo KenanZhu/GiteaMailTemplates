@@ -70,25 +70,35 @@ cd tools && go run . dev
 
 ### Integration Testing
 
-Deploy the templates to a Gitea instance and use the admin test email feature:
-**Site Administration > Configuration > Mailer > Send Test Email**
+Deploy the templates to a Gitea instance and verify with real transactional emails.
+The admin test email (**Site Administration > Configuration > Mailer > Send Test Email**)
+does not use custom mail templates — it follows a built-in code path.
+
+The most reliable method is to trigger a real notification. For example, the password
+reset flow:
+
+1. Log out and click **"Forgot password"** on the login page
+2. Enter your account email and submit
+3. Check the password reset email — it will render with your custom mail templates
 
 ---
 
 ## Commit Conventions
 
+Any readable commit message in semantic format is welcome. Such as:
+
 - `style(horizon|terminal|ember|bloom|heritage|neon|mono|terra|ink|aurora):` — template changes
-- `preview:` — preview tooling changes
-- `tools:` — Go build script changes
-- `docs:` — documentation and translations
-- `fix:` — bug fixes
-- `project:` — README, LICENSE, AGENTS.md, meta
+- `preview(*):` — preview tooling changes
+- `tools(*):` — Go build script changes
+- `docs(*):` — documentation and translations
+- `fix(*):` — bug fixes
+- `project(*):` — README, LICENSE, AGENTS.md, meta
 
 ---
 
 ## Translations
 
-- [English](CONTRIBUTING.md)
+- English
 - [Simplified Chinese](docs/CONTRIBUTING.zh-CN.md)
 - [Traditional Chinese](docs/CONTRIBUTING.zh-TW.md)
 - [Russian](docs/CONTRIBUTING.ru.md)
