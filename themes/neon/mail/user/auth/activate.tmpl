@@ -75,10 +75,6 @@
       <tr>
         <td class="email-card card-body">
 
-          <p class="email-heading">
-            {{.locale.Tr "mail.hi_user_x" (.DisplayName|DotEscape)}}
-          </p>
-
           <p class="email-text">
             {{.locale.Tr "mail.activate_account.text_1" (.DisplayName|DotEscape) AppName}}
           </p>
@@ -128,7 +124,6 @@
           <p class="email-footer-text">
             &copy;
             <a href="{{AppUrl}}" class="email-footer-link">{{AppName}}</a>
-            &mdash; Gitea Mail Templates
           </p>
 
         </td>
