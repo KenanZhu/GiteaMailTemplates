@@ -34,10 +34,9 @@ jobs:
           NEW_VERSION="${NEW_VERSION#v}"
           echo "New Gitea version: $NEW_VERSION"
 
-          # Read current max-tested: data row is directly BELOW the TRACKER:QUICK-REF-MAX marker
+          # Read current max-tested: marker is above table, data row at marker + 3
           MARKER_LINE=$(grep -n 'TRACKER:QUICK-REF-MAX' COMPATIBILITY.md | cut -d: -f1)
-          # Extract the last **X.Y.Z** from the Quick Reference row (4th pipe column)
-          CURRENT=$(sed -n "$((MARKER_LINE + 1))p" COMPATIBILITY.md | awk -F'|' '{gsub(/\*| /, "", $4); print $4}')
+          CURRENT=$(sed -n "$((MARKER_LINE + 3))p" COMPATIBILITY.md | awk -F'|' '{gsub(/\*| /, "", $4); print $4}')
           echo "Current max tested: $CURRENT"
 
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
@@ -55,9 +54,9 @@ jobs:
         if: steps.version.outputs.skip != 'true'
         run: |
           NEW="${{ steps.version.outputs.new_version }}"
-          # The Quick Reference data row is the line directly BELOW TRACKER:QUICK-REF-MAX
+          # Quick Reference data row is at marker + 3 (marker → header → separator → data)
           MARKER=$(grep -n 'TRACKER:QUICK-REF-MAX' COMPATIBILITY.md | cut -d: -f1)
-          TARGET=$((MARKER + 1))
+          TARGET=$((MARKER + 3))
           # Update column 4 (Max Tested) and column 5 (Status) in the pipe-separated row
           awk -i inplace -F'|' -v OFS='|' -v ver="${NEW}" '
             NR == '$TARGET' { $4 = " **" ver "** "; $5 = " ⏳ Pending Verification " }
@@ -69,10 +68,11 @@ jobs:
         run: |
           NEW="${{ steps.version.outputs.new_version }}"
           TODAY=$(date +%Y-%m-%d)
-          # Insert new row after TRACKER:VERSION-INSERT marker (sits after table separator)
+          # Insert new row at marker + 2 (marker → header → after separator)
           MARKER=$(grep -n 'TRACKER:VERSION-INSERT' COMPATIBILITY.md | cut -d: -f1)
+          INSERT=$((MARKER + 2))
           ROW="| **${NEW}** | ${TODAY} | ⏳ Pending Verification | TBD |"
-          sed -i "${MARKER}a ${ROW}" COMPATIBILITY.md
+          sed -i "${INSERT}a ${ROW}" COMPATIBILITY.md
 
       - name: COMPATIBILITY.md — latest verified note
         if: steps.version.outputs.skip != 'true'
