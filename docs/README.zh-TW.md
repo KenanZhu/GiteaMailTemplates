@@ -73,7 +73,9 @@ cd tools && go run . dev
 
 ## 相容性
 
-- **Gitea 1.25+**，100% 變數相容，僅使用內建函式和官方翻譯鍵
+- **Gitea 1.25+** — v1.25 引入的郵件模板目錄結構
+- **最新測試：** Gitea 1.26.4
+- 與 Gitea 官方模板 100% 相容 — 詳見 [COMPATIBILITY.md](COMPATIBILITY.md)
 
 ## 授權
 

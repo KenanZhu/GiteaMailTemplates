@@ -2,6 +2,8 @@
 
 A curated collection of professionally designed, audience-driven email templates for self-hosted [Gitea](https://about.gitea.com) instances.
 
+[![Gitea](https://img.shields.io/badge/Gitea-1.25+%20%7C%201.26.4%20tested-blue)](COMPATIBILITY.md)
+
 > **110 template files — 10 visual styles, 11 email types each**
 
 ---
@@ -161,10 +163,10 @@ gitea-mail-templates/
 
 ## Compatibility
 
-- **Gitea 1.25+** — matches the refactored mail template directory structure introduced in v1.25
-- 100% variable-compatible with official Gitea templates
-- Uses only built-in Gitea template functions
-- Uses only official Gitea translation keys
+- **Gitea 1.25+** — matches the refactored mail template directory structure (v1.25)
+- **Latest tested:** Gitea 1.26.4
+- 100% variable-compatible with official Gitea templates — see [COMPATIBILITY.md](COMPATIBILITY.md) for the full matrix
+- Uses only built-in Gitea template functions and official translation keys
 - No custom template functions or locale patches required
 
 ---
