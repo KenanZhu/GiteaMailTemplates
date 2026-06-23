@@ -21,9 +21,9 @@ gitea --version
 
 ## Gitea Version History — Mail Template Impact
 
-<!-- TRACKER:VERSION-INSERT -->
 | Gitea | Release Date | Mail Template Changes | Breaking? |
 |-------|-------------|----------------------|-----------|
+<!-- TRACKER:VERSION-INSERT -->
 | **1.26.4** | 2026-06-21 | None — hotfix release | No |
 | **1.26.3** | 2026-06-20 | None — security release | No |
 | **1.26.2** | 2026-05-20 | None — security + bug fixes | No |
