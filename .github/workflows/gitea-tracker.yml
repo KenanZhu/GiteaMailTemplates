@@ -91,8 +91,8 @@ jobs:
         if: steps.version.outputs.skip != 'true'
         run: |
           NEW="${{ steps.version.outputs.new_version }}"
-          # Badge: update version, change label tested→待测试, color blue→yellow
-          sed -i "/TRACKER:BADGE/s/%20[0-9a-z.-]*%20tested-blue/%20${NEW}%20%E5%BE%85%E6%B5%8B%E8%AF%95-yellow/" README.md
+          # Badge: update version, change label tested→pending, color blue→yellow
+          sed -i "/TRACKER:BADGE/s/%20[0-9a-z.-]*%20tested-blue/%20${NEW}%20pending-yellow/" README.md
           # Latest tested: update version on the TRACKER:LATEST-TESTED line
           sed -i "/TRACKER:LATEST-TESTED/s/Gitea [0-9.]*/Gitea ${NEW}/" README.md
 
