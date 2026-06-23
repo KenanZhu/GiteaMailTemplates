@@ -26,8 +26,8 @@ jobs:
           if [ -n "${{ github.event.inputs.version }}" ]; then
             NEW_VERSION="${{ github.event.inputs.version }}"
           else
-            # Fetch latest release from Gitea API
-            RELEASE_JSON=$(curl -sSf https://gitea.com/api/v1/repos/gitea/gitea/releases/latest)
+            # Fetch latest release from GitHub API (go-gitea/gitea mirror)
+            RELEASE_JSON=$(curl -sSf https://api.github.com/repos/go-gitea/gitea/releases/latest)
             NEW_VERSION=$(echo "$RELEASE_JSON" | jq -r '.tag_name')
           fi
           # Strip 'v' prefix if present (API returns v1.27.0, we use 1.27.0)
