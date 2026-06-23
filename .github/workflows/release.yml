@@ -32,8 +32,8 @@ jobs:
         run: |
           VERSION=${GITHUB_REF#refs/tags/}
           ARCHIVE="gitea-mail-templates-${VERSION}"
-          mkdir -p dist
-          cp -r themes LICENSE README.md COMPATIBILITY.md "dist/${ARCHIVE}"
+          mkdir -p "dist/${ARCHIVE}"
+          cp -r themes LICENSE README.md COMPATIBILITY.md "dist/${ARCHIVE}/"
           cd dist
           zip -r "${ARCHIVE}.zip" "${ARCHIVE}"
           tar -czf "${ARCHIVE}.tar.gz" "${ARCHIVE}"
