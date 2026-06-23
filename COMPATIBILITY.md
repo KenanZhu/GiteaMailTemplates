@@ -5,7 +5,7 @@ This document tracks the compatibility between **Gitea Mail Templates** releases
 ## Quick Reference
 
 | Template Release | Min Gitea | Max Tested Gitea | Status |
-|-----------------|-----------|-----------------|--------|
+|-----------------|-----------| **1.26.4** | ⏳ Pending Verification |
 <!-- TRACKER:QUICK-REF-MAX -->
 | **v1.0.x**      | **1.25.0** | **1.26.4** | ✅ Active |
 
@@ -24,6 +24,7 @@ gitea --version
 | Gitea | Release Date | Mail Template Changes | Breaking? |
 |-------|-------------|----------------------|-----------|
 <!-- TRACKER:VERSION-INSERT -->
+| **1.26.4** | 2026-06-23 | ⏳ Pending Verification | TBD |
 | **1.26.4** | 2026-06-21 | None — hotfix release | No |
 | **1.26.3** | 2026-06-20 | None — security release | No |
 | **1.26.2** | 2026-05-20 | None — security + bug fixes | No |
