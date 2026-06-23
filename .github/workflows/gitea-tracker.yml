@@ -4,8 +4,6 @@ on:
   schedule:
     # Daily at 08:00 UTC — check for new Gitea releases
     - cron: '0 8 * * *'
-  repository_dispatch:
-    types: [gitea-release]
   workflow_dispatch:
     inputs:
       version:
