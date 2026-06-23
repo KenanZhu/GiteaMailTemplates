@@ -49,19 +49,9 @@ cd tools && go run . preview all
 ```
 그런 다음 `preview/index.html` 열기.
 
-**개발 서버 (실시간 리로드 + Juice CSS 인라인 + 클라이언트 시뮬레이션):**
+**개발 서버 (실시간 리로드):**
 ```bash
-cd tools && go run . dev     # Node.js 필요
+cd tools && go run . dev 
 # → http://localhost:3456
 ```
 
-> [!NOTE]
-> Dev 시뮬레이션은 각 이메일 클라이언트의 렌더링을 완전히 재현할 수 없습니다 — 참고용입니다. 실제 클라이언트에서 반드시 확인하세요.
-
-## 호환성
-
-- **Gitea 1.25+**, 100% 호환, 내장 함수만 사용
-
-## 라이선스
-
-MIT — [LICENSE](../LICENSE).

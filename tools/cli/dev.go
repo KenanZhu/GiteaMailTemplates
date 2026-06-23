@@ -3,20 +3,22 @@ package cli
 import (
 	"fmt"
 	"os"
-	"os/exec"
 	"os/signal"
 	"path/filepath"
 	"syscall"
 
 	"github.com/urfave/cli/v2"
+
+	"gitea-mail-templates/tools/config"
+	"gitea-mail-templates/tools/preview"
 )
 
 // DevCommand returns the "dev" subcommand.
 func DevCommand() *cli.Command {
 	return &cli.Command{
-		Name:  "dev",
-		Usage: "Start a live-reload dev server with CSS inlining (requires Node.js)",
-		UsageText: `go run . dev [--port <port>]`,
+		Name:      "dev",
+		Usage:     "Start a live-reload dev server with SSE browser refresh",
+		UsageText: "go run . dev [--port <port>]",
 		Flags: []cli.Flag{
 			&cli.IntFlag{
 				Name:  "port",
@@ -31,72 +33,45 @@ func DevCommand() *cli.Command {
 func runDev(c *cli.Context) error {
 	port := c.Int("port")
 
-	// Find the server directory relative to the tools/ dir
-	exe, _ := os.Executable()
-	toolsDir := filepath.Dir(exe)
-	// When run with `go run`, resolve relative to CWD
-	if _, err := os.Stat(filepath.Join(toolsDir, "server")); os.IsNotExist(err) {
-		cwd, _ := os.Getwd()
-		toolsDir = cwd
+	// Resolve project paths relative to the tools/ directory
+	toolsDir, err := os.Getwd()
+	if err != nil {
+		toolsDir = "."
 	}
-	serverDir := filepath.Join(toolsDir, "server")
+	projectRoot := filepath.Dir(toolsDir)
+	themesDir := filepath.Join(projectRoot, "themes")
+	previewDir := filepath.Join(projectRoot, "preview")
+	configPath := filepath.Join(toolsDir, "data", "templates_config.json")
 
-	// Verify Node.js is available
-	if _, err := exec.LookPath("node"); err != nil {
-		return fmt.Errorf("Node.js is required but not found in PATH")
-	}
-
-	// Verify node_modules are installed
-	if _, err := os.Stat(filepath.Join(serverDir, "node_modules")); os.IsNotExist(err) {
-		fmt.Println("\033[32m[I]\033[0m [Builder] Installing Node.js dependencies...")
-		cmd := exec.Command("npm", "install")
-		cmd.Dir = serverDir
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stderr
-		if err := cmd.Run(); err != nil {
-			return fmt.Errorf("npm install failed: %w", err)
+	// Verify paths exist
+	for _, p := range []string{themesDir, previewDir, configPath} {
+		if _, err := os.Stat(p); os.IsNotExist(err) {
+			return fmt.Errorf("required path not found: %s", p)
 		}
 	}
 
-	// Ensure rendered.js exists before starting
-	initCmd := exec.Command("go", "run", ".", "preview", "all")
-	initCmd.Dir = toolsDir
-	initCmd.Stdout = os.Stdout
-	initCmd.Stderr = os.Stderr
-	if err := initCmd.Run(); err != nil {
-		fmt.Println("\033[33m[W]\033[0m [Builder] Initial preview generation failed, starting anyway")
+	// Load template config
+	cfg, err := config.Load(configPath)
+	if err != nil {
+		return fmt.Errorf("failed to load config: %w", err)
 	}
 
-	// Start the Node.js dev server
-	serverCmd := exec.Command("node", "server.mjs")
-	serverCmd.Dir = serverDir
-	serverCmd.Env = append(os.Environ(), fmt.Sprintf("PORT=%d", port))
-	serverCmd.Stdout = os.Stdout
-	serverCmd.Stderr = os.Stderr
+	// Start dev server
+	srv := preview.NewDevServer(preview.DevServerConfig{
+		Port:       port,
+		ThemesDir:  themesDir,
+		PreviewDir: previewDir,
+		Config:     cfg,
+	})
 
-	if err := serverCmd.Start(); err != nil {
-		return fmt.Errorf("failed to start dev server: %w", err)
-	}
-
-	fmt.Printf("\033[32m[I]\033[0m [Server] Dev server running at http://localhost:%d\n", port)
-	fmt.Print("\033[32m[I]\033[0m [Server] Press Ctrl+C to stop\n")
-
-	// Handle graceful shutdown
+	// Handle Ctrl+C
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
-
 	go func() {
 		<-sigCh
-		fmt.Println("\033[32m[I]\033[0m [Server] Shutting down")
-		if err := serverCmd.Process.Signal(os.Interrupt); err != nil {
-			serverCmd.Process.Kill()
-		}
+		fmt.Println("\n\033[32m[I]\033[0m [Server] Shutting down")
 		os.Exit(0)
 	}()
 
-	if err := serverCmd.Wait(); err != nil {
-		return fmt.Errorf("dev server exited: %w", err)
-	}
-
-	return nil
+	return srv.Start()
 }

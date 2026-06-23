@@ -35,17 +35,14 @@
 ## 開發環境
 
 - **Go 1.21+** 用於模板渲染與 CLI 工具
-- **Node.js 18+**（可選）用於即時開發伺服器與 Juice CSS 內聯
 
 ### 本機預覽（靜態）
 
 1. 先生成預覽資料：`cd tools && go run . preview all`
 2. 在瀏覽器中開啟 `preview/index.html` — 無需伺服器
 
-> [!WARNING]
-> 靜態 Gmail/Outlook 模擬僅供參考，使用 dev 模式可獲得相對準確的 CSS 內聯渲染。
 
-### 開發伺服器（即時重載 + CSS 內聯 + 客戶端模擬）
+### 開發伺服器（即時重載）
 
 ```bash
 cd tools && go run . dev
@@ -54,8 +51,6 @@ cd tools && go run . dev
 
 修改 `.tmpl` 檔案後自動重建並推送至瀏覽器。
 
-> [!NOTE]
-> Dev 模擬無法 100% 還原各個郵件用戶端的渲染差異，僅供參考，請以實際效果為準。
 
 ### 整合測試
 

@@ -126,10 +126,10 @@ html,body,#preview-area,#panel{
   <label>Template</label>
   <select id="sel-template" onchange="switchTemplate(this.value)"></select>
   <span class="sep"></span>
-  <label>Client</label>
+  <label>View</label>
   <select id="sel-client" onchange="switchClient(this.value)">
-    <option value="modern">Modern</option><option value="gmail">Gmail</option>
-    <option value="outlook">Outlook</option><option value="raw">Raw Source</option>
+    <option value="modern">Modern</option>
+    <option value="source">Source</option>
   </select>
   <span class="sep"></span>
   <div class="btn-group">
@@ -170,10 +170,6 @@ html,body,#preview-area,#panel{
       <table id="panel-params"><tr><td colspan="2" style="color:var(--muted)">-</td></tr></table>
     </section>
     <section>
-      <h3>Client Simulation</h3>
-      <div class="indicators" id="panel-indicators"></div>
-    </section>
-    <section>
       <h3>Source</h3>
       <div class="card" style="font-family:monospace;font-size:10px;color:var(--muted);word-break:break-all" id="panel-path">-</div>
     </section>
@@ -188,33 +184,19 @@ html,body,#preview-area,#panel{
 const state = { theme:'', template:'', client:'modern', viewport:'desktop' };
 let REGISTRY = {};
 let PARAMS = {};
-let rendered = null;        // window.__RENDERED__         (modern / static fallback)
-let renderedGmail = null;   // window.__RENDERED_GMAIL__   (dev mode, Juice + Gmail strip)
-let renderedOutlook = null; // window.__RENDERED_OUTLOOK__ (dev mode, Juice + Outlook strip)
-let devMode = false;        // true once WebSocket connects
-let devCheckTimer = null;   // delayed static-notice timer
+let rendered = null;        // window.__RENDERED__
+let devMode = false;        // true once SSE connects
 
 //
 // Client transforms
 //
 function transform(html, mode) {
-  // Raw source view — escape HTML for display
-  if(mode==='raw') {
+  // Source view — escape HTML for raw display
+  if(mode==='source') {
     const e = html.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     return '<!DOCTYPE html><html><head><style>body{background:#0d1117;color:#c9d1d9;font-family:Consolas,monospace;padding:16px;margin:0}pre{white-space:pre-wrap;word-break:break-all;font-size:11px;line-height:1.6;margin:0}</style></head><body><pre>'+e+'</pre></body></html>';
   }
-  // Modern, Gmail, Outlook — the HTML is pre-processed server-side.
-  // In dev mode rendered.js contains three variants (modern / gmail / outlook);
-  // the caller picks the right one before passing to transform().
   return html;
-}
-
-/** Pick the right rendered object for the current client mode. */
-function getRendered() {
-  if (!devMode) return rendered;                     // static: always modern
-  if (state.client==='gmail')   return renderedGmail || rendered;
-  if (state.client==='outlook') return renderedOutlook || rendered;
-  return rendered;
 }
 
 //
@@ -233,7 +215,7 @@ function render() {
   frame.style.display = 'none';
   loading.style.display = 'flex';
 
-  const src = getRendered();
+  const src = rendered;
   const raw = src[state.theme]?.[state.template];
   let content = raw ? transform(raw, state.client) : '<p style=\"color:red;padding:20px\">Not found: '+state.theme+'/'+state.template+'</p>';
   // Inject invisible scrollbar into iframe content for immersive preview
@@ -282,18 +264,6 @@ function updatePanel() {
     rows += '<tr><td>.'+k+'</td><td>'+String(v)+'</td><td><span class="badge '+(isReq?'badge-req':'badge-opt')+'">'+(isReq?'required':'optional')+'</span></td></tr>';
   }
   document.getElementById('panel-params').innerHTML = rows || '<tr><td colspan="3" style="color:var(--muted)">-</td></tr>';
-
-  // Client simulation indicators
-  const c=state.client,
-    on='<span class="dot d-on"></span>',off='<span class="dot d-off"></span>',warn='<span class="dot d-warn"></span>',
-    items=[
-      [c==='raw'?off:(c==='gmail'||c==='outlook'?warn:on),'CSS'],
-      [c==='raw'?off:(c==='outlook'?warn:on),'Web Fonts'],
-      [c==='modern'?on:off,'Border Radius'],
-      [c==='modern'?on:off,'Shadows'],
-      [c==='modern'?on:off,'Gradients']
-    ];
-  document.getElementById('panel-indicators').innerHTML = items.map(([d,label])=>'<span>'+d+' '+label+'</span>').join('');
 }
 
 //
@@ -350,8 +320,6 @@ document.addEventListener('keydown',e=>{
 
   if(window.__RENDERED__){
     rendered = window.__RENDERED__;
-    if(window.__RENDERED_GMAIL__)   renderedGmail   = window.__RENDERED_GMAIL__;
-    if(window.__RENDERED_OUTLOOK__) renderedOutlook = window.__RENDERED_OUTLOOK__;
 
     // Populate theme selector from rendered data
     const themeKeys = Object.keys(rendered).sort();
@@ -394,57 +362,37 @@ function clearMessages() {
 }
 
 // Dev-mode detection
-// Don't show static warnings if the dev server is running.
-// The WebSocket open handler will call setDevMode() which clears anything stale.
+// The SSE open handler will call setDevMode() which clears any stale messages.
 
 function setDevMode(on) {
   devMode = on;
-  if (devCheckTimer) { clearTimeout(devCheckTimer); devCheckTimer = null; }
   if (on) {
     clearMessages();
-    // Remove any stale static-mode notice injected by a previous check
-    const stale = document.getElementById('msg-static-notice');
-    if (stale) stale.remove();
-    // Dev-mode disclaimer — simulation is never 100% accurate
     showMessage(
-      'Dev simulation cannot 100% reproduce every client — for reference only; always verify against real clients.',
+      'Live reload active — changes to .tmpl files will auto-refresh the preview.',
       'info'
     ).id = 'msg-dev-disclaimer';
   }
 }
 
-// Static-mode notice (delayed — only shown if no WebSocket within 1 s)
-devCheckTimer = setTimeout(function() {
-  devCheckTimer = null;
-  if (!devMode) {
-    showMessage(
-      'Gmail / Outlook simulation is approximate. For more accurate rendering with CSS inlining, use <code>cd tools && go run . dev</code>',
-      'warn'
-    ).id = 'msg-static-notice';
-  }
-}, 1000);
-
-// Dev-server live-reload (WebSocket)
+// Dev-server live-reload (SSE)
 (function(){
-  let ws;
+  let es;
   try {
-    const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
-    ws = new WebSocket(proto + '//' + location.host + '/ws');
+    es = new EventSource('/events');
   } catch(e) {
     return;
   }
-  ws.onmessage = function(e) {
+  es.onmessage = function(e) {
     try {
       const msg = JSON.parse(e.data);
       if (msg.type === 'reload') {
         const script = document.createElement('script');
         script.src = 'rendered.js?v=' + Date.now();
         script.onload = function() {
-          if (window.__RENDERED__)         rendered        = window.__RENDERED__;
-          if (window.__RENDERED_GMAIL__)   renderedGmail   = window.__RENDERED_GMAIL__;
-          if (window.__RENDERED_OUTLOOK__) renderedOutlook = window.__RENDERED_OUTLOOK__;
-          if (window.__REGISTRY__)         REGISTRY        = window.__REGISTRY__;
-          if (window.__PARAMS__)           PARAMS          = window.__PARAMS__;
+          if (window.__RENDERED__) rendered = window.__RENDERED__;
+          if (window.__REGISTRY__) REGISTRY = window.__REGISTRY__;
+          if (window.__PARAMS__)   PARAMS   = window.__PARAMS__;
           render();
         };
         document.head.appendChild(script);
@@ -453,21 +401,16 @@ devCheckTimer = setTimeout(function() {
       }
     } catch(_) {}
   };
-  ws.onopen  = function() {
+  es.onopen = function() {
     setDevMode(true);
     console.log('[dev] live-reload connected');
   };
-  ws.onclose = function() {
-    // Only alert if the server was previously connected (crash / shutdown)
+  es.onerror = function() {
     if (devMode) {
       showMessage('Dev server disconnected — reload the page to reconnect', 'error');
       setDevMode(false);
     }
     console.log('[dev] live-reload disconnected');
-  };
-  ws.onerror = function() {
-    // onerror always fires before onclose — let onclose decide whether to show a message
-    console.log('[dev] WebSocket error (dev server may be offline)');
   };
 })();
 </script>

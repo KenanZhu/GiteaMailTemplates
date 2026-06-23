@@ -31,7 +31,7 @@ Every template is a drop-in replacement. All Go template variables, translation 
 
 > Images are screenshots from the [live preview](preview/index.html). See [docs/images/README.md](docs/images/README.md) for capture instructions.
 
-[**Live preview gallery**](preview/index.html) — open in a browser for an interactive style switcher with desktop/mobile viewports and email client simulation (Modern, Gmail, Outlook, Raw source).
+[**Live preview gallery**](preview/index.html) — open in a browser for an interactive style switcher with desktop/mobile viewports and view mode (Modern, Source).
 
 ---
 
@@ -91,15 +91,12 @@ cd tools && go run . preview all
 open preview/index.html        # no server needed
 ```
 
-> [!WARNING]
-> Gmail/Outlook simulation in static mode is approximate. Use dev mode for relatively accurate CSS inlining.
+### Dev Server (Live Reload)
 
-### Dev Server (Live Reload + Juice CSS Inlining)
-
-Start a development server that watches for `.tmpl` changes, auto-rebuilds, inlines CSS for email client compatibility, and pushes live updates to the browser:
+Start a pure Go development server that watches for `.tmpl` changes, auto-rebuilds, and pushes live updates to the browser via SSE:
 
 ```bash
-cd tools && go run . dev      # requires Node.js
+cd tools && go run . dev
 open http://localhost:3456
 ```
 
@@ -107,22 +104,16 @@ open http://localhost:3456
 |-----------|--------|-----|
 | Go template rendering | ✅ | ✅ |
 | Theme/template switching | ✅ | ✅ |
-| Juice CSS inlining | — | ✅ |
-| Gmail/Outlook CSS stripping | — | ✅ |
 | Live reload on save | — | ✅ |
-| Node.js required | — | ✅ |
-
-> [!NOTE]
-> Dev simulation cannot 100% reproduce every email client — for reference only; always verify against real clients.
 
 ### Features
 
 - Theme switcher — browse all 10 visual styles
 - Template switcher — all 11 email types
-- Client simulation — Modern, Gmail, Outlook, Raw Source (CSS stripping in dev mode)
+- View mode — Modern (rendered preview), Source (raw HTML)
 - Viewport toggle — Desktop 1386×780 / Mobile 390×780
 - Parameter panel — mock data per email type
-- Keyboard shortcuts — `←→` tab between Theme/Template/Client, `↑↓` select within, `d`/`m` viewport
+- Keyboard shortcuts — `←→` tab between Theme/Template/View, `↑↓` select within, `d`/`m` viewport
 
 ---
 

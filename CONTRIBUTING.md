@@ -20,7 +20,7 @@ Thanks for your interest in contributing! This project aims to provide a diverse
 - Translation keys must come from Gitea's official locale files (`mail.*` namespace)
 - **Never reference `.DisplayName`** in templates where the data context lacks it (collaborator, transfer, release, workflow_run, assigned, default)
 - Design for 600px max-width email clients
-- Test against major email clients (Gmail, Outlook, Apple Mail) when possible
+- Test against major email clients (Apple Mail, Gmail, Outlook) when possible
 
 ### Bug Reports
 
@@ -41,18 +41,14 @@ Documentation updates, preview screenshots, installation guides, and translation
 ## Development Setup
 
 - **Go 1.21+** for template rendering and the CLI tool
-- **Node.js 18+** (optional) for the live-reload dev server with Juice CSS inlining
 
 ### Previewing Locally (Static)
 
 1. Run `cd tools && go run . preview all` to generate rendered data
 2. Open `preview/index.html` directly in a browser — no server needed
-3. Use the theme switcher, template selector, and client mode toggles
+3. Use the theme switcher, template selector, and view mode toggles
 
-> [!WARNING]
-> Static Gmail/Outlook simulation is approximate. Use dev mode for relatively accurate rendering.
-
-### Dev Server (Live Reload + CSS Inlining + Client Simulation)
+### Dev Server (Live Reload)
 
 ```bash
 cd tools && go run . dev
@@ -60,13 +56,9 @@ cd tools && go run . dev
 ```
 
 - Watches `themes/**/*.tmpl` — auto-rebuilds on save
-- Runs [Juice](https://github.com/Automattic/juice) to inline `<style>` into `style=""` attributes
-- Generates three `rendered.js` variants: modern (Juice only), Gmail (Juice + CSS strip), Outlook (Juice + aggressive CSS strip)
-- Pushes live reload to browser via WebSocket
-- Terminal output: `themes/aurora/mail/repo/release.tmpl edited` → `[rebuild] done in 480ms`
-
-> [!NOTE]
-> Dev simulation cannot 100% reproduce every email client — for reference only; always verify against real clients.
+- Pure Go HTTP server with SSE push — no external dependencies
+- Re-renders templates in-process and pushes reload events to the browser
+- Terminal output: `themes/aurora/mail/repo/release.tmpl changed` → `[Builder] Rebuild done in 45ms`
 
 ### Integration Testing
 
