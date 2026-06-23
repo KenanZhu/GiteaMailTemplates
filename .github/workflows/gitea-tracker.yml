@@ -1,0 +1,118 @@
+name: Gitea Version Tracker
+
+on:
+  schedule:
+    # Daily at 08:00 UTC — check for new Gitea releases
+    - cron: '0 8 * * *'
+  repository_dispatch:
+    types: [gitea-release]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Gitea version (e.g. 1.27.0) — leave empty to auto-detect'
+        required: false
+
+jobs:
+  track:
+    name: Track Gitea Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Determine latest Gitea version
+        id: version
+        run: |
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            NEW_VERSION="${{ github.event.inputs.version }}"
+          else
+            # Fetch latest release from Gitea API
+            RELEASE_JSON=$(curl -sSf https://gitea.com/api/v1/repos/gitea/gitea/releases/latest)
+            NEW_VERSION=$(echo "$RELEASE_JSON" | jq -r '.tag_name')
+          fi
+          echo "New Gitea version: $NEW_VERSION"
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+          # Parse current max tested from COMPATIBILITY.md
+          CURRENT=$(grep -oP 'Max Tested Gitea.*?\|\s*\*\*\K[0-9.]+' COMPATIBILITY.md)
+          echo "Current max tested: $CURRENT"
+          echo "current_version=$CURRENT" >> $GITHUB_OUTPUT
+
+          if [ "$NEW_VERSION" = "$CURRENT" ]; then
+            echo "No new Gitea release detected. Skipping."
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "New version detected: $CURRENT → $NEW_VERSION"
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update COMPATIBILITY.md — Quick Reference
+        if: steps.version.outputs.skip != 'true'
+        run: |
+          NEW="${{ steps.version.outputs.new_version }}"
+          sed -i "s/|\*\*\([0-9.]*\)\*\* | \*\*[0-9.]*\*\* |/\|\*\*\1\*\* | \*\*${NEW}\*\* |/" COMPATIBILITY.md
+
+      - name: Update COMPATIBILITY.md — Version History table
+        if: steps.version.outputs.skip != 'true'
+        run: |
+          NEW="${{ steps.version.outputs.new_version }}"
+          TODAY=$(date +%Y-%m-%d)
+          # Insert new row after the table header (line with "|---|---")
+          ROW="| **${NEW}** | ${TODAY} | ⏳ Pending Verification | TBD |"
+          sed -i "/^|---/a ${ROW}" COMPATIBILITY.md
+
+      - name: Update COMPATIBILITY.md — latest verified note
+        if: steps.version.outputs.skip != 'true'
+        run: |
+          NEW="${{ steps.version.outputs.new_version }}"
+          # Update the "Latest verified" note
+          sed -i "s/Gitea [0-9.]* data contexts/Gitea ${NEW} data contexts/" COMPATIBILITY.md
+
+      - name: Update README.md badge
+        if: steps.version.outputs.skip != 'true'
+        run: |
+          NEW="${{ steps.version.outputs.new_version }}"
+          # Update the shields.io badge
+          sed -i "s/\(tested\)-[0-9a-z.]*\(blue\)/\1-${NEW}\2/" README.md
+          # Update the "Latest tested" line
+          sed -i "s/Latest tested:\*\* Gitea [0-9.]*/Latest tested:** Gitea ${NEW}/" README.md
+
+      - name: Update README translations
+        if: steps.version.outputs.skip != 'true'
+        run: |
+          NEW="${{ steps.version.outputs.new_version }}"
+          for f in docs/README.{ja,ko,ru,zh-CN,zh-TW}.md; do
+            # Update version number in the compatibility section
+            sed -i "s/テスト:\*\* Gitea [0-9.]*/テスト:** Gitea ${NEW}/" "$f"
+            sed -i "s/테스트:\*\* Gitea [0-9.]*/테스트:** Gitea ${NEW}/" "$f"
+            sed -i "s/проверка:\*\* Gitea [0-9.]*/проверка:** Gitea ${NEW}/" "$f"
+            sed -i "s/测试：\*\* Gitea [0-9.]*/测试：** Gitea ${NEW}/" "$f"
+            sed -i "s/測試：\*\* Gitea [0-9.]*/測試：** Gitea ${NEW}/" "$f"
+          done
+
+      - name: Create Pull Request
+        if: steps.version.outputs.skip != 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: track/gitea-${{ steps.version.outputs.new_version }}
+          commit-message: "docs: track Gitea ${{ steps.version.outputs.new_version }} — pending verification"
+          title: "⬆️ Track Gitea ${{ steps.version.outputs.new_version }} — ⏳ Pending Verification"
+          body: |
+            Gitea **${{ steps.version.outputs.new_version }}** has been released.
+
+            This PR:
+            - Updates the compatibility matrix in `COMPATIBILITY.md`
+            - Updates version badges in `README.md` and translations
+            - Marks the new version as **⏳ Pending Verification**
+
+            ## Verification Checklist
+            - [ ] Check [Gitea changelog](https://github.com/go-gitea/gitea/blob/main/CHANGELOG.md) for mail template changes
+            - [ ] Review diff of official templates: `git diff v${{ steps.version.outputs.current_version }}..v${{ steps.version.outputs.new_version }} -- templates/mail/ services/mailer/`
+            - [ ] Run `cd tools && go run . preview all` to confirm templates still render
+            - [ ] Update status from ⏳ to ✅ (compatible) or ❌ (breaking) in COMPATIBILITY.md
+            - [ ] Update the `Mail Template Changes` and `Breaking?` columns with accurate notes
+          labels: compatibility, automated
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

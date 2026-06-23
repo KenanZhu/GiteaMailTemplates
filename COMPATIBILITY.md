@@ -85,6 +85,28 @@ All templates use Gitea's official `mail.*` translation namespace. Keys are stab
 2. **Source audit** — Template data contexts are cross-referenced against Gitea's `services/mailer/` package
 3. **Release checklist** — Each release confirms the max-tested Gitea version in this file
 
+## Automated Tracking
+
+A [workflow](.github/workflows/gitea-tracker.yml) runs daily (and on-demand) to detect new Gitea releases. When a new version is found, it automatically creates a PR updating the matrix and badges with a **⏳ Pending Verification** status.
+
+### Webhook Setup (optional)
+
+To trigger the tracker immediately when Gitea publishes a release, configure a webhook on your Gitea instance:
+
+1. Go to **Site Administration → System Webhooks**
+2. Add a webhook with the type **Send Everything**
+3. Set URL to:
+   ```
+   https://api.github.com/repos/<YOUR_USER>/gitea-mail-templates/dispatches/gitea-release
+   ```
+4. Set **Authorization** header with a [GitHub PAT](https://github.com/settings/tokens) that has `repo` scope:
+   ```
+   Authorization: Bearer ghp_xxxxxxxxxxxx
+   ```
+5. Content type: `application/json`
+
+> The tracker also runs daily via cron (`0 8 * * *` UTC), so manual webhook setup is optional.
+
 ## Reporting Issues
 
 If you find a compatibility problem with a specific Gitea version:
