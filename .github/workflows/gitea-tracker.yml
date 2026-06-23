@@ -31,11 +31,13 @@ jobs:
             NEW_VERSION=$(echo "$RELEASE_JSON" | jq -r '.tag_name')
           fi
           echo "New Gitea version: $NEW_VERSION"
-          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
-          # Parse current max tested from COMPATIBILITY.md
-          CURRENT=$(grep -oP 'Max Tested Gitea.*?\|\s*\*\*\K[0-9.]+' COMPATIBILITY.md)
+          # Read current max-tested from the TRACKER:QUICK-REF-MAX marker line above it
+          MARKER_LINE=$(grep -n 'TRACKER:QUICK-REF-MAX' COMPATIBILITY.md | cut -d: -f1)
+          CURRENT=$(sed -n "$((MARKER_LINE - 1))p" COMPATIBILITY.md | grep -oP '\*\*[0-9.]+\*\*' | tail -1 | tr -d '*')
           echo "Current max tested: $CURRENT"
+
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
           echo "current_version=$CURRENT" >> $GITHUB_OUTPUT
 
           if [ "$NEW_VERSION" = "$CURRENT" ]; then
@@ -46,49 +48,57 @@ jobs:
             echo "skip=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Update COMPATIBILITY.md — Quick Reference
+      # --- COMPATIBILITY.md ---
+
+      - name: COMPATIBILITY.md — Quick Reference (max tested version)
         if: steps.version.outputs.skip != 'true'
         run: |
           NEW="${{ steps.version.outputs.new_version }}"
-          sed -i "s/|\*\*\([0-9.]*\)\*\* | \*\*[0-9.]*\*\* |/\|\*\*\1\*\* | \*\*${NEW}\*\* |/" COMPATIBILITY.md
+          # The Quick Reference row is the line directly above TRACKER:QUICK-REF-MAX
+          MARKER=$(grep -n 'TRACKER:QUICK-REF-MAX' COMPATIBILITY.md | cut -d: -f1)
+          TARGET=$((MARKER - 1))
+          # Replace the last **X.Y.Z** in that line with the new version
+          sed -i "${TARGET}s/\*\*[0-9.]*\*\* | ✅/**${NEW}** | ✅/" COMPATIBILITY.md
 
-      - name: Update COMPATIBILITY.md — Version History table
+      - name: COMPATIBILITY.md — Version History table
         if: steps.version.outputs.skip != 'true'
         run: |
           NEW="${{ steps.version.outputs.new_version }}"
           TODAY=$(date +%Y-%m-%d)
-          # Insert new row after the table header (line with "|---|---")
+          # Insert a new row right after TRACKER:VERSION-INSERT marker
+          MARKER=$(grep -n 'TRACKER:VERSION-INSERT' COMPATIBILITY.md | cut -d: -f1)
           ROW="| **${NEW}** | ${TODAY} | ⏳ Pending Verification | TBD |"
-          sed -i "/^|---/a ${ROW}" COMPATIBILITY.md
+          sed -i "${MARKER}a ${ROW}" COMPATIBILITY.md
 
-      - name: Update COMPATIBILITY.md — latest verified note
+      - name: COMPATIBILITY.md — latest verified note
         if: steps.version.outputs.skip != 'true'
         run: |
           NEW="${{ steps.version.outputs.new_version }}"
-          # Update the "Latest verified" note
-          sed -i "s/Gitea [0-9.]* data contexts/Gitea ${NEW} data contexts/" COMPATIBILITY.md
+          # Update version inline on the line with TRACKER:LATEST-VERIFIED
+          sed -i "/TRACKER:LATEST-VERIFIED/s/Gitea [0-9.]*/Gitea ${NEW}/" COMPATIBILITY.md
 
-      - name: Update README.md badge
+      # --- README.md ---
+
+      - name: README.md — badge and latest tested
         if: steps.version.outputs.skip != 'true'
         run: |
           NEW="${{ steps.version.outputs.new_version }}"
-          # Update the shields.io badge
-          sed -i "s/\(tested\)-[0-9a-z.]*\(blue\)/\1-${NEW}\2/" README.md
-          # Update the "Latest tested" line
-          sed -i "s/Latest tested:\*\* Gitea [0-9.]*/Latest tested:** Gitea ${NEW}/" README.md
+          # Badge: update version on the TRACKER:BADGE line
+          sed -i "/TRACKER:BADGE/s/tested\)-[0-9a-z.]*\(blue\)/tested\)-${NEW}\2/" README.md
+          # Latest tested: update version on the TRACKER:LATEST-TESTED line
+          sed -i "/TRACKER:LATEST-TESTED/s/Gitea [0-9.]*/Gitea ${NEW}/" README.md
 
-      - name: Update README translations
+      # --- Translation READMEs ---
+
+      - name: README translations — latest tested
         if: steps.version.outputs.skip != 'true'
         run: |
           NEW="${{ steps.version.outputs.new_version }}"
           for f in docs/README.{ja,ko,ru,zh-CN,zh-TW}.md; do
-            # Update version number in the compatibility section
-            sed -i "s/テスト:\*\* Gitea [0-9.]*/テスト:** Gitea ${NEW}/" "$f"
-            sed -i "s/테스트:\*\* Gitea [0-9.]*/테스트:** Gitea ${NEW}/" "$f"
-            sed -i "s/проверка:\*\* Gitea [0-9.]*/проверка:** Gitea ${NEW}/" "$f"
-            sed -i "s/测试：\*\* Gitea [0-9.]*/测试：** Gitea ${NEW}/" "$f"
-            sed -i "s/測試：\*\* Gitea [0-9.]*/測試：** Gitea ${NEW}/" "$f"
+            sed -i "/TRACKER:LATEST-TESTED/s/Gitea [0-9.]*/Gitea ${NEW}/" "$f"
           done
+
+      # --- Create PR ---
 
       - name: Create Pull Request
         if: steps.version.outputs.skip != 'true'

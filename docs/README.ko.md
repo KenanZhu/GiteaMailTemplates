@@ -58,7 +58,7 @@ cd tools && go run . dev
 ## 호환성
 
 - **Gitea 1.25+** — v1.25에서 도입된 메일 템플릿 디렉토리 구조 사용
-- **최신 테스트:** Gitea 1.26.4
+- **최신 테스트:** Gitea 1.26.4<!-- TRACKER:LATEST-TESTED -->
 - Gitea 공식 템플릿과 100% 호환 — 자세한 내용은 [COMPATIBILITY.md](../COMPATIBILITY.md) 참조
 
 ## 라이선스

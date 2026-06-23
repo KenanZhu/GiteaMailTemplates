@@ -58,7 +58,7 @@ cd tools && go run . dev
 ## 互換性
 
 - **Gitea 1.25+** — v1.25で導入されたメールテンプレートディレクトリ構造
-- **最新テスト:** Gitea 1.26.4
+- **最新テスト:** Gitea 1.26.4<!-- TRACKER:LATEST-TESTED -->
 - Gitea公式テンプレートと100%互換 — 詳細は [COMPATIBILITY.md](COMPATIBILITY.md)を参照
 
 ## ライセンス
