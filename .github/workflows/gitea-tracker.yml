@@ -36,7 +36,8 @@ jobs:
 
           # Read current max-tested from the TRACKER:QUICK-REF-MAX marker line above it
           MARKER_LINE=$(grep -n 'TRACKER:QUICK-REF-MAX' COMPATIBILITY.md | cut -d: -f1)
-          CURRENT=$(sed -n "$((MARKER_LINE - 1))p" COMPATIBILITY.md | grep -oP '\*\*[0-9.]+\*\*' | tail -1 | tr -d '*')
+          # Extract the last **X.Y.Z** from the Quick Reference row (4th pipe column)
+          CURRENT=$(sed -n "$((MARKER_LINE - 1))p" COMPATIBILITY.md | awk -F'|' '{gsub(/\*| /, "", $4); print $4}')
           echo "Current max tested: $CURRENT"
 
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
@@ -57,8 +58,11 @@ jobs:
           # The Quick Reference row is the line directly above TRACKER:QUICK-REF-MAX
           MARKER=$(grep -n 'TRACKER:QUICK-REF-MAX' COMPATIBILITY.md | cut -d: -f1)
           TARGET=$((MARKER - 1))
-          # Replace max-tested version (last **X.Y.Z**) + status in Quick Reference row
-          sed -i "${TARGET}s/\*\*[0-9.]*\*\* | [^|]*/**${NEW}** | ⏳ Pending Verification/" COMPATIBILITY.md
+          # Update column 4 (Max Tested) and column 5 (Status) in the pipe-separated row
+          awk -i inplace -F'|' -v OFS='|' -v ver="${NEW}" '
+            NR == '$TARGET' { $4 = " **" ver "** "; $5 = " ⏳ Pending Verification " }
+            { print }
+          ' COMPATIBILITY.md
 
       - name: COMPATIBILITY.md — Version History table
         if: steps.version.outputs.skip != 'true'
