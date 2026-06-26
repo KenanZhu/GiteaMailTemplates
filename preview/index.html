@@ -14,20 +14,38 @@
 body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column}
 
 /* Top bar */
-#topbar{height:var(--nav-h);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:14px;flex-shrink:0;z-index:30;position:relative}
+#topbar{min-height:var(--nav-h);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;flex-wrap:wrap;padding:6px 12px;gap:8px;row-gap:4px;flex-shrink:0;z-index:30;position:relative}
 #topbar .brand{font-weight:700;font-size:14px;color:#fff;white-space:nowrap;letter-spacing:-0.2px}
 #topbar .brand span{color:var(--accent);font-weight:400;font-size:11px;margin-left:4px;text-transform:uppercase;letter-spacing:1px}
-#topbar .sep{width:1px;height:20px;background:var(--border)}
-#topbar label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-right:-8px}
-#topbar select{background:var(--bg);color:var(--text);border:1px solid var(--border);padding:6px 10px;border-radius:var(--rad);font-size:12px;cursor:pointer;outline:none;min-width:90px}
+.ctl-group{display:inline-flex;align-items:center;gap:3px;white-space:nowrap}
+.ctl-group label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+#topbar .sep{width:1px;height:20px;background:var(--border);flex-shrink:0;align-self:center}
+#topbar select{background:var(--bg);color:var(--text);border:1px solid var(--border);padding:5px 8px;border-radius:var(--rad);font-size:12px;cursor:pointer;outline:none;min-width:80px}
 #topbar select:focus{border-color:var(--accent)}
-#topbar .btn-group{display:flex}
-#topbar .btn-group button{background:var(--bg);color:var(--muted);border:1px solid var(--border);padding:6px 14px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
+#topbar .btn-group{display:flex;flex-shrink:0}
+#topbar .btn-group button{background:var(--bg);color:var(--muted);border:1px solid var(--border);padding:6px 12px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
 #topbar .btn-group button:first-child{border-radius:var(--rad) 0 0 var(--rad)}
 #topbar .btn-group button:last-child{border-radius:0 var(--rad) var(--rad) 0}
 #topbar .btn-group button+button{border-left:none}
 #topbar .btn-group button.on{background:var(--accent);color:#000;border-color:var(--accent);font-weight:600}
-#topbar .hint{font-size:10px;color:var(--muted);opacity:.5}
+#topbar .hint{font-size:10px;color:var(--muted);opacity:.5;white-space:nowrap}
+
+/* Topbar responsive — progressively compact as width shrinks */
+@media(max-width:900px){#topbar .hint{display:none}}
+@media(max-width:700px){
+  #topbar{gap:5px;row-gap:3px;padding:4px 8px}
+  #topbar .sep{display:none}
+  #topbar select{min-width:70px;font-size:11px;padding:4px 6px}
+  .ctl-group label{font-size:9px}
+  #topbar .btn-group button{padding:4px 10px;font-size:11px}
+}
+@media(max-width:500px){
+  #topbar{gap:4px;row-gap:2px;padding:4px 6px}
+  #topbar .brand{font-size:12px}
+  #topbar .brand span{font-size:10px}
+  #topbar select{min-width:60px;font-size:10px;padding:3px 5px}
+  #topbar .btn-group button{padding:3px 8px;font-size:10px}
+}
 
 /* Main layout */
 #main{flex:1;display:flex;position:relative;min-height:0;overflow:hidden}
@@ -203,7 +221,6 @@ html,body,#preview-area,#panel-body{
 }
 @media(max-width:700px){
   #panel{display:none}
-  #topbar .hint{display:none}
 }
 </style>
 </head>
@@ -212,17 +229,23 @@ html,body,#preview-area,#panel-body{
 <nav id="topbar">
   <span class="brand">Gitea Mail Templates <span>Preview</span></span>
   <span class="sep"></span>
-  <label>Theme</label>
-  <select id="sel-theme" onchange="switchTheme(this.value)"></select>
+  <span class="ctl-group">
+    <label>Theme</label>
+    <select id="sel-theme" onchange="switchTheme(this.value)"></select>
+  </span>
   <span class="sep"></span>
-  <label>Template</label>
-  <select id="sel-template" onchange="switchTemplate(this.value)"></select>
+  <span class="ctl-group">
+    <label>Template</label>
+    <select id="sel-template" onchange="switchTemplate(this.value)"></select>
+  </span>
   <span class="sep"></span>
-  <label>View</label>
-  <select id="sel-client" onchange="switchClient(this.value)">
-    <option value="modern">Modern</option>
-    <option value="source">Source</option>
-  </select>
+  <span class="ctl-group">
+    <label>View</label>
+    <select id="sel-client" onchange="switchClient(this.value)">
+      <option value="modern">Modern</option>
+      <option value="source">Source</option>
+    </select>
+  </span>
   <span class="sep"></span>
   <div class="btn-group">
     <button id="btn-desk" class="on" onclick="setViewport('desktop')">Desktop</button>
