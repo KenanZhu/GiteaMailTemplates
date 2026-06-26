@@ -8,13 +8,13 @@
 :root{
   --bg:#0b1120;--surface:#151d2e;--border:#1e2d45;--text:#d1d9e6;--muted:#6b7d99;
   --accent:#4da6ff;--green:#34d399;--red:#f87171;--warn:#fbbf24;
-  --nav-h:48px;--panel-w:540px;--rad:6px
+  --nav-h:48px;--panel-w:440px;--rad:6px
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column}
 
 /* Top bar */
-#topbar{height:var(--nav-h);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:14px;flex-shrink:0;z-index:10}
+#topbar{height:var(--nav-h);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:14px;flex-shrink:0;z-index:30;position:relative}
 #topbar .brand{font-weight:700;font-size:14px;color:#fff;white-space:nowrap;letter-spacing:-0.2px}
 #topbar .brand span{color:var(--accent);font-weight:400;font-size:11px;margin-left:4px;text-transform:uppercase;letter-spacing:1px}
 #topbar .sep{width:1px;height:20px;background:var(--border)}
@@ -30,23 +30,120 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 #topbar .hint{font-size:10px;color:var(--muted);opacity:.5}
 
 /* Main layout */
-#main{flex:1;display:flex;min-height:0}
-#preview-area{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:24px;overflow:auto;background:linear-gradient(135deg,#0b1120,#131c30,#0d1525)}
+#main{flex:1;display:flex;position:relative;min-height:0;overflow:hidden}
+#preview-area{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:24px;overflow:auto;background:linear-gradient(135deg,#0b1120,#131c30,#0d1525);transition:padding-right .3s cubic-bezier(.4,0,.2,1)}
 
-/* Viewport */
-#viewport{border-radius:var(--rad);box-shadow:0 8px 32px rgba(0,0,0,.45);transition:all .3s;flex-shrink:0;overflow:hidden;background:#fff}
-#viewport.desktop{width:1386px;height:780px}
-#viewport.mobile{width:390px;height:780px;border-radius:28px;border:3px solid #1e293b;box-shadow:0 8px 32px rgba(0,0,0,.5),inset 0 0 0 1px #0f172a;display:flex;flex-direction:column}
-#viewport.mobile::before{content:'';display:block;height:24px;background:#1e293b;flex-shrink:0}
-#preview-frame{width:100%;height:100%;border:none;display:block;background:#fff}
-#viewport.desktop #preview-frame{border-radius:var(--rad)}
+/* --- Floating panel --- */
+#panel{
+  position:absolute;right:12px;top:12px;bottom:12px;
+  width:var(--panel-w);
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:10px;
+  box-shadow:-4px 4px 32px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.03) inset;
+  z-index:20;
+  display:flex;flex-direction:column;
+  overflow:hidden;
+  transition:transform .35s cubic-bezier(.4,0,.2,1),opacity .35s ease,box-shadow .35s ease;
+}
+#panel.collapsed{
+  transform:translateX(calc(var(--panel-w) - 36px));
+  box-shadow:-2px 2px 16px rgba(0,0,0,.35),0 0 0 1px rgba(255,255,255,.03) inset;
+  opacity:.92;
+}
+#panel.collapsed:hover{opacity:1}
 
-/* Side panel */
-#panel{width:var(--panel-w);background:var(--surface);border-left:1px solid var(--border);overflow-y:auto;flex-shrink:0;display:flex;flex-direction:column}
-#panel section{padding:14px 16px;border-bottom:1px solid var(--border)}
+/* Panel drag-handle / collapse tab */
+#panel-handle{
+  position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:28px;height:64px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-right:none;
+  border-radius:6px 0 0 6px;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:background .15s;
+  z-index:21;
+  /* sit just outside the panel's left edge */
+  margin-left:-1px;
+}
+#panel.collapsed #panel-handle{
+  /* when collapsed, handle moves with panel, peeking from right edge */
+  left:1px;
+}
+#panel-handle:hover{background:var(--bg)}
+#panel-handle svg{
+  width:14px;height:14px;
+  stroke:var(--muted);
+  fill:none;stroke-width:2;
+  transition:transform .35s cubic-bezier(.4,0,.2,1),stroke .15s;
+}
+#panel-handle:hover svg{stroke:var(--text)}
+#panel.collapsed #panel-handle svg{transform:rotate(180deg)}
+
+/* Panel inner scroll */
+#panel-body{flex:1;overflow-y:auto;overflow-x:hidden}
+
+/* Panel close button (top-right) */
+#panel-close{
+  position:absolute;right:8px;top:8px;
+  width:24px;height:24px;
+  background:none;border:none;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:4px;
+  color:var(--muted);
+  font-size:16px;line-height:1;
+  transition:background .15s,color .15s;
+  z-index:2;
+}
+#panel-close:hover{background:rgba(255,255,255,.06);color:var(--text)}
+
+/* Section */
+#panel section{padding:12px 14px;border-bottom:1px solid var(--border)}
 #panel section:last-child{border-bottom:none}
-#panel h3{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
+
+/* Collapsible section header */
+.section-hdr{
+  display:flex;align-items:center;gap:6px;
+  cursor:pointer;
+  user-select:none;
+  padding:2px 0;
+  border-radius:4px;
+  transition:color .15s;
+}
+.section-hdr:hover{color:#fff}
+.section-hdr h3{
+  font-size:10px;font-weight:600;color:inherit;text-transform:uppercase;letter-spacing:.8px;
+  flex:1;
+}
+.section-chevron{
+  width:12px;height:12px;
+  stroke:currentColor;fill:none;stroke-width:2;
+  transition:transform .25s ease;
+  flex-shrink:0;
+  opacity:.5;
+}
+.section-hdr:hover .section-chevron{opacity:1}
+section.collapsed .section-chevron{transform:rotate(-90deg)}
+
+/* Collapsible content wrapper */
+.section-content{
+  overflow:hidden;
+  transition:max-height .3s ease,opacity .25s ease,margin-top .3s ease;
+  max-height:2000px;
+  opacity:1;
+  margin-top:10px;
+}
+section.collapsed .section-content{
+  max-height:0;
+  opacity:0;
+  margin-top:0;
+}
+
 #panel .card{background:var(--bg);border-radius:var(--rad);padding:10px 12px;margin-bottom:8px}
+#panel .card:last-child{margin-bottom:0}
 #panel .card .label{font-size:10px;color:var(--muted);margin-bottom:2px}
 #panel .card .value{font-size:12px;color:var(--text)}
 #panel table{width:100%;border-collapse:collapse}
@@ -58,11 +155,13 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .badge-opt{background:rgba(107,125,153,.1);color:var(--muted)}
 #panel .stat{font-size:10px;color:var(--muted);margin-top:6px}
 
-/* Client indicators */
-#panel .indicators{display:flex;flex-wrap:wrap;gap:4px 12px}
-#panel .indicators span{font-size:11px;color:var(--muted);display:inline-flex;align-items:center;gap:5px}
-.dot{width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0}
-.d-on{background:var(--green)}.d-off{background:var(--red)}.d-warn{background:var(--warn)}
+/* Viewport */
+#viewport{border-radius:var(--rad);box-shadow:0 8px 32px rgba(0,0,0,.45);transition:all .3s;flex-shrink:0;overflow:hidden;background:#fff}
+#viewport.desktop{width:1386px;height:780px}
+#viewport.mobile{width:390px;height:780px;border-radius:28px;border:3px solid #1e293b;box-shadow:0 8px 32px rgba(0,0,0,.5),inset 0 0 0 1px #0f172a;display:flex;flex-direction:column}
+#viewport.mobile::before{content:'';display:block;height:24px;background:#1e293b;flex-shrink:0}
+#preview-frame{width:100%;height:100%;border:none;display:block;background:#fff}
+#viewport.desktop #preview-frame{border-radius:var(--rad)}
 
 /* Loading */
 .loading-wrap{display:flex;align-items:center;justify-content:center;height:100%;color:var(--muted);font-size:13px;flex-direction:column;gap:8px}
@@ -76,43 +175,36 @@ body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:v
 .message code{background:rgba(0,0,0,0.12);padding:1px 6px;border-radius:3px}
 
 /* Scrollbar — neutral gray, consistent across all browsers */
-/* Standards-track: Firefox 64+ / Chrome 121+ / Edge 121+ */
-html,body,#preview-area,#panel{
+html,body,#preview-area,#panel-body{
   scrollbar-width:thin;
   scrollbar-color:rgba(107,125,153,.25) transparent;
 }
-/* IE / Legacy Edge */
-#preview-area,#panel{
+#preview-area,#panel-body{
   -ms-overflow-style:-ms-autohiding-scrollbar;
 }
-/* WebKit scrollbars — scoped to actual scrollable regions only */
 #preview-area::-webkit-scrollbar,
-#panel::-webkit-scrollbar          { width:6px; height:6px }
+#panel-body::-webkit-scrollbar          { width:6px; height:6px }
 #preview-area::-webkit-scrollbar-track,
-#panel::-webkit-scrollbar-track    { background:transparent }
+#panel-body::-webkit-scrollbar-track    { background:transparent }
 #preview-area::-webkit-scrollbar-thumb,
-#panel::-webkit-scrollbar-thumb    {
+#panel-body::-webkit-scrollbar-thumb    {
   background-color:rgba(107,125,153,.25);
   border-radius:3px;
   border:1px solid rgba(255,255,255,.06);
 }
 #preview-area::-webkit-scrollbar-thumb:hover,
-#panel::-webkit-scrollbar-thumb:hover { background-color:rgba(107,125,153,.45) }
+#panel-body::-webkit-scrollbar-thumb:hover { background-color:rgba(107,125,153,.45) }
 #preview-area::-webkit-scrollbar-corner,
-#panel::-webkit-scrollbar-corner   { background:transparent }
-/* The panel's inner parameter section (flex:1;overflow-y:auto) */
-#panel section::-webkit-scrollbar          { width:6px; height:6px }
-#panel section::-webkit-scrollbar-track    { background:transparent }
-#panel section::-webkit-scrollbar-thumb    {
-  background-color:rgba(107,125,153,.25);
-  border-radius:3px;
-  border:1px solid rgba(255,255,255,.06);
-}
-#panel section::-webkit-scrollbar-thumb:hover { background-color:rgba(107,125,153,.45) }
-#panel section::-webkit-scrollbar-corner   { background:transparent }
-#panel section{scrollbar-width:thin;scrollbar-color:rgba(107,125,153,.25) transparent}
+#panel-body::-webkit-scrollbar-corner   { background:transparent }
 
-@media(max-width:850px){#panel{display:none}#topbar .hint{display:none}}
+@media(max-width:900px){
+  #panel{--panel-w:380px;right:6px;top:6px;bottom:6px}
+  #panel.collapsed{transform:translateX(calc(var(--panel-w) - 36px))}
+}
+@media(max-width:700px){
+  #panel{display:none}
+  #topbar .hint{display:none}
+}
 </style>
 </head>
 <body>
@@ -136,7 +228,7 @@ html,body,#preview-area,#panel{
     <button id="btn-desk" class="on" onclick="setViewport('desktop')">Desktop</button>
     <button id="btn-mob" onclick="setViewport('mobile')">Mobile</button>
   </div>
-  <span class="hint">keys: d/m &nbsp; &larr;&rarr; tab &nbsp; &uarr;&darr; select</span>
+  <span class="hint">keys: d/m &nbsp; &larr;&rarr; tab &nbsp; &uarr;&darr; select &nbsp; p toggle panel</span>
 </nav>
 
 <div id="messages"></div>
@@ -153,26 +245,53 @@ html,body,#preview-area,#panel{
   </div>
 
   <aside id="panel">
-    <section>
-      <h3>Current Template</h3>
-      <div class="card">
-        <div class="label">Type</div>
-        <div class="value" id="panel-name">-</div>
-      </div>
-      <div class="card">
-        <div class="label">Description</div>
-        <div class="value" id="panel-desc" style="font-size:11px;line-height:1.5">-</div>
-      </div>
-      <div class="stat" id="panel-stats"></div>
-    </section>
-    <section style="flex:1;overflow-y:auto">
-      <h3>Parameters</h3>
-      <table id="panel-params"><tr><td colspan="2" style="color:var(--muted)">-</td></tr></table>
-    </section>
-    <section>
-      <h3>Source</h3>
-      <div class="card" style="font-family:monospace;font-size:10px;color:var(--muted);word-break:break-all" id="panel-path">-</div>
-    </section>
+    <!-- Collapse handle tab on the left edge -->
+    <div id="panel-handle" title="Toggle panel" onclick="togglePanel()">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+
+    <!-- Close button (top-right) -->
+    <button id="panel-close" title="Close panel" onclick="togglePanel()">&times;</button>
+
+    <div id="panel-body">
+      <section id="sec-info">
+        <div class="section-hdr" onclick="toggleSection('sec-info')">
+          <h3>Current Template</h3>
+          <svg class="section-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="section-content">
+          <div class="card">
+            <div class="label">Type</div>
+            <div class="value" id="panel-name">-</div>
+          </div>
+          <div class="card">
+            <div class="label">Description</div>
+            <div class="value" id="panel-desc" style="font-size:11px;line-height:1.5">-</div>
+          </div>
+          <div class="stat" id="panel-stats"></div>
+        </div>
+      </section>
+
+      <section id="sec-params">
+        <div class="section-hdr" onclick="toggleSection('sec-params')">
+          <h3>Parameters</h3>
+          <svg class="section-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="section-content">
+          <table id="panel-params"><tr><td colspan="2" style="color:var(--muted)">-</td></tr></table>
+        </div>
+      </section>
+
+      <section id="sec-source">
+        <div class="section-hdr" onclick="toggleSection('sec-source')">
+          <h3>Source</h3>
+          <svg class="section-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="section-content">
+          <div class="card" style="font-family:monospace;font-size:10px;color:var(--muted);word-break:break-all" id="panel-path">-</div>
+        </div>
+      </section>
+    </div>
   </aside>
 </div>
 
@@ -205,9 +324,8 @@ function transform(html, mode) {
 function render() {
   const frame = document.getElementById('preview-frame');
   const loading = document.getElementById('loading');
-  if(!rendered) return; // no data yet — init handles the error display
+  if(!rendered) return;
 
-  // Sandbox only in dev mode; file: protocol rejects sandboxed srcdoc
   if (location.protocol !== 'file:') {
     frame.setAttribute('sandbox', '');
   }
@@ -218,7 +336,6 @@ function render() {
   const src = rendered;
   const raw = src[state.theme]?.[state.template];
   let content = raw ? transform(raw, state.client) : '<p style=\"color:red;padding:20px\">Not found: '+state.theme+'/'+state.template+'</p>';
-  // Inject invisible scrollbar into iframe content for immersive preview
   content = content.replace('</head>', '<style>html{scrollbar-color:rgba(107,125,153,.25) transparent;scrollbar-width:thin;-ms-overflow-style:-ms-autohiding-scrollbar}html::-webkit-scrollbar{width:6px;height:6px}html::-webkit-scrollbar-track{background:transparent}html::-webkit-scrollbar-thumb{background-color:rgba(107,125,153,.25);border-radius:3px;border:1px solid rgba(255,255,255,.06)}html::-webkit-scrollbar-thumb:hover{background-color:rgba(107,125,153,.45)}html::-webkit-scrollbar-corner{background:transparent}</style></head>');
 
   let done = false;
@@ -230,13 +347,25 @@ function render() {
   }
   frame.onload = finish;
   frame.srcdoc = content;
-  // Safety timeout — force-hide loading if onload stalls (max 5 s)
   setTimeout(finish, 5000);
   updatePanel();
 }
 
 //
-// Panel updates
+// Panel — collapse/expand
+//
+function togglePanel() {
+  const panel = document.getElementById('panel');
+  panel.classList.toggle('collapsed');
+}
+
+function toggleSection(id) {
+  const sec = document.getElementById(id);
+  sec.classList.toggle('collapsed');
+}
+
+//
+// Panel content updates
 //
 function updatePanel() {
   const r = REGISTRY[state.template];
@@ -287,9 +416,10 @@ document.addEventListener('keydown',e=>{
   // Viewport shortcuts (no modifiers)
   if(e.key==='d'&&!e.ctrlKey&&!e.metaKey&&!e.altKey){ setViewport('desktop'); return; }
   if(e.key==='m'&&!e.ctrlKey&&!e.metaKey&&!e.altKey){ setViewport('mobile'); return; }
+  // 'p' to toggle floating panel
+  if(e.key==='p'&&!e.ctrlKey&&!e.metaKey&&!e.altKey){ togglePanel(); return; }
 
   // ← →  cycle focus between Theme / Template / Client selects
-  // When a select dropdown is open the browser captures keys, so this only runs when closed
   const selects=['sel-theme','sel-template','sel-client'];
   const activeId=document.activeElement?.id;
   const cur=selects.indexOf(activeId);
@@ -297,31 +427,25 @@ document.addEventListener('keydown',e=>{
   if(e.key==='ArrowRight'||e.key==='ArrowLeft'){
     e.preventDefault();
     if(cur>=0){
-      // Cycle to next/previous select
       const dir=e.key==='ArrowRight'?1:-1;
       const next=(cur+dir+selects.length)%selects.length;
       document.getElementById(selects[next])?.focus();
     } else {
-      // First press — jump to template (middle)
       document.getElementById('sel-template')?.focus();
     }
   }
-
-  // ↑ ↓ are handled natively by the focused <select> — onchange fires → render()
 });
 
 //
 // Init — load everything from rendered.js (single source of truth)
 //
 (function(){
-  // Load REGISTRY and PARAMS from rendered.js
   if(window.__REGISTRY__) REGISTRY = window.__REGISTRY__;
   if(window.__PARAMS__)   PARAMS   = window.__PARAMS__;
 
   if(window.__RENDERED__){
     rendered = window.__RENDERED__;
 
-    // Populate theme selector from rendered data
     const themeKeys = Object.keys(rendered).sort();
     const selTheme = document.getElementById('sel-theme');
     themeKeys.forEach(t => {
@@ -332,7 +456,6 @@ document.addEventListener('keydown',e=>{
     });
     state.theme = themeKeys[0] || '';
 
-    // Populate template selector from REGISTRY
     const selTpl = document.getElementById('sel-template');
     for(const [id, t] of Object.entries(REGISTRY)){
       const o = document.createElement('option');
@@ -360,9 +483,6 @@ function showMessage(ht, type) {
 function clearMessages() {
   document.getElementById('messages').innerHTML = '';
 }
-
-// Dev-mode detection
-// The SSE open handler will call setDevMode() which clears any stale messages.
 
 function setDevMode(on) {
   devMode = on;
