@@ -21,6 +21,7 @@
 
     /* Card */
     .email-card { padding:24px 24px 16px 28px;vertical-align:top;color:#333 }
+    .email-sidebar { padding:24px 28px 16px 0;vertical-align:top;border-left:1px solid #ddd }
     .email-heading { margin:0 0 16px;font-size:15px;color:#333;line-height:1.7 }
     .email-text { margin:0 0 12px;font-size:13px;line-height:1.8;color:#444 }
     .email-subtext { margin:0 0 20px;font-size:12px;line-height:1.8;color:#666;font-style:italic }
@@ -53,6 +54,7 @@
     @media only screen and (max-width:480px) {
       .email-header { padding-left:16px!important;padding-right:16px!important }
       .email-card { width:100%!important;display:block!important;border-left:none!important;padding-left:28px!important;padding-right:28px!important;padding-top:0!important }
+      .email-sidebar { width:100%!important;display:block!important;padding:0 28px 16px!important;border-left:none!important;border-top:1px solid #ddd!important }
       .email-btn { display:block!important;width:auto!important;text-align:center!important }
       .email-footer { padding-left:16px!important;padding-right:16px!important }
     }
@@ -115,7 +117,7 @@
 
         </td>
         <!-- right column / sidebar -->
-        <td width="36%" style="padding:24px 28px 16px 0;vertical-align:top;border-left:1px solid #ddd;">
+        <td width="36%" class="email-sidebar">
 
           <p style="margin:0 0 10px;font-size:10px;color:#888;text-transform:uppercase;letter-spacing:1px;font-family:system-ui,sans-serif;font-weight:700;">Quick Info</p>
           <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:1px solid #ddd;border-bottom:1px solid #ddd;">
