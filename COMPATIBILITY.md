@@ -7,7 +7,8 @@ This document tracks the compatibility between **Gitea Mail Templates** releases
 <!-- TRACKER:QUICK-REF-MAX OFFSET=3 -->
 | Template Release | Min Gitea | Max Tested Gitea | Status |
 |-----------------|-----------|-----------------|--------|
-| **v1.0.0**      | **1.25.0** | **1.26.4** | ✅ Active |
+| **v1.0.1**      | **1.25.0** | **1.26.4** | ✅ Active |
+| **v1.0.0**      | **1.25.0** | **1.26.4** | ✅ Superseded |
 
 > **Latest verified:** All 11 templates pass validation against Gitea 1.26.4 data contexts. <!-- TRACKER:LATEST-VERIFIED -->
 
