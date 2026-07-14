@@ -2,7 +2,7 @@
 
 A curated collection of professionally designed, audience-driven email templates for self-hosted [Gitea](https://about.gitea.com) instances.
 
-[![Gitea](https://img.shields.io/badge/Gitea-1.25+%20%7C%201.27.0%20pending-yellow)](COMPATIBILITY.md) <!-- TRACKER:BADGE -->
+[![Gitea](https://img.shields.io/badge/Gitea-1.25+%20%7C%201.27.0%20tested-blue)](COMPATIBILITY.md) <!-- TRACKER:BADGE -->
 
 > **110 template files — 10 visual styles, 11 email types each**
 
