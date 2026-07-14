@@ -79,7 +79,7 @@ cd tools && go run . dev
 ## 兼容性
 
 - **Gitea 1.25+** — v1.25 引入的邮件模板目录结构
-- **最新测试：** Gitea 1.26.4<!-- TRACKER:LATEST-TESTED -->
+- **最新测试：** Gitea 1.27.0<!-- TRACKER:LATEST-TESTED -->
 - 与 Gitea 官方模板 100% 兼容 — 详见 [COMPATIBILITY.md](COMPATIBILITY.md)
 
 ## 许可证
