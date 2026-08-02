@@ -96,11 +96,11 @@
             <h4>{{.locale.Tr "mail.release.title" .Release.Title}}</h4>
 
             {{if .Release.RenderedNote}}
-              <p>{{.locale.Tr "mail.release.note"}}</p>
+              <p class="email-text">{{.locale.Tr "mail.release.note"}}</p>
               <div class="aurora-content" style="font-size:14px;line-height:2;">{{.Release.RenderedNote}}</div>
             {{end}}
 
-            <p>{{.locale.Tr "mail.release.downloads"}}</p>
+            <p class="email-text">{{.locale.Tr "mail.release.downloads"}}</p>
             <ul>
               {{if not .DisableDownloadSourceArchives}}
                 <li><a href="{{.Release.Repo.HTMLURL}}/archive/{{.Release.TagName | PathEscapeSegments}}.zip">{{.locale.Tr "mail.release.download.zip"}}</a></li>
