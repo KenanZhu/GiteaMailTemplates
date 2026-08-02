@@ -142,7 +142,7 @@
               <ul>
                 {{range .Comment.Commits}}
                   <li>
-                    <a href="{{$.Comment.Issue.PullRequest.BaseRepo.HTMLURL}}/commit/{{.ID}}">{{ShortSha .ID.String}}</a> - {{.MessageTitle}}
+                    <a href="{{$.Comment.Issue.PullRequest.BaseRepo.HTMLURL}}/commit/{{.UserCommit.GitCommit.ID}}">{{ShortSha .UserCommit.GitCommit.ID.String}}</a> - {{.UserCommit.GitCommit.MessageTitle}}
                   </li>
                 {{end}}
               </ul>

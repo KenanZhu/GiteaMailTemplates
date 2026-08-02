@@ -131,7 +131,7 @@
             <li class="commit-item">
               <a href="{{$.Comment.Issue.PullRequest.BaseRepo.HTMLURL}}/commit/{{.ID}}" class="commit-link">
                 {{ShortSha .ID.String}}
-              </a>  &mdash;  {{.MessageTitle}}
+              </a>  &mdash;  {{.UserCommit.GitCommit.MessageTitle}}
             </li>
           {{end}}
           </ul>
