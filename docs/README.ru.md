@@ -58,7 +58,7 @@ cd tools && go run . dev
 ## Совместимость
 
 - **Gitea 1.25+** — структура директорий из v1.25
-- **Последняя проверка:** Gitea 1.27.1<!-- TRACKER:LATEST-TESTED -->
+- **Последняя проверка:** Gitea 1.27.2<!-- TRACKER:LATEST-TESTED -->
 - 100% совместимость с официальными шаблонами Gitea — см. [COMPATIBILITY.md](COMPATIBILITY.md)
 
 ## Лицензия
