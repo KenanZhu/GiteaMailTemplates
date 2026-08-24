@@ -101,7 +101,7 @@ jobs:
         if: steps.version.outputs.skip != 'true'
         run: |
           NEW="${{ steps.version.outputs.new_version }}"
-          for f in docs/README.{ja,ko,ru,zh-CN,zh-TW}.md; do
+          for f in docs/README.zh-CN.md; do
             sed -i "/TRACKER:LATEST-TESTED/s/Gitea [0-9.]*/Gitea ${NEW}/" "$f"
           done
 

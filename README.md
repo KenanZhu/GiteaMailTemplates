@@ -135,7 +135,7 @@ gitea-mail-templates/
 │   ├── data/             #   templates_config.json — single source of truth
 │   ├── preview/          #   Template rendering engine
 │   └── go.mod
-├── docs/                 # Multi-language documentation
+├── docs/                 # Bilingual documentation (English + Simplified Chinese)
 ├── AGENTS.md             # AI agent guidance
 ├── CONTRIBUTING.md
 ├── LICENSE
@@ -185,17 +185,13 @@ gitea-mail-templates/
 ## Documentation
 
 - [English](README.md)
-- [Simplified Chinese](docs/README.zh-CN.md)
-- [Traditional Chinese](docs/README.zh-TW.md)
-- [Russian](docs/README.ru.md)
-- [Japanese](docs/README.ja.md)
-- [Korean](docs/README.ko.md)
+- [简体中文](docs/README.zh-CN.md)
 
 ---
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines. Multi-language versions available in [docs/](docs/).
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines. A Simplified Chinese translation is available in [docs/](docs/).
 
 ## License
 

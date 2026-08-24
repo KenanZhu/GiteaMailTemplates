@@ -28,7 +28,7 @@ tools/              # Go CLI tooling (modular, zero dependencies)
 preview/            # Browser-based live preview
   index.html        # SPA with style/template/client/viewport switching
   rendered.js       # Pre-rendered HTML (generated, committed for clone-and-preview)
-docs/               # Multi-language documentation
+docs/               # Bilingual documentation (English + Simplified Chinese only)
 ```
 
 ## Working With Templates

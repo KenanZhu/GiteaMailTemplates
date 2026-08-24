@@ -90,12 +90,10 @@ Any readable commit message in semantic format is welcome. Such as:
 
 ## Translations
 
+Only English and Simplified Chinese are maintained:
+
 - English
-- [Simplified Chinese](docs/CONTRIBUTING.zh-CN.md)
-- [Traditional Chinese](docs/CONTRIBUTING.zh-TW.md)
-- [Russian](docs/CONTRIBUTING.ru.md)
-- [Japanese](docs/CONTRIBUTING.ja.md)
-- [Korean](docs/CONTRIBUTING.ko.md)
+- [简体中文](docs/CONTRIBUTING.zh-CN.md)
 
 ---
 
