@@ -64,6 +64,13 @@ docs/               # Multi-language documentation
 - `tools/preview/server.go` pure Go dev server with SSE live reload and in-process template re-rendering
 - Uses Go's native `html/template` package for template rendering
 
+## Versioning
+
+- Release versions **mirror the Gitea version they support**: Gitea `X.Y.Z` → template release `X.Y.Z` (git tag `vX.Y.Z`)
+- The current release is **1.27.1** (tracks Gitea 1.27.1); the quick-reference table in `COMPATIBILITY.md` lists it first — the tracker workflow updates that row by position
+- When a new Gitea version is verified compatible: bump the **Template Release** column in `COMPATIBILITY.md`, update the README release line and badge, then tag `vX.Y.Z` (the release workflow packages automatically on tag push)
+- Keep the `TRACKER:` markers in `COMPATIBILITY.md` / `README.md` adjacent to their rows so the automated workflow keeps parsing them
+
 ## Commit Conventions
 - `style(name):` — template changes for a specific theme
 - `preview:` — preview tooling changes

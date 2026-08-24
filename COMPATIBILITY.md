@@ -7,10 +7,23 @@ This document tracks the compatibility between **Gitea Mail Templates** releases
 <!-- TRACKER:QUICK-REF-MAX OFFSET=3 -->
 | Template Release | Min Gitea | Max Tested Gitea | Status |
 |-----------------|-----------|-----------------|--------|
-| **v1.0.1**      | **1.25.0** | **1.27.1** | ✅ Active |
+| **1.27.1**      | **1.25.0** | **1.27.1** | ✅ Active |
+| **v1.0.1**      | **1.25.0** | **1.27.1** | ✅ Superseded |
 | **v1.0.0**      | **1.25.0** | **1.26.4** | ✅ Superseded |
 
 > **Latest verified:** All 11 templates pass validation against Gitea 1.27.1 data contexts. <!-- TRACKER:LATEST-VERIFIED -->
+
+## Versioning
+
+From **1.27.1** onward, Gitea Mail Templates releases **mirror the Gitea version they support**: Gitea `X.Y.Z` uses template release `X.Y.Z` (tagged `vX.Y.Z`).
+
+| Gitea version | Template release |
+|---------------|------------------|
+| 1.27.1        | **1.27.1**       |
+
+- The [tracker workflow](.github/workflows/gitea-tracker.yml) opens a PR when a new Gitea release appears, marking it ⏳ Pending Verification.
+- After verification, bump the **Template Release** column to the new version and tag it with the same number — the [release workflow](.github/workflows/release.yml) packages the archive automatically on tag push.
+- Releases before 1.27.1 used an independent numbering scheme (`v1.0.x`) and remain listed in the matrix for reference.
 
 ## Check Your Gitea Version
 
@@ -92,7 +105,7 @@ All templates use Gitea's official `mail.*` translation namespace. Keys are stab
 
 ## Automated Tracking
 
-A [workflow](.github/workflows/gitea-tracker.yml) runs daily (UTC 08:00) to detect new Gitea releases. When a new version is found, it automatically creates a PR updating the matrix and badges with a **⏳ Pending Verification** status. Manual trigger is also available via `workflow_dispatch`.
+A [workflow](.github/workflows/gitea-tracker.yml) runs daily (UTC 08:00) to detect new Gitea releases. When a new version is found, it automatically creates a PR updating the matrix and badges with a **⏳ Pending Verification** status. Manual trigger is also available via `workflow_dispatch`. Once verification passes, release the templates under the same version number (see [Versioning](#versioning)).
 
 ## Reporting Issues
 
