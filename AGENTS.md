@@ -28,7 +28,7 @@ tools/              # Go CLI tooling (modular, zero dependencies)
 preview/            # Browser-based live preview
   index.html        # SPA with style/template/client/viewport switching
   rendered.js       # Pre-rendered HTML (generated, committed for clone-and-preview)
-docs/               # Bilingual documentation (English + Simplified Chinese only)
+docs/               # Bilingual documentation (English + Simplified Chinese)
 ```
 
 ## Working With Templates
@@ -66,9 +66,10 @@ docs/               # Bilingual documentation (English + Simplified Chinese only
 
 ## Versioning
 
-- Release versions **mirror the Gitea version they support**: Gitea `X.Y.Z` → template release `X.Y.Z` (git tag `vX.Y.Z`)
-- The current release is **1.27.1** (tracks Gitea 1.27.1); the quick-reference table in `COMPATIBILITY.md` lists it first — the tracker workflow updates that row by position
-- When a new Gitea version is verified compatible: bump the **Template Release** column in `COMPATIBILITY.md`, update the README release line and badge, then tag `vX.Y.Z` (the release workflow packages automatically on tag push)
+- Release numbers stay on the project's own scheme; the supported Gitea version is appended in parentheses — `v1.0.1(v1.27.2)` means release `v1.0.1` tracks Gitea `1.27.2`
+- The current release is **v1.0.1** (tracks Gitea 1.27.2); the quick-reference table in `COMPATIBILITY.md` lists it first — the tracker workflow updates that row by position
+- When a new Gitea version is verified compatible: update the parenthesized Gitea version in the active `COMPATIBILITY.md` row, plus the README release line and badge
+- Tag a new release (`vX.Y.Z`) only when the template content itself changes — the release workflow packages automatically on tag push
 - Keep the `TRACKER:` markers in `COMPATIBILITY.md` / `README.md` adjacent to their rows so the automated workflow keeps parsing them
 
 ## Commit Conventions

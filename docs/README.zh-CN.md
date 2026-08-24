@@ -79,8 +79,8 @@ cd tools && go run . dev
 ## 兼容性
 
 - **Gitea 1.25+** — v1.25 引入的邮件模板目录结构
-- **最新测试：** Gitea 1.27.1<!-- TRACKER:LATEST-TESTED -->
-- **版本号：** 发布版本与所支持的 Gitea 版本一致 — Gitea 1.27.1 → 模板发布版 1.27.1（详见 [COMPATIBILITY.md](COMPATIBILITY.md)）
+- **最新测试：** Gitea 1.27.2<!-- TRACKER:LATEST-TESTED -->
+- **版本号：** 发布版本语义化追踪 Gitea 版本 — Gitea 1.27.2 → 模板发布版 v1.0.1(v1.27.2)（详见 [COMPATIBILITY.md](COMPATIBILITY.md)）
 - 与 Gitea 官方模板 100% 兼容 — 详见 [COMPATIBILITY.md](COMPATIBILITY.md)
 
 ## 许可证

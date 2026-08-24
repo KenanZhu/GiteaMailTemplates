@@ -7,23 +7,23 @@ This document tracks the compatibility between **Gitea Mail Templates** releases
 <!-- TRACKER:QUICK-REF-MAX OFFSET=3 -->
 | Template Release | Min Gitea | Max Tested Gitea | Status |
 |-----------------|-----------|-----------------|--------|
-| **1.27.1**      | **1.25.0** | **1.27.1** | ✅ Active |
-| **v1.0.1**      | **1.25.0** | **1.27.1** | ✅ Superseded |
+| **v1.0.1(v1.27.2)** | **1.25.0** | **1.27.2** | ✅ Active |
 | **v1.0.0**      | **1.25.0** | **1.26.4** | ✅ Superseded |
 
-> **Latest verified:** All 11 templates pass validation against Gitea 1.27.1 data contexts. <!-- TRACKER:LATEST-VERIFIED -->
+> **Latest verified:** All 11 templates pass validation against Gitea 1.27.2 data contexts. <!-- TRACKER:LATEST-VERIFIED -->
 
 ## Versioning
 
-From **1.27.1** onward, Gitea Mail Templates releases **mirror the Gitea version they support**: Gitea `X.Y.Z` uses template release `X.Y.Z` (tagged `vX.Y.Z`).
+From **1.27.1** onward, template releases are **semantically tracked** against Gitea: the release keeps its own number, and the supported Gitea version is appended in parentheses — `v1.0.1(v1.27.2)` means release `v1.0.1` is the version to use with Gitea `1.27.2`.
 
 | Gitea version | Template release |
 |---------------|------------------|
-| 1.27.1        | **1.27.1**       |
+| 1.27.2        | **v1.0.1(v1.27.2)** |
+| 1.27.1        | **v1.0.1(v1.27.1)** |
 
 - The [tracker workflow](.github/workflows/gitea-tracker.yml) opens a PR when a new Gitea release appears, marking it ⏳ Pending Verification.
-- After verification, bump the **Template Release** column to the new version and tag it with the same number — the [release workflow](.github/workflows/release.yml) packages the archive automatically on tag push.
-- Releases before 1.27.1 used an independent numbering scheme (`v1.0.x`) and remain listed in the matrix for reference.
+- After verification, update the parenthesized Gitea version on the active **Template Release** row. A new release (`vX.Y.Z`) is only tagged when the template content itself changes — the [release workflow](.github/workflows/release.yml) packages the archive automatically on tag push.
+- Releases before Gitea 1.27.1 predate semantic tracking and keep their plain version numbers in the matrix.
 
 ## Check Your Gitea Version
 
@@ -38,6 +38,7 @@ gitea --version
 <!-- TRACKER:VERSION-INSERT OFFSET=2 -->
 | Gitea | Release Date | Mail Template Changes | Breaking? |
 |-------|-------------|----------------------|-----------|
+| **1.27.2** | 2026-08-14 | None — security + bug fixes | No |
 | **1.27.1** | 2026-07-27 | Fixed push commit data paths: .ID → .UserCommit.GitCommit.ID (#38467) | No |
 | **1.27.0** | 2026-07-13 | None — no mail template changes | No |
 | **1.26.4** | 2026-06-21 | None — hotfix release | No |

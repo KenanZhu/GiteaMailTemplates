@@ -127,10 +127,11 @@ jobs:
             - [ ] Update status from ⏳ to ✅ (compatible) or ❌ (breaking) in COMPATIBILITY.md
             - [ ] Update the `Mail Template Changes` and `Breaking?` columns with accurate notes
 
-            ## Release (semantic versioning)
-            Once verified, releases mirror the Gitea version:
-            - [ ] Bump the **Template Release** column in `COMPATIBILITY.md` to **${{ steps.version.outputs.new_version }}**
-            - [ ] Tag the release with the same number: `git tag v${{ steps.version.outputs.new_version }} && git push origin v${{ steps.version.outputs.new_version }}` — the release workflow packages the archive automatically
+            ## Semantic tracking
+            Once verified, update the tracked Gitea version (release numbers stay unchanged):
+            - [ ] Update the parenthesized Gitea version on the active **Template Release** row in `COMPATIBILITY.md` (e.g. `v1.0.1(v${{ steps.version.outputs.new_version }})`)
+            - [ ] Update the README release line and badge to the new version
+            - [ ] Tag a new release only if the template content itself changed — `git tag vX.Y.Z && git push origin vX.Y.Z` (the release workflow packages automatically)
           labels: compatibility, automated
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
