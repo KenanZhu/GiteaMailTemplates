@@ -4,7 +4,7 @@ A curated collection of professionally designed, audience-driven email templates
 
 [![Gitea](https://img.shields.io/badge/Gitea-1.25+%20%7C%201.27.3%20tested-blue)](COMPATIBILITY.md) <!-- TRACKER:BADGE -->
 
-> **110 template files — 10 visual styles, 11 email types each. Current source verified with Gitea 1.27.3; push-notification fixes await a new release.**
+> **110 template files — 10 visual styles, 11 email types each. The `main` branch is verified with Gitea 1.27.3; push-notification fixes await a new release.**
 
 ---
 
@@ -12,7 +12,7 @@ A curated collection of professionally designed, audience-driven email templates
 
 Most self-hosted Gitea instances use the default plain email templates. This project provides **ready-to-deploy, visually polished alternatives** — each designed for a specific community or audience, so you can pick the one that feels right for your users.
 
-Every template is a drop-in replacement. All Go template variables, translation keys, and Gitea data contexts are fully compatible. **No patches, no plugins, no forks required.**
+The templates on `main` can replace Gitea's built-in mail templates without patches, plugins, or forks. Check the [compatibility matrix](COMPATIBILITY.md) before using a published archive; older releases may have version-specific limitations.
 
 ---
 
@@ -165,7 +165,7 @@ gitea-mail-templates/
 
 - **Gitea 1.25+** — matches the refactored mail template directory structure (v1.25)
 - **Latest tested:** Gitea 1.27.3 <!-- TRACKER:LATEST-TESTED -->
-- **Published release:** v1.27.2. Its Bloom, Ember, and Heritage push notifications can fail on Gitea 1.27.1+; the fix is in the current source tree and awaits release (see [COMPATIBILITY.md](COMPATIBILITY.md))
+- **Published release:** v1.27.2. Its Bloom, Ember, and Heritage push notifications can fail on Gitea 1.27.1+; the fix is on `main` and awaits release (see [COMPATIBILITY.md](COMPATIBILITY.md))
 - The current source uses Gitea's official template data paths — see [COMPATIBILITY.md](COMPATIBILITY.md) for release-specific limitations
 - Uses only built-in Gitea template functions and official translation keys
 - No custom template functions or locale patches required
