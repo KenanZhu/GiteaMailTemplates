@@ -2,7 +2,7 @@
 
 为自托管 [Gitea](https://about.gitea.com) 实例精心设计、面向不同受众的邮件模板集合。
 
-> **110 个模板文件 — 10 种视觉风格，每种 11 种邮件类型**
+> **发布版 v1.27.3 — 已通过 Gitea 1.27.3 兼容性检查 — 110 个模板文件、10 种视觉风格、每种 11 种邮件类型**
 
 ---
 
@@ -80,7 +80,7 @@ cd tools && go run . dev
 
 - **Gitea 1.25+** — v1.25 引入的邮件模板目录结构
 - **最新测试：** Gitea 1.27.3<!-- TRACKER:LATEST-TESTED -->
-- **发布状态：** 已发布的 v1.27.2 在 Gitea 1.27.1+ 上，Bloom、Ember、Heritage 主题的推送通知可能失败；修复已推送到 `main`，尚待发布（详见 [兼容性说明](../COMPATIBILITY.md)）
+- **最新发布版：** [v1.27.3](https://github.com/KenanZhu/GiteaMailTemplates/releases/tag/v1.27.3) 已修复 Bloom、Ember、Heritage 主题在 Gitea 1.27.1+ 上的推送通知问题；旧版 v1.27.2 压缩包仍受影响（详见 [兼容性说明](../COMPATIBILITY.md)）
 - 当前源码使用 Gitea 官方模板的数据路径；各发布版的限制详见 [兼容性说明](../COMPATIBILITY.md)
 
 ## 许可证

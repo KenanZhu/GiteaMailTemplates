@@ -106,14 +106,16 @@ jobs:
             - [ ] Check [Gitea changelog](https://github.com/go-gitea/gitea/blob/main/CHANGELOG.md) for mail template changes
             - [ ] Review diff of official templates: `git diff v${{ steps.version.outputs.current_version }}..v${{ steps.version.outputs.new_version }} -- templates/mail/ services/mailer/`
             - [ ] Run `cd tools && go run . preview all` to confirm templates still render
+            - [ ] Run `cd tools && go test ./...` to verify push-notification data paths
             - [ ] Update status from ⏳ to ✅ (compatible) or ❌ (breaking) in COMPATIBILITY.md
             - [ ] Update the `Mail Template Changes` and `Breaking?` columns with accurate notes
             - [ ] After verification, update `TRACKER:LATEST-VERIFIED` and the English/Chinese `TRACKER:LATEST-TESTED` lines; switch the README badge from pending to tested
 
             ## Semantic tracking
             Once verified, update the tracked Gitea version:
-            - [ ] Keep the top **Template Release** row as `Unreleased` until its fixes are tagged; never label a released archive compatible with unshipped changes
+            - [ ] If templates changed, mark the top **Template Release** row `Unreleased` until the fix is tagged; if no change is needed, retain the verified release tag
             - [ ] Update the README release status and compatibility matrix to distinguish source fixes from published packages
+            - [ ] Write `.github/release-notes/vX.Y.Z.md` before tagging; the release workflow uses this file for the published notes
             - [ ] Tag a new release when shipping template fixes — `git tag vX.Y.Z && git push origin vX.Y.Z` (the release workflow packages automatically)
           labels: compatibility, automated
         env:

@@ -4,7 +4,7 @@ A curated collection of professionally designed, audience-driven email templates
 
 [![Gitea](https://img.shields.io/badge/Gitea-1.25+%20%7C%201.27.3%20tested-blue)](COMPATIBILITY.md) <!-- TRACKER:BADGE -->
 
-> **110 template files — 10 visual styles, 11 email types each. The `main` branch is verified with Gitea 1.27.3; push-notification fixes await a new release.**
+> **Release v1.27.3 — verified with Gitea 1.27.3 — 110 template files, 10 visual styles, 11 email types each.**
 
 ---
 
@@ -165,7 +165,7 @@ gitea-mail-templates/
 
 - **Gitea 1.25+** — matches the refactored mail template directory structure (v1.25)
 - **Latest tested:** Gitea 1.27.3 <!-- TRACKER:LATEST-TESTED -->
-- **Published release:** v1.27.2. Its Bloom, Ember, and Heritage push notifications can fail on Gitea 1.27.1+; the fix is on `main` and awaits release (see [COMPATIBILITY.md](COMPATIBILITY.md))
+- **Latest release:** [v1.27.3](https://github.com/KenanZhu/GiteaMailTemplates/releases/tag/v1.27.3) fixes push notifications in Bloom, Ember, and Heritage on Gitea 1.27.1+. The older v1.27.2 archive is affected (see [COMPATIBILITY.md](COMPATIBILITY.md))
 - The current source uses Gitea's official template data paths — see [COMPATIBILITY.md](COMPATIBILITY.md) for release-specific limitations
 - Uses only built-in Gitea template functions and official translation keys
 - No custom template functions or locale patches required

@@ -7,22 +7,22 @@ This document tracks the compatibility between **Gitea Mail Templates** releases
 <!-- TRACKER:QUICK-REF-MAX OFFSET=3 -->
 | Template Release | Min Gitea | Max Tested Gitea | Status |
 |-----------------|-----------|-----------------|--------|
-| **main (unreleased)** | **1.25.0** | **1.27.3** | ✅ Fix pushed and verified; release pending |
+| **v1.27.3** | **1.25.0** | **1.27.3** | ✅ Active |
 | **v1.27.2** | **1.25.0** | **1.27.3** | ⚠️ Push notices fail in Bloom, Ember, and Heritage on Gitea 1.27.1+ |
 | **v1.0.1**      | **1.25.0** | **1.27.0** | ✅ Superseded; push notices need newer release on 1.27.1+ |
 | **v1.0.0**      | **1.25.0** | **1.26.4** | ✅ Superseded |
 
-> **Latest verified:** The fix on `main` passes the Gitea 1.27.3 source audit and push-render test; [CI passed](https://github.com/KenanZhu/GiteaMailTemplates/actions/runs/35824718700). The published v1.27.2 archive still contains three broken push-notification templates. <!-- TRACKER:LATEST-VERIFIED -->
+> **Latest verified:** Release v1.27.3 passes the Gitea 1.27.3 source audit and push-render test. The older v1.27.2 archive contains three broken push-notification templates. <!-- TRACKER:LATEST-VERIFIED -->
 
 ## Versioning
 
-The release tag identifies the downloadable template package. The supported Gitea version may be appended in parentheses in this compatibility matrix; the parenthesized version is not a Git tag. A **main (unreleased)** row describes fixes available in the repository but not yet in a downloadable release.
+The release tag identifies the downloadable template package. The supported Gitea version may be appended in parentheses in this compatibility matrix; the parenthesized version is not a Git tag. An **unreleased** row describes fixes available in the repository but not yet in a downloadable release.
 
 | Gitea version | Template release |
 |---------------|------------------|
-| 1.27.3        | **main (unreleased)**; published v1.27.2 has a push-notification issue in three themes |
-| 1.27.2        | **main (unreleased)**; published v1.27.2 has the same issue |
-| 1.27.1        | **main (unreleased)**; published v1.27.2 has the same issue |
+| 1.27.3        | **v1.27.3**; v1.27.2 has a push-notification issue in three themes |
+| 1.27.2        | **v1.27.3**; v1.27.2 has the same issue |
+| 1.27.1        | **v1.27.3**; v1.27.2 has the same issue |
 
 - The [tracker workflow](.github/workflows/gitea-tracker.yml) opens a PR when a new Gitea release appears, marking it ⏳ Pending Verification.
 - After verification, update the top **Template Release** row. Keep fixes on `main` marked **unreleased** until a new tag is published; the [release workflow](.github/workflows/release.yml) packages the archive on tag push.
@@ -41,7 +41,7 @@ gitea --version
 <!-- TRACKER:VERSION-INSERT OFFSET=2 -->
 | Gitea | Release Date | Mail Template Changes | Breaking? |
 |-------|-------------|----------------------|-----------|
-| **1.27.3** | 2026-08-29 | No upstream mail template, mailer, or locale changes; an existing push-notification defect in three published themes was found and fixed in the current source tree | No upstream break (local fix pending release) |
+| **1.27.3** | 2026-08-29 | No upstream mail template, mailer, or locale changes; an existing push-notification defect in three themes is fixed in template release v1.27.3 | No upstream break |
 | **1.27.2** | 2026-08-14 | None — security + bug fixes | No |
 | **1.27.1** | 2026-07-27 | Push commit data paths changed: .ID → .UserCommit.GitCommit.ID (#38467); older custom templates can fail on push notifications | Yes (old .ID paths) |
 | **1.27.0** | 2026-07-13 | None — no mail template changes | No |

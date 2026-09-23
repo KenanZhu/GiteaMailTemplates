@@ -16,6 +16,10 @@ jobs:
         with:
           go-version: '1.21'
 
+      - name: Test — mail template data contexts
+        working-directory: tools
+        run: go test ./...
+
       - name: Lint — render all templates
         working-directory: tools
         run: go run . preview all
@@ -30,20 +34,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Verify release notes
+        run: test -s ".github/release-notes/${GITHUB_REF_NAME}.md"
+
       - name: Package themes/
         run: |
           VERSION=${GITHUB_REF#refs/tags/}
           ARCHIVE="gitea-mail-templates-${VERSION}"
-          mkdir -p "dist/${ARCHIVE}"
-          cp -r themes LICENSE README.md COMPATIBILITY.md "dist/${ARCHIVE}/"
+          mkdir -p "dist/${ARCHIVE}/docs"
+          cp -r themes LICENSE README.md CONTRIBUTING.md COMPATIBILITY.md "dist/${ARCHIVE}/"
+          cp docs/README.zh-CN.md docs/CONTRIBUTING.zh-CN.md "dist/${ARCHIVE}/docs/"
           cd dist
           zip -r "${ARCHIVE}.zip" "${ARCHIVE}"
           tar -czf "${ARCHIVE}.tar.gz" "${ARCHIVE}"
 
       - name: Create Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: dist/*.zip,dist/*.tar.gz
-          generate_release_notes: true
+          fail_on_unmatched_files: true
+          body_path: .github/release-notes/${{ github.ref_name }}.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
