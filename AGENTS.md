@@ -66,9 +66,9 @@ docs/               # Bilingual documentation (English + Simplified Chinese)
 
 ## Versioning
 
-- Release numbers stay on the project's own scheme; the supported Gitea version is appended in parentheses — `v1.0.1(v1.27.2)` means release `v1.0.1` tracks Gitea `1.27.2`
-- The current release is **v1.0.1** (tracks Gitea 1.27.2); the quick-reference table in `COMPATIBILITY.md` lists it first — the tracker workflow updates that row by position
-- When a new Gitea version is verified compatible: update the parenthesized Gitea version in the active `COMPATIBILITY.md` row, plus the README release line and badge
+- Release tags identify actual downloadable packages; the compatibility matrix distinguishes released tags from source-only fixes
+- The current published release is **v1.27.2**; it has a push-notification bug in Bloom, Ember, and Heritage on Gitea 1.27.1+. The current source tree fixes it and is verified against Gitea 1.27.3. The quick-reference table in `COMPATIBILITY.md` lists the unreleased row first; the tracker workflow updates that row by position
+- When a new Gitea version is checked: update the top `COMPATIBILITY.md` row and README badge; keep unreleased fixes distinct from the published release, and update verified/tested wording only after verification
 - Tag a new release (`vX.Y.Z`) only when the template content itself changes — the release workflow packages automatically on tag push
 - Keep the `TRACKER:` markers in `COMPATIBILITY.md` / `README.md` adjacent to their rows so the automated workflow keeps parsing them
 

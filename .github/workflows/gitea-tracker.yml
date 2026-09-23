@@ -80,30 +80,12 @@ jobs:
           ROW="| **${NEW}** | ${TODAY} | ⏳ Pending Verification | TBD |"
           sed -i "${INSERT}a ${ROW}" COMPATIBILITY.md
 
-      - name: COMPATIBILITY.md — latest verified note
-        if: steps.version.outputs.skip != 'true'
-        run: |
-          NEW="${{ steps.version.outputs.new_version }}"
-          # Update version inline on the line with TRACKER:LATEST-VERIFIED
-          sed -i "/TRACKER:LATEST-VERIFIED/s/Gitea [0-9.]*/Gitea ${NEW}/" COMPATIBILITY.md
-
-      - name: README.md — badge and latest tested
+      - name: README.md — pending badge
         if: steps.version.outputs.skip != 'true'
         run: |
           NEW="${{ steps.version.outputs.new_version }}"
           # Badge: update version, change label tested→pending, color blue→yellow
           sed -i "/TRACKER:BADGE/s/%20[0-9a-z.-]*%20tested-blue/%20${NEW}%20pending-yellow/" README.md
-          # Latest tested: update version on the TRACKER:LATEST-TESTED line
-          sed -i "/TRACKER:LATEST-TESTED/s/Gitea [0-9.]*/Gitea ${NEW}/" README.md
-
-
-      - name: README translations — latest tested
-        if: steps.version.outputs.skip != 'true'
-        run: |
-          NEW="${{ steps.version.outputs.new_version }}"
-          for f in docs/README.zh-CN.md; do
-            sed -i "/TRACKER:LATEST-TESTED/s/Gitea [0-9.]*/Gitea ${NEW}/" "$f"
-          done
 
       - name: Create Pull Request
         if: steps.version.outputs.skip != 'true'
@@ -117,7 +99,7 @@ jobs:
 
             This PR:
             - Updates the compatibility matrix in `COMPATIBILITY.md`
-            - Updates version badges in `README.md` and translations
+            - Marks the new version as pending in the `README.md` badge
             - Marks the new version as **⏳ Pending Verification**
 
             ## Verification Checklist
@@ -126,12 +108,13 @@ jobs:
             - [ ] Run `cd tools && go run . preview all` to confirm templates still render
             - [ ] Update status from ⏳ to ✅ (compatible) or ❌ (breaking) in COMPATIBILITY.md
             - [ ] Update the `Mail Template Changes` and `Breaking?` columns with accurate notes
+            - [ ] After verification, update `TRACKER:LATEST-VERIFIED` and the English/Chinese `TRACKER:LATEST-TESTED` lines; switch the README badge from pending to tested
 
             ## Semantic tracking
-            Once verified, update the tracked Gitea version (release numbers stay unchanged):
-            - [ ] Update the parenthesized Gitea version on the active **Template Release** row in `COMPATIBILITY.md` (e.g. `v1.0.1(v${{ steps.version.outputs.new_version }})`)
-            - [ ] Update the README release line and badge to the new version
-            - [ ] Tag a new release only if the template content itself changed — `git tag vX.Y.Z && git push origin vX.Y.Z` (the release workflow packages automatically)
+            Once verified, update the tracked Gitea version:
+            - [ ] Keep the top **Template Release** row as `Unreleased` until its fixes are tagged; never label a released archive compatible with unshipped changes
+            - [ ] Update the README release status and compatibility matrix to distinguish source fixes from published packages
+            - [ ] Tag a new release when shipping template fixes — `git tag vX.Y.Z && git push origin vX.Y.Z` (the release workflow packages automatically)
           labels: compatibility, automated
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

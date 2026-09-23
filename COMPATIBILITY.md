@@ -7,23 +7,26 @@ This document tracks the compatibility between **Gitea Mail Templates** releases
 <!-- TRACKER:QUICK-REF-MAX OFFSET=3 -->
 | Template Release | Min Gitea | Max Tested Gitea | Status |
 |-----------------|-----------|-----------------|--------|
-| **v1.0.1(v1.27.2)** | **1.25.0** | **1.27.2** | ✅ Active |
+| **Unreleased** | **1.25.0** | **1.27.3** | ✅ Source verified; release pending |
+| **v1.27.2** | **1.25.0** | **1.27.3** | ⚠️ Push notices fail in Bloom, Ember, and Heritage on Gitea 1.27.1+ |
+| **v1.0.1**      | **1.25.0** | **1.27.0** | ✅ Superseded; push notices need newer release on 1.27.1+ |
 | **v1.0.0**      | **1.25.0** | **1.26.4** | ✅ Superseded |
 
-> **Latest verified:** All 11 templates pass validation against Gitea 1.27.2 data contexts. <!-- TRACKER:LATEST-VERIFIED -->
+> **Latest verified:** The current source tree passes the Gitea 1.27.3 source audit and push-render test. The published v1.27.2 archive still contains three broken push-notification templates. <!-- TRACKER:LATEST-VERIFIED -->
 
 ## Versioning
 
-From **1.27.1** onward, template releases are **semantically tracked** against Gitea: the release keeps its own number, and the supported Gitea version is appended in parentheses — `v1.0.1(v1.27.2)` means release `v1.0.1` is the version to use with Gitea `1.27.2`.
+The release tag identifies the downloadable template package. The supported Gitea version may be appended in parentheses in this compatibility matrix; the parenthesized version is not a Git tag. An **Unreleased** row describes fixes in the source tree that are not yet in a downloadable release.
 
 | Gitea version | Template release |
 |---------------|------------------|
-| 1.27.2        | **v1.0.1(v1.27.2)** |
-| 1.27.1        | **v1.0.1(v1.27.1)** |
+| 1.27.3        | **Unreleased fix**; published v1.27.2 has a push-notification issue in three themes |
+| 1.27.2        | **Unreleased fix**; published v1.27.2 has the same issue |
+| 1.27.1        | **Unreleased fix**; published v1.27.2 has the same issue |
 
 - The [tracker workflow](.github/workflows/gitea-tracker.yml) opens a PR when a new Gitea release appears, marking it ⏳ Pending Verification.
-- After verification, update the parenthesized Gitea version on the active **Template Release** row. A new release (`vX.Y.Z`) is only tagged when the template content itself changes — the [release workflow](.github/workflows/release.yml) packages the archive automatically on tag push.
-- Releases before Gitea 1.27.1 predate semantic tracking and keep their plain version numbers in the matrix.
+- After verification, update the top **Template Release** row. Keep source-only fixes marked **Unreleased** until a new tag is published; the [release workflow](.github/workflows/release.yml) packages the archive on tag push.
+- The older `v1.0.1` tag predates the Gitea 1.27.1 push notification data fix and should not be used for Gitea 1.27.1 or newer.
 
 ## Check Your Gitea Version
 
@@ -38,8 +41,9 @@ gitea --version
 <!-- TRACKER:VERSION-INSERT OFFSET=2 -->
 | Gitea | Release Date | Mail Template Changes | Breaking? |
 |-------|-------------|----------------------|-----------|
+| **1.27.3** | 2026-08-29 | No upstream mail template, mailer, or locale changes; an existing push-notification defect in three published themes was found and fixed in the current source tree | No upstream break (local fix pending release) |
 | **1.27.2** | 2026-08-14 | None — security + bug fixes | No |
-| **1.27.1** | 2026-07-27 | Fixed push commit data paths: .ID → .UserCommit.GitCommit.ID (#38467) | No |
+| **1.27.1** | 2026-07-27 | Push commit data paths changed: .ID → .UserCommit.GitCommit.ID (#38467); older custom templates can fail on push notifications | Yes (old .ID paths) |
 | **1.27.0** | 2026-07-13 | None — no mail template changes | No |
 | **1.26.4** | 2026-06-21 | None — hotfix release | No |
 | **1.26.3** | 2026-06-20 | None — security release | No |
@@ -106,7 +110,7 @@ All templates use Gitea's official `mail.*` translation namespace. Keys are stab
 
 ## Automated Tracking
 
-A [workflow](.github/workflows/gitea-tracker.yml) runs daily (UTC 08:00) to detect new Gitea releases. When a new version is found, it automatically creates a PR updating the matrix and badges with a **⏳ Pending Verification** status. Manual trigger is also available via `workflow_dispatch`. Once verification passes, release the templates under the same version number (see [Versioning](#versioning)).
+A [workflow](.github/workflows/gitea-tracker.yml) runs daily (UTC 08:00) to detect new Gitea releases. When a new version is found, it automatically creates a PR updating the matrix and badges with a **⏳ Pending Verification** status. Manual trigger is also available via `workflow_dispatch`. Once verification passes, update the compatibility matrix; publish a new template tag when template changes require a release (see [Versioning](#versioning)).
 
 ## Reporting Issues
 

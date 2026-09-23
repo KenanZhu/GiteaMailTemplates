@@ -79,9 +79,9 @@ cd tools && go run . dev
 ## 兼容性
 
 - **Gitea 1.25+** — v1.25 引入的邮件模板目录结构
-- **最新测试：** Gitea 1.27.2<!-- TRACKER:LATEST-TESTED -->
-- **版本号：** 发布版本语义化追踪 Gitea 版本 — Gitea 1.27.2 → 模板发布版 v1.0.1(v1.27.2)（详见 [COMPATIBILITY.md](COMPATIBILITY.md)）
-- 与 Gitea 官方模板 100% 兼容 — 详见 [COMPATIBILITY.md](COMPATIBILITY.md)
+- **最新测试：** Gitea 1.27.3<!-- TRACKER:LATEST-TESTED -->
+- **发布状态：** 已发布的 v1.27.2 在 Gitea 1.27.1+ 上，Bloom、Ember、Heritage 主题的推送通知可能失败；当前源码已修复，尚待发布（详见 [兼容性说明](../COMPATIBILITY.md)）
+- 当前源码使用 Gitea 官方模板的数据路径；各发布版的限制详见 [兼容性说明](../COMPATIBILITY.md)
 
 ## 许可证
 
